@@ -9,7 +9,6 @@
 #define _TASK_H
 
 #include <QObject>
-#include <QTimer>
 
 // -------------------------------------------------------------------------------------------------
 
@@ -25,6 +24,10 @@ signals:
 public slots:
   void init();
   void slotRun();
+
+private:
+  unsigned int factorial(unsigned int n);
+
 };
 
 #endif // _TASK_H

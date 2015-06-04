@@ -15,6 +15,8 @@ CONFIG   -= app_bundle
 TEMPLATE = app
 
 
+INCLUDEPATH += ../SimpleQtLogger
+
 SOURCES += main.cpp \
     task.cpp \
     ../SimpleQtLogger/SimpleQtLogger.cpp
