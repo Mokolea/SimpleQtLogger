@@ -4,7 +4,7 @@
   Mario Ban, 05.2015
 
   TODO:
-   - not thread-safe
+   - currently not thread-safe, stack-depth not tracked per thread
 
 */
 
@@ -22,7 +22,7 @@
 #define ENABLED_SQT_LOG_WARNING    1   /* 1: enable, 0: disable */
 #define ENABLED_SQT_LOG_INFO       1   /* 1: enable, 0: disable */
 #define ENABLED_SQT_LOG_DEBUG      0   /* 1: enable, 0: disable; just for step-by-step testing */
-#define ENABLED_SQT_LOG_FUNCTION   0   /* 1: enable, 0: disable; stack-trace */
+#define ENABLED_SQT_LOG_FUNCTION   1   /* 1: enable, 0: disable; stack-trace */
 
 /**
  * Logging levels.
@@ -66,7 +66,7 @@ public:
   void setLogFileName(const QString& logFileName, unsigned int logFileSize, unsigned int logFileNumber);
   void log(const QString& text, SQT_LOG_Level level, const QString& functionName, const char* fileName, unsigned int lineNumber);
   void logFuncBegin(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber);
-  void logFuncEnd(const QString& functionName, const QString& fileName, unsigned int lineNumber);
+  void logFuncEnd(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber);
 
 private:
   QString _logFileName;
@@ -85,6 +85,7 @@ public:
   ~SimpleQtLoggerFunc();
 
 private:
+  const QString _text;
   const QString _functionName;
   const QString _fileName;
   unsigned int _lineNumber;
