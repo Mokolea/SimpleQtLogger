@@ -19,8 +19,8 @@ INCLUDEPATH += ../SimpleQtLogger
 
 SOURCES += main.cpp \
     task.cpp \
-    ../SimpleQtLogger/SimpleQtLogger.cpp
+    ../SimpleQtLogger/simpleQtLogger.cpp
 
 HEADERS += \
     task.h \
-    ../SimpleQtLogger/SimpleQtLogger.h
+    ../SimpleQtLogger/simpleQtLogger.h

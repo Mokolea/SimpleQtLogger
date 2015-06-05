@@ -9,7 +9,7 @@
 #include <QTimer>
 
 #include "task.h"
-#include "SimpleQtLogger.h"
+#include "simpleQtLogger.h"
 
 SimpleQtLogger simpleQtLogger_;
 

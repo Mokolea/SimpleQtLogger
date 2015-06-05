@@ -6,7 +6,7 @@
 */
 
 #include "task.h"
-#include "SimpleQtLogger.h"
+#include "simpleQtLogger.h"
 
 #include <QTimer>
 #include <QtDebug>
