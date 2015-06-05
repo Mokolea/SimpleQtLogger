@@ -16,12 +16,12 @@
 Task::Task(QObject *parent)
   : QObject(parent)
 {
-  LogFunction("Task::Task");
+  LogFunction("");
 }
 
 void Task::init()
 {
-  LogFunction("Task::init");
+  LogFunction("");
 
   LogInfo("+++ test Logger");
   LogFatal("LogFatal");
@@ -36,16 +36,16 @@ void Task::init()
 
 void Task::slotRun()
 {
-  LogFunction("Task::slotRun");
+  LogFunction("");
 
   LogInfo(QString("Calculate: 5! = %1").arg(factorial(5)));
 
   emit finished();
 }
 
-unsigned int Task::factorial(unsigned int n)
+unsigned int Task::factorial(unsigned int n) const
 {
-  LogFunction(QString("Task::factorial(%1)").arg(n));
+  LogFunction(QString("n=%1").arg(n));
 
   if(n > 2) {
     return n * factorial(n-1);

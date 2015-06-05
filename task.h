@@ -15,6 +15,7 @@
 class Task : public QObject
 {
   Q_OBJECT
+
 public:
   explicit Task(QObject *parent = 0);
 
@@ -26,7 +27,7 @@ public slots:
   void slotRun();
 
 private:
-  unsigned int factorial(unsigned int n);
+  unsigned int factorial(unsigned int n) const;
 
 };
 

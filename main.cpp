@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
 {
   QCoreApplication a(argc, argv);
 
-  simpleQtLogger_.setLogFileName("test.log", 100, 10);
+  simpleQtLogger_.setLogFileName("testSimpleQtLogger.log", 20, 4); // TODO test
   SQT_LOG_ENABLE_FUNCTION = true;
 
   Task *task = new Task(&a);
@@ -28,30 +28,33 @@ int main(int argc, char *argv[])
 }
 
 /*
-Marios-iMac:build-TestSimpleQtLogger-Desktop_Qt_5_4_2_clang_64bit-Debug mario$ ./TestSimpleQtLogger
+Marios-iMac:Qt mario$ ./build-TestSimpleQtLogger-Desktop_Qt_5_4_2_clang_64bit-Debug/TestSimpleQtLogger
 SimpleQtLogger::SimpleQtLogger
 SimpleQtLogger::setLogFileName
-test.log: [F] \ Task::Task (Task@../TestSimpleQtLogger/task.cpp:19)
-test.log: [F] / Task::Task (Task@../TestSimpleQtLogger/task.cpp:19)
-test.log: [F] \ Task::init (init@../TestSimpleQtLogger/task.cpp:24)
-test.log: [I] +++ test Logger (init@../TestSimpleQtLogger/task.cpp:26)
-test.log: [!] LogFatal (init@../TestSimpleQtLogger/task.cpp:27)
-test.log: [E] LogError (init@../TestSimpleQtLogger/task.cpp:28)
-test.log: [W] LogWarning (init@../TestSimpleQtLogger/task.cpp:29)
-test.log: [I] LogInfo (init@../TestSimpleQtLogger/task.cpp:30)
-test.log: [I] --- test Logger (init@../TestSimpleQtLogger/task.cpp:32)
-test.log: [F] / Task::init (init@../TestSimpleQtLogger/task.cpp:24)
-test.log: [F] \ Task::slotRun (slotRun@../TestSimpleQtLogger/task.cpp:39)
-test.log: [F]  \ Task::factorial(5) (factorial@../TestSimpleQtLogger/task.cpp:48)
-test.log: [F]   \ Task::factorial(4) (factorial@../TestSimpleQtLogger/task.cpp:48)
-test.log: [F]    \ Task::factorial(3) (factorial@../TestSimpleQtLogger/task.cpp:48)
-test.log: [F]     \ Task::factorial(2) (factorial@../TestSimpleQtLogger/task.cpp:48)
-test.log: [F]     / Task::factorial(2) (factorial@../TestSimpleQtLogger/task.cpp:48)
-test.log: [F]    / Task::factorial(3) (factorial@../TestSimpleQtLogger/task.cpp:48)
-test.log: [F]   / Task::factorial(4) (factorial@../TestSimpleQtLogger/task.cpp:48)
-test.log: [F]  / Task::factorial(5) (factorial@../TestSimpleQtLogger/task.cpp:48)
-test.log: [I] Calculate: 5! = 120 (slotRun@../TestSimpleQtLogger/task.cpp:41)
-test.log: [F] / Task::slotRun (slotRun@../TestSimpleQtLogger/task.cpp:39)
 SimpleQtLogger::~SimpleQtLogger
-Marios-iMac:build-TestSimpleQtLogger-Desktop_Qt_5_4_2_clang_64bit-Debug mario$
+Marios-iMac:Qt mario$
+
+Marios-iMac:Qt mario$ cat testSimpleQtLogger.log
+2015-06-05 19:25:31.366 [F] \ (Task@../TestSimpleQtLogger/task.cpp:19)
+2015-06-05 19:25:31.368 [F] / (Task@../TestSimpleQtLogger/task.cpp:19)
+2015-06-05 19:25:31.368 [F] \ (init@../TestSimpleQtLogger/task.cpp:24)
+2015-06-05 19:25:31.368 [I] +++ test Logger (init@../TestSimpleQtLogger/task.cpp:26)
+2015-06-05 19:25:31.368 [!] LogFatal (init@../TestSimpleQtLogger/task.cpp:27)
+2015-06-05 19:25:31.368 [E] LogError (init@../TestSimpleQtLogger/task.cpp:28)
+2015-06-05 19:25:31.368 [W] LogWarning (init@../TestSimpleQtLogger/task.cpp:29)
+2015-06-05 19:25:31.368 [I] LogInfo (init@../TestSimpleQtLogger/task.cpp:30)
+2015-06-05 19:25:31.368 [I] --- test Logger (init@../TestSimpleQtLogger/task.cpp:32)
+2015-06-05 19:25:31.368 [F] / (init@../TestSimpleQtLogger/task.cpp:24)
+2015-06-05 19:25:31.368 [F] \ (slotRun@../TestSimpleQtLogger/task.cpp:39)
+2015-06-05 19:25:31.368 [F] .\ n=5 (factorial@../TestSimpleQtLogger/task.cpp:48)
+2015-06-05 19:25:31.368 [F] ..\ n=4 (factorial@../TestSimpleQtLogger/task.cpp:48)
+2015-06-05 19:25:31.368 [F] ...\ n=3 (factorial@../TestSimpleQtLogger/task.cpp:48)
+2015-06-05 19:25:31.368 [F] ....\ n=2 (factorial@../TestSimpleQtLogger/task.cpp:48)
+2015-06-05 19:25:31.368 [F] ..../ n=2 (factorial@../TestSimpleQtLogger/task.cpp:48)
+2015-06-05 19:25:31.368 [F] .../ n=3 (factorial@../TestSimpleQtLogger/task.cpp:48)
+2015-06-05 19:25:31.368 [F] ../ n=4 (factorial@../TestSimpleQtLogger/task.cpp:48)
+2015-06-05 19:25:31.368 [F] ./ n=5 (factorial@../TestSimpleQtLogger/task.cpp:48)
+2015-06-05 19:25:31.368 [I] Calculate: 5! = 120 (slotRun@../TestSimpleQtLogger/task.cpp:41)
+2015-06-05 19:25:31.368 [F] / (slotRun@../TestSimpleQtLogger/task.cpp:39)
+Marios-iMac:Qt mario$
 */
