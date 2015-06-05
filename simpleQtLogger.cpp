@@ -5,7 +5,7 @@
 
 */
 
-#include "SimpleQtLogger.h"
+#include "simpleQtLogger.h"
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QtDebug>
@@ -26,8 +26,10 @@ bool SQT_LOG_ENABLE_FUNCTION = false;
 
 SimpleQtLogger::SimpleQtLogger()
   : _logFileSize(0)
-  , _logFileNumber(0)
+  , _logFileMaxNumber(0)
   , _stackDepth(0)
+  , _logFileIsOpen(false)
+  , _currentLogFileSize(0)
 {
   qDebug("SimpleQtLogger::SimpleQtLogger");
 }
@@ -36,24 +38,25 @@ SimpleQtLogger::~SimpleQtLogger()
 {
   qDebug("SimpleQtLogger::~SimpleQtLogger");
 
-  // TODO: close log file
+  // TODO: check close log file
 }
 
-void SimpleQtLogger::setLogFileName(const QString& logFileName, unsigned int logFileSize, unsigned int logFileNumber)
+void SimpleQtLogger::setLogFileName(const QString& logFileName, unsigned int logFileSize, unsigned int logFileMaxNumber)
 {
   qDebug("SimpleQtLogger::setLogFileName");
+
   _logFileName = logFileName;
   _logFileSize = logFileSize;
-  _logFileNumber = logFileNumber;
+  _logFileMaxNumber = logFileMaxNumber;
 
-  // TODO: open log file
+  // TODO: check close/reopen log file
 }
 
 void SimpleQtLogger::log(const QString& text, SQT_LOG_Level level, const QString& functionName, const char* fileName, unsigned int lineNumber)
 {
   // qDebug("SimpleQtLogger::log");
 
-  // TODO: append to log file, handle file rolling
+  // TODO: open log file, append to log file, handle file rolling
 
   qDebug("%s", QString("%6: [%1] %2 (%3@%4:%5)").arg(LOG_LEVEL_CHAR[level]).arg(text).arg(functionName).arg(fileName).arg(lineNumber).arg(_logFileName).toStdString().c_str());
 }
@@ -64,7 +67,7 @@ void SimpleQtLogger::logFuncBegin(const QString& text, const QString& functionNa
 
   // TODO stack-trace depth (++ before) ... (thread-id-callback?)
 
-  _stackDepth++;
+  _stackDepth++; // adjust stack-trace depth
 
   QString stackDepth("");
   for(unsigned int i=1; i<_stackDepth; ++i) {
@@ -85,7 +88,7 @@ void SimpleQtLogger::logFuncEnd(const QString& text, const QString& functionName
   }
   log(QString("%1/ %2").arg(stackDepth).arg(text), SQT_LOG_FUNCTION, functionName, fileName.toStdString().c_str(), lineNumber);
 
-  _stackDepth--;
+  _stackDepth--; // adjust stack-trace depth
 }
 
 // -------------------------------------------------------------------------------------------------
