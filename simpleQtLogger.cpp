@@ -58,7 +58,12 @@ void SimpleQtLogger::log(const QString& text, SQT_LOG_Level level, const QString
 
   // TODO: open log file, append to log file, handle file rolling
 
-  qDebug("%s", QString("%6: [%1] %2 (%3@%4:%5)").arg(LOG_LEVEL_CHAR[level]).arg(text).arg(functionName).arg(fileName).arg(lineNumber).arg(_logFileName).toStdString().c_str());
+  if(text.isEmpty()) {
+    qDebug("%s", QString("%6: [%1] %2 (%3@%4:%5)").arg(LOG_LEVEL_CHAR[level]).arg("?").arg(functionName).arg(fileName).arg(lineNumber).arg(_logFileName).toStdString().c_str());
+  }
+  else {
+    qDebug("%s", QString("%6: [%1] %2 (%3@%4:%5)").arg(LOG_LEVEL_CHAR[level]).arg(text).arg(functionName).arg(fileName).arg(lineNumber).arg(_logFileName).toStdString().c_str());
+  }
 }
 
 void SimpleQtLogger::logFuncBegin(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber)
@@ -71,9 +76,14 @@ void SimpleQtLogger::logFuncBegin(const QString& text, const QString& functionNa
 
   QString stackDepth("");
   for(unsigned int i=1; i<_stackDepth; ++i) {
-    stackDepth += " ";
+    stackDepth += STACK_DEPTH_CHAR;
   }
-  log(QString("%1\\ %2").arg(stackDepth).arg(text), SQT_LOG_FUNCTION, functionName, fileName.toStdString().c_str(), lineNumber);
+  if(text.isEmpty()) {
+    log(QString("%1\\").arg(stackDepth), SQT_LOG_FUNCTION, functionName, fileName.toStdString().c_str(), lineNumber);
+  }
+  else {
+    log(QString("%1\\ %2").arg(stackDepth).arg(text), SQT_LOG_FUNCTION, functionName, fileName.toStdString().c_str(), lineNumber);
+  }
 }
 
 void SimpleQtLogger::logFuncEnd(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber)
@@ -84,9 +94,14 @@ void SimpleQtLogger::logFuncEnd(const QString& text, const QString& functionName
 
   QString stackDepth("");
   for(unsigned int i=1; i<_stackDepth; ++i) {
-    stackDepth += " ";
+    stackDepth += STACK_DEPTH_CHAR;
   }
-  log(QString("%1/ %2").arg(stackDepth).arg(text), SQT_LOG_FUNCTION, functionName, fileName.toStdString().c_str(), lineNumber);
+  if(text.isEmpty()) {
+    log(QString("%1/").arg(stackDepth), SQT_LOG_FUNCTION, functionName, fileName.toStdString().c_str(), lineNumber);
+  }
+  else {
+    log(QString("%1/ %2").arg(stackDepth).arg(text), SQT_LOG_FUNCTION, functionName, fileName.toStdString().c_str(), lineNumber);
+  }
 
   _stackDepth--; // adjust stack-trace depth
 }
@@ -100,7 +115,7 @@ SimpleQtLoggerFunc::SimpleQtLoggerFunc(const QString& text, const QString& funct
   , _lineNumber(lineNumber)
 {
   // qDebug("SimpleQtLoggerFunc::SimpleQtLoggerFunc");
-  if(ENABLED_SQT_LOG_FUNCTION && SQT_LOG_ENABLE_FUNCTION) simpleQtLogger_.logFuncBegin(text, _functionName, _fileName, _lineNumber);
+  if(ENABLED_SQT_LOG_FUNCTION && SQT_LOG_ENABLE_FUNCTION) simpleQtLogger_.logFuncBegin(_text, _functionName, _fileName, _lineNumber);
 }
 
 SimpleQtLoggerFunc::~SimpleQtLoggerFunc()

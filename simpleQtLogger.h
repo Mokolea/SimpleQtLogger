@@ -9,6 +9,8 @@
   TODO:
    - rolling file appender
    - maybe allow message-buffering, processing on idle-time
+   - maybe flush periodically on idle-time
+   - do file rolling (check file size periodically) on idle-time
    - currently not thread-safe, stack-depth not tracked per thread
 
 */
@@ -42,6 +44,8 @@ SQT_LOG_Level;
 
 static const char LOG_LEVEL_CHAR[6] = {'!', 'E', 'W', 'I', 'D', 'F'}; /* MUST correspond to enum SQT_LOG_Level, unchecked array!!! */
 
+#define STACK_DEPTH_CHAR   "."   /* use e.g. " " or "." */
+
 /* Log-level (adjust at run-time) */
 extern bool SQT_LOG_ENABLE_FATAL;      /* Log-level: true: enable, false: disable, default: true */
 extern bool SQT_LOG_ENABLE_ERROR;      /* Log-level: true: enable, false: disable, default: true */
@@ -50,7 +54,7 @@ extern bool SQT_LOG_ENABLE_INFO;       /* Log-level: true: enable, false: disabl
 extern bool SQT_LOG_ENABLE_DEBUG;      /* Log-level: true: enable, false: disable, default: false; just for step-by-step testing */
 extern bool SQT_LOG_ENABLE_FUNCTION;   /* Log-level: true: enable, false: disable, default: false; stack-trace */
 
-/* Use thess macros to have function-, filename and linenumber set */
+/* Use these macros to have function-, filename and linenumber set correct */
 #define LogFatal(text)      do { if(ENABLED_SQT_LOG_FATAL && SQT_LOG_ENABLE_FATAL) simpleQtLogger_.log(text, SQT_LOG_FATAL, __FUNCTION__, __FILE__, __LINE__); } while(0)
 #define LogError(text)      do { if(ENABLED_SQT_LOG_ERROR && SQT_LOG_ENABLE_ERROR) simpleQtLogger_.log(text, SQT_LOG_ERROR, __FUNCTION__, __FILE__, __LINE__); } while(0)
 #define LogWarning(text)    do { if(ENABLED_SQT_LOG_WARNING && SQT_LOG_ENABLE_WARNING) simpleQtLogger_.log(text, SQT_LOG_WARNING, __FUNCTION__, __FILE__, __LINE__); } while(0)
