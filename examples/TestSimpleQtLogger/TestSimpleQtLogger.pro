@@ -5,22 +5,21 @@
 #-------------------------------------------------
 
 QT       += core
-
 QT       -= gui
 
 TARGET = TestSimpleQtLogger
+
 CONFIG   += console
 CONFIG   -= app_bundle
 
 TEMPLATE = app
 
-
-INCLUDEPATH += ../SimpleQtLogger
+INCLUDEPATH += ../..
 
 SOURCES += main.cpp \
     task.cpp \
-    ../SimpleQtLogger/simpleQtLogger.cpp
+    ../../simpleQtLogger.cpp
 
 HEADERS += \
     task.h \
-    ../SimpleQtLogger/simpleQtLogger.h
+    ../../simpleQtLogger.h
