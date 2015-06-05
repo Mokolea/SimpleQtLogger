@@ -20,8 +20,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QString>
-#include <QtCore/QStringList>
-#include <QtCore/QSet>
+#include <QtCore/QFile>
 
 /* Log-level (adjust at compile-time) */
 #define ENABLED_SQT_LOG_FATAL      1   /* 1: enable, 0: disable */
@@ -82,8 +81,7 @@ private:
 
   unsigned int _stackDepth;
 
-  bool _logFileIsOpen;
-  unsigned int _currentLogFileSize;
+  QFile* _logFile;
 };
 
 // -------------------------------------------------------------------------------------------------

@@ -8,6 +8,7 @@
 #include "simpleQtLogger.h"
 
 #include <QtCore/QCoreApplication>
+#include <QtCore/QDateTime>
 #include <QtCore/QtDebug>
 
 /* Log-level */
@@ -28,8 +29,7 @@ SimpleQtLogger::SimpleQtLogger()
   : _logFileSize(0)
   , _logFileMaxNumber(0)
   , _stackDepth(0)
-  , _logFileIsOpen(false)
-  , _currentLogFileSize(0)
+  , _logFile(0)
 {
   qDebug("SimpleQtLogger::SimpleQtLogger");
 }
@@ -38,7 +38,14 @@ SimpleQtLogger::~SimpleQtLogger()
 {
   qDebug("SimpleQtLogger::~SimpleQtLogger");
 
-  // TODO: check close log file
+  // check close log file
+  if(_logFile) {
+    if(_logFile->isOpen()) {
+      _logFile->close();
+    }
+    delete _logFile;
+    _logFile = 0;
+  }
 }
 
 void SimpleQtLogger::setLogFileName(const QString& logFileName, unsigned int logFileSize, unsigned int logFileMaxNumber)
@@ -49,21 +56,40 @@ void SimpleQtLogger::setLogFileName(const QString& logFileName, unsigned int log
   _logFileSize = logFileSize;
   _logFileMaxNumber = logFileMaxNumber;
 
-  // TODO: check close/reopen log file
+  // check close and open log file
+  if(_logFile) {
+    if(_logFile->isOpen()) {
+      _logFile->close();
+    }
+    delete _logFile;
+  }
+  _logFile = new QFile(_logFileName);
+  if(!_logFile->open(QIODevice::WriteOnly | QIODevice::Text)) {
+    delete _logFile;
+    _logFile = 0;
+    qWarning() << "Open log-file failed!" << logFileName;
+  }
+
+  // TODO: check initiate file rolling
 }
 
 void SimpleQtLogger::log(const QString& text, SQT_LOG_Level level, const QString& functionName, const char* fileName, unsigned int lineNumber)
 {
   // qDebug("SimpleQtLogger::log");
 
-  // TODO: open log file, append to log file, handle file rolling
+  // time-stamp
+  QDateTime dateTime = QDateTime::currentDateTime(); // or better use QDateTime::currentDateTimeUtc() instead
+  QString ts = dateTime.toString("yyyy-MM-dd hh:mm:ss.zzz");
 
-  if(text.isEmpty()) {
-    qDebug("%s", QString("%6: [%1] %2 (%3@%4:%5)").arg(LOG_LEVEL_CHAR[level]).arg("?").arg(functionName).arg(fileName).arg(lineNumber).arg(_logFileName).toStdString().c_str());
+  // TODO: append to log file, handle (initiate) file rolling
+
+  if(_logFile && _logFile->isOpen()) {
+    QTextStream out(_logFile);
+    out << ts << " [" << LOG_LEVEL_CHAR[level] << "] " << (text.isEmpty() ? "?" : text) << " (" << functionName << "@" << fileName << ":" << lineNumber << ")" << '\n';
+    return;
   }
-  else {
-    qDebug("%s", QString("%6: [%1] %2 (%3@%4:%5)").arg(LOG_LEVEL_CHAR[level]).arg(text).arg(functionName).arg(fileName).arg(lineNumber).arg(_logFileName).toStdString().c_str());
-  }
+
+  qDebug("%s", QString("%7: %1 [%2] %3 (%4@%5:%6)").arg(ts).arg(LOG_LEVEL_CHAR[level]).arg(text.isEmpty() ? "?" : text).arg(functionName).arg(fileName).arg(lineNumber).arg(_logFileName).toStdString().c_str());
 }
 
 void SimpleQtLogger::logFuncBegin(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber)
