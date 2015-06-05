@@ -75,6 +75,9 @@ public:
   void logFuncEnd(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber);
 
 private:
+  void checkFileOpen();
+  void checkFileRolling();
+
   QString _logFileName;
   unsigned int _logFileSize;
   unsigned int _logFileMaxNumber;
