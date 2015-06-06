@@ -23,10 +23,6 @@ bool SQT_LOG_ENABLE_FUNCTION = false;
 
 // -------------------------------------------------------------------------------------------------
 
-// define one GLOBAL instance in main: SimpleQtLogger simpleQtLogger_;
-
-// -------------------------------------------------------------------------------------------------
-
 SimpleQtLogger::SimpleQtLogger(QObject *parent)
   : QObject(parent)
   , _logFileSize(0)
@@ -59,6 +55,23 @@ void SimpleQtLogger::setLogFileName(const QString& logFileName, unsigned int log
   _logFileName = logFileName;
   _logFileSize = logFileSize;
   _logFileMaxNumber = logFileMaxNumber;
+
+  // check valid log-file name ending
+  if(_logFileName.right(4) != ".log") {
+    qWarning() << "Name of log-file not ending with '.log'" << _logFileName;
+    return;
+  }
+
+  // check valid number ranges
+  if(_logFileSize < 100) {
+    _logFileSize = 100;
+  }
+  if(_logFileMaxNumber < 1) {
+    _logFileMaxNumber = 1;
+  }
+  if(_logFileMaxNumber > 99) {
+    _logFileMaxNumber = 99;
+  }
 
   checkLogFileOpen();
 }

@@ -5,11 +5,17 @@
 
   Facts:
    - rolling file appender
+   - restriction: log-file name has to end with: ".log"
+
+  Usage:
+   - define one GLOBAL instance in main: SimpleQtLogger simpleQtLogger_;
+   - initialize: simpleQtLogger_.setLogFileName("testSimpleQtLogger.log", 10000, 10);
+   - initialize: SQT_LOG_ENABLE_FUNCTION = true;
 
   TODO:
    - maybe allow message-buffering, processing on idle-time
    - maybe flush periodically on idle-time
-   - do file rolling (check file size periodically) on idle-time
+   - maybe do file rolling (check file size periodically) on idle-time
    - currently not thread-safe, stack-depth not tracked per thread
 
 */
@@ -21,7 +27,7 @@
 #include <QString>
 #include <QFile>
 
-/* Log-level (adjust at compile-time) */
+/* Log-level (hard; adjust at compile-time) */
 #define ENABLED_SQT_LOG_FATAL      1   /* 1: enable, 0: disable */
 #define ENABLED_SQT_LOG_ERROR      1   /* 1: enable, 0: disable */
 #define ENABLED_SQT_LOG_WARNING    1   /* 1: enable, 0: disable */
