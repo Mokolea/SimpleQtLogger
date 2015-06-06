@@ -3,6 +3,7 @@
 
   Mario Ban, 05.2015
 
+  GNU General Public License v2.0
 */
 
 #include "simpleQtLogger.h"

@@ -20,6 +20,7 @@
 
   Tested using: Qt 5.4.2 (Community Open Source), Clang 6.0 (Apple) 64 bit
 
+  GNU General Public License v2.0
 */
 
 #ifndef _SIMPLE_QT_LOGGER_H
