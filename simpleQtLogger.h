@@ -4,10 +4,9 @@
   Mario Ban, 05.2015
 
   Facts:
-   - ...
+   - rolling file appender
 
   TODO:
-   - rolling file appender
    - maybe allow message-buffering, processing on idle-time
    - maybe flush periodically on idle-time
    - do file rolling (check file size periodically) on idle-time
@@ -85,13 +84,13 @@ private:
   void checkLogFileRolling();
 
   QString _logFileName;
-  unsigned int _logFileSize;
-  unsigned int _logFileMaxNumber;
+  unsigned int _logFileSize; // initiate log-file rolling
+  unsigned int _logFileMaxNumber; // max number of rolling log-file history
 
-  unsigned int _stackDepth;
+  unsigned int _stackDepth; // current stack-depth for function-log
 
   QFile* _logFile;
-  bool _logFileActivity;
+  bool _logFileActivity; // track log-file write (append) activity
 };
 
 // -------------------------------------------------------------------------------------------------

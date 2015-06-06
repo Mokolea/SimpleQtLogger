@@ -135,8 +135,7 @@ void SimpleQtLogger::checkLogFileOpen()
     delete _logFile;
   }
 
-  // TODO check existing files ... open latest (modification-time) file
-
+  // open log-file
   _logFile = new QFile(_logFileName);
   if(!_logFile->open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
     delete _logFile;
@@ -147,6 +146,8 @@ void SimpleQtLogger::checkLogFileOpen()
   if(!_logFile) {
     return;
   }
+
+  qDebug() << "Current log-file:" << _logFileName;
 
   QTimer::singleShot(CHECK_LOG_FILE_ACTIVITY_INTERVAL, this, SLOT(slotCheckLogFileActivity()));
 }
@@ -161,11 +162,59 @@ void SimpleQtLogger::checkLogFileRolling()
 
   // check current log-file size
   QFileInfo logFileInfo(*_logFile);
-  LogInfo(QString("Current log-file size=%1").arg(logFileInfo.size()));
+  qint64 logFileSize = logFileInfo.size();
 
-  // TODO: handle (initiate) file rolling
+  if(logFileSize < _logFileSize) {
+    QTimer::singleShot(CHECK_LOG_FILE_ACTIVITY_INTERVAL, this, SLOT(slotCheckLogFileActivity()));
+    return;
+  }
+  LogInfo(QString("Current log-file size=%1 (rolling-size=%2) --> rolling").arg(logFileSize).arg(_logFileSize));
 
-  QTimer::singleShot(CHECK_LOG_FILE_ACTIVITY_INTERVAL, this, SLOT(slotCheckLogFileActivity()));
+  // handle file rolling
+
+  // delete last file
+  QString logFileName = _logFileName;
+  logFileName.replace(".log", QString("_%1.log").arg(_logFileMaxNumber, 2, 10, QLatin1Char('0')));
+  if(QFile::exists(logFileName)) {
+    if(QFile::remove(logFileName)) {
+      qDebug() << "Removed" << logFileName;
+    }
+    else {
+      qWarning() << "ERROR: Remove" << logFileName;
+    }
+  }
+
+  // rolling files
+  for(int i=_logFileMaxNumber-1; i>0; --i) {
+    QString logFileNameFrom = _logFileName;
+    logFileNameFrom.replace(".log", QString("_%1.log").arg(i, 2, 10, QLatin1Char('0')));
+    QString logFileNameTo = _logFileName;
+    logFileNameTo.replace(".log", QString("_%1.log").arg(i+1, 2, 10, QLatin1Char('0')));
+    if(QFile::exists(logFileNameFrom)) {
+      if(QFile::rename(logFileNameFrom, logFileNameTo)) {
+        qDebug() << "Moved" << logFileNameFrom << "to" << logFileNameTo;
+      }
+      else {
+        qWarning() << "ERROR: Move" << logFileNameFrom << "to" << logFileNameTo;
+      }
+    }
+  }
+
+  _logFile->close();
+
+  // move first file
+  QString logFileNameTo = _logFileName;
+  logFileNameTo.replace(".log", QString("_%1.log").arg(1, 2, 10, QLatin1Char('0')));
+  if(QFile::exists(_logFileName)) {
+    if(QFile::rename(_logFileName, logFileNameTo)) {
+      qDebug() << "Moved" << _logFileName << "to" << logFileNameTo;
+    }
+    else {
+      qWarning() << "ERROR: Move" << _logFileName << "to" << logFileNameTo;
+    }
+  }
+
+  checkLogFileOpen();
 }
 
 void SimpleQtLogger::slotCheckLogFileActivity()

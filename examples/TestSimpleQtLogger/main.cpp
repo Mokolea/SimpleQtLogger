@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
 {
   QCoreApplication a(argc, argv);
 
-  simpleQtLogger_.setLogFileName("testSimpleQtLogger.log", 20, 4); // TODO test
+  simpleQtLogger_.setLogFileName("testSimpleQtLogger.log", 10000, 10); // TODO test
   SQT_LOG_ENABLE_FUNCTION = true;
 
   Task *task = new Task(&a);
