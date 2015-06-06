@@ -18,9 +18,9 @@
 #ifndef _SIMPLE_QT_LOGGER_H
 #define _SIMPLE_QT_LOGGER_H
 
-#include <QtCore/QObject>
-#include <QtCore/QString>
-#include <QtCore/QFile>
+#include <QObject>
+#include <QString>
+#include <QFile>
 
 /* Log-level (adjust at compile-time) */
 #define ENABLED_SQT_LOG_FATAL      1   /* 1: enable, 0: disable */
@@ -44,6 +44,7 @@ SQT_LOG_Level;
 static const char LOG_LEVEL_CHAR[6] = {'!', 'E', 'W', 'I', 'D', 'F'}; /* MUST correspond to enum SQT_LOG_Level, unchecked array!!! */
 
 #define STACK_DEPTH_CHAR   "."   /* use e.g. " " or "." */
+#define CHECK_LOG_FILE_ACTIVITY_INTERVAL   5000   /* [ms] */
 
 /* Log-level (adjust at run-time) */
 extern bool SQT_LOG_ENABLE_FATAL;      /* Log-level: true: enable, false: disable, default: true */
@@ -63,10 +64,12 @@ extern bool SQT_LOG_ENABLE_FUNCTION;   /* Log-level: true: enable, false: disabl
 
 // -------------------------------------------------------------------------------------------------
 
-class SimpleQtLogger
+class SimpleQtLogger : public QObject
 {
+  Q_OBJECT
+
 public:
-  SimpleQtLogger();
+  SimpleQtLogger(QObject *parent = 0);
   ~SimpleQtLogger();
 
   void setLogFileName(const QString& logFileName, unsigned int logFileSize, unsigned int logFileMaxNumber);
@@ -74,9 +77,12 @@ public:
   void logFuncBegin(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber);
   void logFuncEnd(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber);
 
+private slots:
+  void slotCheckLogFileActivity();
+
 private:
-  void checkFileOpen();
-  void checkFileRolling();
+  void checkLogFileOpen();
+  void checkLogFileRolling();
 
   QString _logFileName;
   unsigned int _logFileSize;
@@ -85,6 +91,7 @@ private:
   unsigned int _stackDepth;
 
   QFile* _logFile;
+  bool _logFileActivity;
 };
 
 // -------------------------------------------------------------------------------------------------

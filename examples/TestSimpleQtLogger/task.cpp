@@ -31,7 +31,15 @@ void Task::init()
   LogDebug("LogDebug");
   LogInfo("--- test Logger");
 
-  QTimer::singleShot(0, this, SLOT(slotRun()));
+  QTimer::singleShot(100, this, SLOT(slotRun()));
+  QTimer::singleShot(7000, this, SLOT(theEnd()));
+}
+
+void Task::theEnd()
+{
+  LogFunction("");
+  LogInfo("Bye bye");
+  emit finished();
 }
 
 void Task::slotRun()
@@ -40,7 +48,7 @@ void Task::slotRun()
 
   LogInfo(QString("Calculate: 5! = %1").arg(factorial(5)));
 
-  emit finished();
+  QTimer::singleShot(3000, this, SLOT(slotRun()));
 }
 
 unsigned int Task::factorial(unsigned int n) const

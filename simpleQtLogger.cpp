@@ -7,9 +7,11 @@
 
 #include "simpleQtLogger.h"
 
-#include <QtCore/QCoreApplication>
-#include <QtCore/QDateTime>
-#include <QtCore/QtDebug>
+#include <QCoreApplication>
+#include <QTimer>
+#include <QDateTime>
+#include <QFileInfo>
+#include <QtDebug>
 
 /* Log-level */
 bool SQT_LOG_ENABLE_FATAL = true;
@@ -25,11 +27,13 @@ bool SQT_LOG_ENABLE_FUNCTION = false;
 
 // -------------------------------------------------------------------------------------------------
 
-SimpleQtLogger::SimpleQtLogger()
-  : _logFileSize(0)
+SimpleQtLogger::SimpleQtLogger(QObject *parent)
+  : QObject(parent)
+  , _logFileSize(0)
   , _logFileMaxNumber(0)
   , _stackDepth(0)
   , _logFile(0)
+  , _logFileActivity(false)
 {
   qDebug("SimpleQtLogger::SimpleQtLogger");
 }
@@ -56,9 +60,7 @@ void SimpleQtLogger::setLogFileName(const QString& logFileName, unsigned int log
   _logFileSize = logFileSize;
   _logFileMaxNumber = logFileMaxNumber;
 
-  checkFileOpen();
-
-  checkFileRolling();
+  checkLogFileOpen();
 }
 
 void SimpleQtLogger::log(const QString& text, SQT_LOG_Level level, const QString& functionName, const char* fileName, unsigned int lineNumber)
@@ -73,12 +75,12 @@ void SimpleQtLogger::log(const QString& text, SQT_LOG_Level level, const QString
   if(_logFile && _logFile->isOpen()) {
     QTextStream out(_logFile);
     out << ts << " [" << LOG_LEVEL_CHAR[level] << "] " << (text.isEmpty() ? "?" : text) << " (" << functionName << "@" << fileName << ":" << lineNumber << ")" << '\n';
+
+    _logFileActivity = true;
   }
   else {
     qDebug("%s", QString("%7: %1 [%2] %3 (%4@%5:%6)").arg(ts).arg(LOG_LEVEL_CHAR[level]).arg(text.isEmpty() ? "?" : text).arg(functionName).arg(fileName).arg(lineNumber).arg(_logFileName).toStdString().c_str());
   }
-
-  checkFileRolling();
 }
 
 void SimpleQtLogger::logFuncBegin(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber)
@@ -121,9 +123,9 @@ void SimpleQtLogger::logFuncEnd(const QString& text, const QString& functionName
   _stackDepth--; // adjust stack-trace depth
 }
 
-void SimpleQtLogger::checkFileOpen()
+void SimpleQtLogger::checkLogFileOpen()
 {
-  // qDebug("SimpleQtLogger::checkFileOpen");
+  // qDebug("SimpleQtLogger::checkLogFileOpen");
 
   // check close and open log file
   if(_logFile) {
@@ -141,17 +143,46 @@ void SimpleQtLogger::checkFileOpen()
     _logFile = 0;
     qWarning() << "Open log-file failed!" << _logFileName;
   }
-}
-
-void SimpleQtLogger::checkFileRolling()
-{
-  // qDebug("SimpleQtLogger::checkFileRolling");
 
   if(!_logFile) {
     return;
   }
 
-  // TODO: check, handle (initiate) file rolling
+  QTimer::singleShot(CHECK_LOG_FILE_ACTIVITY_INTERVAL, this, SLOT(slotCheckLogFileActivity()));
+}
+
+void SimpleQtLogger::checkLogFileRolling()
+{
+  // qDebug("SimpleQtLogger::checkLogFileRolling");
+
+  if(!_logFile) {
+    return;
+  }
+
+  // check current log-file size
+  QFileInfo logFileInfo(*_logFile);
+  LogInfo(QString("Current log-file size=%1").arg(logFileInfo.size()));
+
+  // TODO: handle (initiate) file rolling
+
+  QTimer::singleShot(CHECK_LOG_FILE_ACTIVITY_INTERVAL, this, SLOT(slotCheckLogFileActivity()));
+}
+
+void SimpleQtLogger::slotCheckLogFileActivity()
+{
+  // qDebug("SimpleQtLogger::slotCheckLogFileActivity");
+
+  if(!_logFile) {
+    return;
+  }
+
+  if(_logFileActivity) {
+    _logFileActivity = false;
+    checkLogFileRolling();
+    return;
+  }
+
+  QTimer::singleShot(CHECK_LOG_FILE_ACTIVITY_INTERVAL, this, SLOT(slotCheckLogFileActivity()));
 }
 
 // -------------------------------------------------------------------------------------------------
