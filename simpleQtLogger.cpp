@@ -74,6 +74,8 @@ void SimpleQtLogger::setLogFileName(const QString& logFileName, unsigned int log
   }
 
   checkLogFileOpen();
+
+  log("Start logger", SQT_LOG_INFO, "", "", 0);
 }
 
 void SimpleQtLogger::log(const QString& text, SQT_LOG_Level level, const QString& functionName, const char* fileName, unsigned int lineNumber)
@@ -84,11 +86,23 @@ void SimpleQtLogger::log(const QString& text, SQT_LOG_Level level, const QString
   QDateTime dateTime = QDateTime::currentDateTime(); // or better use QDateTime::currentDateTimeUtc() instead
   QString ts = dateTime.toString("yyyy-MM-dd hh:mm:ss.zzz");
 
+  if(functionName.isEmpty()) {
+    // stream (append) to log file
+    if(_logFile && _logFile->isOpen()) {
+      QTextStream out(_logFile);
+      out << ts << " [" << LOG_LEVEL_CHAR[level] << "] " << (text.isEmpty() ? "?" : text) << '\n';
+      _logFileActivity = true;
+    }
+    else {
+      qDebug("%s", QString("%4: %1 [%2] %3").arg(ts).arg(LOG_LEVEL_CHAR[level]).arg(text.isEmpty() ? "?" : text).arg(_logFileName).toStdString().c_str());
+    }
+    return;
+  }
+
   // stream (append) to log file
   if(_logFile && _logFile->isOpen()) {
     QTextStream out(_logFile);
     out << ts << " [" << LOG_LEVEL_CHAR[level] << "] " << (text.isEmpty() ? "?" : text) << " (" << functionName << "@" << fileName << ":" << lineNumber << ")" << '\n';
-
     _logFileActivity = true;
   }
   else {
@@ -181,7 +195,7 @@ void SimpleQtLogger::checkLogFileRolling()
     QTimer::singleShot(CHECK_LOG_FILE_ACTIVITY_INTERVAL, this, SLOT(slotCheckLogFileActivity()));
     return;
   }
-  LogInfo(QString("Current log-file size=%1 (rolling-size=%2) --> rolling").arg(logFileSize).arg(_logFileSize));
+  log(QString("Current log-file size=%1 (rolling-size=%2) --> rolling").arg(logFileSize).arg(_logFileSize), SQT_LOG_INFO, "", "", 0);
 
   // handle file rolling
 
