@@ -249,6 +249,8 @@ void SimpleQtLogger::slotCheckLogFileActivity()
 
 // -------------------------------------------------------------------------------------------------
 
+#if ENABLED_SQT_LOG_FUNCTION > 0
+
 SimpleQtLoggerFunc::SimpleQtLoggerFunc(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber)
   : _text(text)
   , _functionName(functionName)
@@ -264,3 +266,5 @@ SimpleQtLoggerFunc::~SimpleQtLoggerFunc()
   // qDebug("SimpleQtLoggerFunc::~SimpleQtLoggerFunc");
   if(ENABLED_SQT_LOG_FUNCTION && SQT_LOG_ENABLE_FUNCTION) simpleQtLogger_.logFuncEnd(_text, _functionName, _fileName, _lineNumber);
 }
+
+#endif

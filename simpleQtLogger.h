@@ -65,7 +65,11 @@ extern bool SQT_LOG_ENABLE_FUNCTION;   /* Log-level: true: enable, false: disabl
 #define LogWarning(text)    do { if(ENABLED_SQT_LOG_WARNING && SQT_LOG_ENABLE_WARNING) simpleQtLogger_.log(text, SQT_LOG_WARNING, __FUNCTION__, __FILE__, __LINE__); } while(0)
 #define LogInfo(text)       do { if(ENABLED_SQT_LOG_INFO && SQT_LOG_ENABLE_INFO) simpleQtLogger_.log(text, SQT_LOG_INFO, __FUNCTION__, __FILE__, __LINE__); } while(0)
 #define LogDebug(text)      do { if(ENABLED_SQT_LOG_DEBUG && SQT_LOG_ENABLE_DEBUG) simpleQtLogger_.log(text, SQT_LOG_DEBUG, __FUNCTION__, __FILE__, __LINE__); } while(0)
+#if ENABLED_SQT_LOG_FUNCTION > 0
 #define LogFunction(text)   SimpleQtLoggerFunc _simpleQtLoggerFunc_(text, __FUNCTION__, __FILE__, __LINE__)
+#else
+#define LogFunction(text)   /* nop */
+#endif
 
 // -------------------------------------------------------------------------------------------------
 
@@ -101,6 +105,8 @@ private:
 
 // -------------------------------------------------------------------------------------------------
 
+#if ENABLED_SQT_LOG_FUNCTION > 0
+
 class SimpleQtLoggerFunc
 {
 public:
@@ -113,6 +119,8 @@ private:
   const QString _fileName;
   unsigned int _lineNumber;
 };
+
+#endif
 
 // -------------------------------------------------------------------------------------------------
 
