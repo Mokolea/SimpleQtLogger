@@ -18,6 +18,8 @@
    - maybe do file rolling (check file size periodically) on idle-time
    - currently not thread-safe, stack-depth not tracked per thread
 
+  Tested using: Qt 5.4.2 (Community Open Source), Clang 6.0 (Apple) 64 bit
+
 */
 
 #ifndef _SIMPLE_QT_LOGGER_H

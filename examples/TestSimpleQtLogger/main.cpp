@@ -3,6 +3,8 @@
 
   Mario Ban, 05.2015
 
+  Tested using: Qt 5.4.2 (Community Open Source), Clang 6.0 (Apple) 64 bit
+
 */
 
 #include <QCoreApplication>
