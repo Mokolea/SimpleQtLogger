@@ -13,10 +13,11 @@
    - initialize: SQT_LOG_ENABLE_FUNCTION = true;
 
   TODO:
+   - add different set of log macros to compose messages using stream operator
    - maybe allow message-buffering, processing on idle-time
    - maybe flush periodically on idle-time
    - maybe do file rolling (check file size periodically) on idle-time
-   - currently not thread-safe, stack-depth not tracked per thread
+   - currently not thread-safe, stack-depth not tracked per thread (thread-id-callback?)
 
   Tested using: Qt 5.4.2 (Community Open Source), Clang 6.0 (Apple) 64 bit
 
