@@ -2,6 +2,10 @@
 
 Simple rolling file logger for Qt.
 
+Facts:
+ - rolling file appender
+ - no configuration file
+
 **TODO...**
 
 Example log-file content:

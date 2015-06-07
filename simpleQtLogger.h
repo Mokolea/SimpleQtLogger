@@ -5,10 +5,12 @@
 
   Facts:
    - rolling file appender
+   - no configuration file
    - restriction: log-file name has to end with: ".log"
 
   Usage:
    - define one GLOBAL instance in main: SimpleQtLogger simpleQtLogger_;
+   - moc has to be applied
    - initialize: simpleQtLogger_.setLogFileName("testSimpleQtLogger.log", 10000, 10);
    - initialize: SQT_LOG_ENABLE_FUNCTION = true;
 
