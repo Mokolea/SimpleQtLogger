@@ -92,11 +92,11 @@ void SimpleQtLogger::log(const QString& text, SQT_LOG_Level level, const QString
     // stream (append) to log file
     if(_logFile && _logFile->isOpen()) {
       QTextStream out(_logFile);
-      out << ts << " [" << LOG_LEVEL_CHAR[level] << "] " << (text.isEmpty() ? "?" : text) << '\n';
+      out << ts << " [" << LOG_LEVEL_CHAR[level] << "] " << (text.isEmpty() ? "?" : text.trimmed()) << '\n';
       _logFileActivity = true;
     }
     else {
-      qDebug("%s", QString("%4: %1 [%2] %3").arg(ts).arg(LOG_LEVEL_CHAR[level]).arg(text.isEmpty() ? "?" : text).arg(_logFileName).toStdString().c_str());
+      qDebug("%s", QString("%4: %1 [%2] %3").arg(ts).arg(LOG_LEVEL_CHAR[level]).arg(text.isEmpty() ? "?" : text.trimmed()).arg(_logFileName).toStdString().c_str());
     }
     return;
   }
@@ -104,11 +104,11 @@ void SimpleQtLogger::log(const QString& text, SQT_LOG_Level level, const QString
   // stream (append) to log file
   if(_logFile && _logFile->isOpen()) {
     QTextStream out(_logFile);
-    out << ts << " [" << LOG_LEVEL_CHAR[level] << "] " << (text.isEmpty() ? "?" : text) << " (" << functionName << "@" << fileName << ":" << lineNumber << ")" << '\n';
+    out << ts << " [" << LOG_LEVEL_CHAR[level] << "] " << (text.isEmpty() ? "?" : text.trimmed()) << " (" << functionName << "@" << fileName << ":" << lineNumber << ")" << '\n';
     _logFileActivity = true;
   }
   else {
-    qDebug("%s", QString("%7: %1 [%2] %3 (%4@%5:%6)").arg(ts).arg(LOG_LEVEL_CHAR[level]).arg(text.isEmpty() ? "?" : text).arg(functionName).arg(fileName).arg(lineNumber).arg(_logFileName).toStdString().c_str());
+    qDebug("%s", QString("%7: %1 [%2] %3 (%4@%5:%6)").arg(ts).arg(LOG_LEVEL_CHAR[level]).arg(text.isEmpty() ? "?" : text.trimmed()).arg(functionName).arg(fileName).arg(lineNumber).arg(_logFileName).toStdString().c_str());
   }
 }
 
