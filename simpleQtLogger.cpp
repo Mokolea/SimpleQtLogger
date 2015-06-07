@@ -112,6 +112,8 @@ void SimpleQtLogger::log(const QString& text, SQT_LOG_Level level, const QString
   }
 }
 
+#if ENABLED_SQT_LOG_FUNCTION > 0
+
 void SimpleQtLogger::logFuncBegin(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber)
 {
   // qDebug("SimpleQtLogger::logFuncBegin");
@@ -151,6 +153,8 @@ void SimpleQtLogger::logFuncEnd(const QString& text, const QString& functionName
 
   _stackDepth--; // adjust stack-trace depth
 }
+
+#endif
 
 void SimpleQtLogger::checkLogFileOpen()
 {

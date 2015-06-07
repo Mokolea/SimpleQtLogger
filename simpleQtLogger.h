@@ -34,7 +34,7 @@
 #include <QString>
 #include <QFile>
 
-/* Log-level (hard; adjust at compile-time) */
+/* Log-level (hard; adjust at pre-processor, compile-time) */
 #define ENABLED_SQT_LOG_FATAL      1   /* 1: enable, 0: disable */
 #define ENABLED_SQT_LOG_ERROR      1   /* 1: enable, 0: disable */
 #define ENABLED_SQT_LOG_WARNING    1   /* 1: enable, 0: disable */
@@ -45,7 +45,7 @@
 /* Log-level */
 typedef enum {
   SQT_LOG_FATAL = 0, /* Fatal error, the program execution has to be aborted */
-  SQT_LOG_ERROR,     /* An error, that challengs the core operation */
+  SQT_LOG_ERROR,     /* An error, that challenges the core operation */
   SQT_LOG_WARNING,   /* A warning, signalizing a deformity, without challenging the core operation */
   SQT_LOG_INFO,      /* Analysis information directed to supporters */
   SQT_LOG_DEBUG,     /* Analysis debug information directed to developers */
@@ -90,8 +90,10 @@ public:
 
   void setLogFileName(const QString& logFileName, unsigned int logFileSize, unsigned int logFileMaxNumber);
   void log(const QString& text, SQT_LOG_Level level, const QString& functionName, const char* fileName, unsigned int lineNumber);
+#if ENABLED_SQT_LOG_FUNCTION > 0
   void logFuncBegin(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber);
   void logFuncEnd(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber);
+#endif
 
 private slots:
   void slotCheckLogFileActivity();
