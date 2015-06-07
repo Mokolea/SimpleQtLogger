@@ -4,22 +4,25 @@
 #
 #-------------------------------------------------
 
-QT       += core
-QT       -= gui
+QT += core
+QT -= gui
 
 TARGET = TestSimpleQtLogger
 
-CONFIG   += console
-CONFIG   -= app_bundle
+CONFIG += console
+CONFIG -= app_bundle
 
 TEMPLATE = app
+
+QMAKE_CXXFLAGS_DEBUG += -Wextra
+# QMAKE_CXXFLAGS_DEBUG += -pedantic-errors
 
 INCLUDEPATH += ../..
 
 SOURCES += main.cpp \
-    task.cpp \
-    ../../simpleQtLogger.cpp
+  task.cpp \
+  ../../simpleQtLogger.cpp
 
 HEADERS += \
-    task.h \
-    ../../simpleQtLogger.h
+  task.h \
+  ../../simpleQtLogger.h
