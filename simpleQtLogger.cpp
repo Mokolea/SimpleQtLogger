@@ -36,7 +36,7 @@ SimpleQtLogger::SimpleQtLogger(QObject *parent)
   qDebug("SimpleQtLogger::SimpleQtLogger");
 
   Qt::ConnectionType connectionType = Qt::DirectConnection;
-  QObject::connect(this, SIGNAL(signalLog(const QString&, SQT_LOG_Level, const QString&, const QString&, unsigned int)),
+  QObject::connect(this, SIGNAL(signalLog(const QString&, SQTL_LOG_Level, const QString&, const QString&, unsigned int)),
     this, SLOT(slotLog(const QString&, SQTL_LOG_Level, const QString&, const QString&, unsigned int)), connectionType);
 }
 
