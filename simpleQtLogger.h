@@ -9,10 +9,14 @@
    - restriction: log-file name has to end with: ".log"
 
   Usage:
-   - define one GLOBAL instance in main: SimpleQtLogger simpleQtLogger_;
    - moc has to be applied
-   - initialize: simpleQtLogger_.setLogFileName("testSimpleQtLogger.log", 10000, 10);
-   - initialize: SQTL_LOG_ENABLE_FUNCTION = true;
+   - define one global instance in main:
+      SimpleQtLogger simpleQtLogger_;
+   - initialize (example):
+      simpleQtLogger_.setLogFileName("testSimpleQtLogger.log", 10000, 10);
+      SQTL_LOG_ENABLE_INFO = true;
+      SQTL_LOG_ENABLE_DEBUG = false;
+      SQTL_LOG_ENABLE_FUNCTION = true;
 
   TODO:
    - enable pedantic-errors, check for no compiler warnings, use e.g.: -Wall -Wextra -Werror -pedantic-errors -Wwrite-strings
@@ -58,7 +62,7 @@ SQTL_LOG_Level;
 
 static const char LOG_LEVEL_CHAR[6] = {'!', 'E', 'W', 'I', 'D', 'F'}; /* MUST correspond to enum SQTL_LOG_Level, unchecked array!!! */
 
-#define STACK_DEPTH_CHAR   "."   /* use e.g. " " or "." */
+#define STACK_DEPTH_CHAR   '.'   /* use e.g. ' ' or '.' */
 #define CHECK_LOG_FILE_ACTIVITY_INTERVAL   5000   /* [ms] */
 
 /* Log-level (adjust at run-time) */
