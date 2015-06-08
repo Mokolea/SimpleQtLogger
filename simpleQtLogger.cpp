@@ -34,6 +34,10 @@ SimpleQtLogger::SimpleQtLogger(QObject *parent)
   , _logFileActivity(false)
 {
   qDebug("SimpleQtLogger::SimpleQtLogger");
+
+  Qt::ConnectionType connectionType = Qt::DirectConnection;
+  QObject::connect(this, SIGNAL(signalLog(const QString&, SQT_LOG_Level, const QString&, const QString&, unsigned int)),
+    this, SLOT(slotLog(const QString&, SQT_LOG_Level, const QString&, const QString&, unsigned int)), connectionType);
 }
 
 SimpleQtLogger::~SimpleQtLogger()
@@ -83,6 +87,13 @@ void SimpleQtLogger::setLogFileName(const QString& logFileName, unsigned int log
 void SimpleQtLogger::log(const QString& text, SQT_LOG_Level level, const QString& functionName, const char* fileName, unsigned int lineNumber)
 {
   // qDebug("SimpleQtLogger::log");
+
+  emit signalLog(text, level, functionName, fileName, lineNumber);
+}
+
+void SimpleQtLogger::slotLog(const QString& text, SQT_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber)
+{
+  // qDebug("SimpleQtLogger::slotLog");
 
   // time-stamp
   QDateTime dateTime = QDateTime::currentDateTime(); // or better use QDateTime::currentDateTimeUtc() instead

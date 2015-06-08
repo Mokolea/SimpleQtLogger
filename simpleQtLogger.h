@@ -98,7 +98,11 @@ public:
   void logFuncEnd(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber);
 #endif
 
+signals:
+  void signalLog(const QString& text, SQT_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber);
+
 private slots:
+  void slotLog(const QString& text, SQT_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber);
   void slotCheckLogFileActivity();
 
 private:
