@@ -99,10 +99,10 @@ public:
 #endif
 
 signals:
-  void signalLog(const QString& text, SQT_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber);
+  void signalLog(const QString& text, SQTL_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber);
 
 private slots:
-  void slotLog(const QString& text, SQT_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber);
+  void slotLog(const QString& text, SQTL_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber);
   void slotCheckLogFileActivity();
 
 private:

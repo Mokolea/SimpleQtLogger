@@ -37,7 +37,7 @@ SimpleQtLogger::SimpleQtLogger(QObject *parent)
 
   Qt::ConnectionType connectionType = Qt::DirectConnection;
   QObject::connect(this, SIGNAL(signalLog(const QString&, SQT_LOG_Level, const QString&, const QString&, unsigned int)),
-    this, SLOT(slotLog(const QString&, SQT_LOG_Level, const QString&, const QString&, unsigned int)), connectionType);
+    this, SLOT(slotLog(const QString&, SQTL_LOG_Level, const QString&, const QString&, unsigned int)), connectionType);
 }
 
 SimpleQtLogger::~SimpleQtLogger()
@@ -91,7 +91,7 @@ void SimpleQtLogger::log(const QString& text, SQTL_LOG_Level level, const QStrin
   emit signalLog(text, level, functionName, fileName, lineNumber);
 }
 
-void SimpleQtLogger::slotLog(const QString& text, SQT_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber)
+void SimpleQtLogger::slotLog(const QString& text, SQTL_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber)
 {
   // qDebug("SimpleQtLogger::slotLog");
 
