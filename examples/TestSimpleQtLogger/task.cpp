@@ -16,23 +16,23 @@
 Task::Task(QObject *parent)
   : QObject(parent)
 {
-  LogFunction("");
+  L_FUNC("");
 }
 
 void Task::init()
 {
-  LogFunction("");
+  L_FUNC("");
 
-  LogInfo("+++ test Logger");
-  LogFatal("LogFatal");
-  LogError("LogError");
-  LogWarning("LogWarning");
-  LogInfo("LogInfo");
-  LogDebug("LogDebug");
-  LogInfo("--- test Logger");
+  L_INFO("+++ test Logger");
+  L_FATAL("L_FATAL");
+  L_ERROR("L_ERROR");
+  L_WARN("L_WARN");
+  L_INFO("L_INFO");
+  L_DEBUG("L_DEBUG");
+  L_INFO("--- test Logger");
 
-  LogInfo(QString()); // --> "?"
-  LogInfo("\nTrimmed\n"); // --> whitespace removed from start and end
+  L_INFO(QString()); // --> "?"
+  L_INFO("\nTrimmed\n"); // --> whitespace removed from start and end
 
   QString formattedOutput1 = "JSON output 1:\n"
     "{\n"
@@ -40,10 +40,10 @@ void Task::init()
     "  \"age\": 44\n"
     "}"
   ;
-  LogInfo(formattedOutput1);
+  L_INFO(formattedOutput1);
 
   QString formattedOutput2 = "{<br>  \"firstName\": \"Mario\"<br>  \"age\": 44<br>}";
-  LogInfo(formattedOutput2.prepend("JSON output 2:<br>").replace("<br>", "\n"));
+  L_INFO(formattedOutput2.prepend("JSON output 2:<br>").replace("<br>", "\n"));
 
   QTimer::singleShot(100, this, SLOT(slotRun()));
   QTimer::singleShot(7000, this, SLOT(theEnd()));
@@ -51,23 +51,23 @@ void Task::init()
 
 void Task::theEnd()
 {
-  LogFunction("");
-  LogInfo("Bye bye");
+  L_FUNC("");
+  L_INFO("Bye bye");
   emit finished();
 }
 
 void Task::slotRun()
 {
-  LogFunction("");
+  L_FUNC("");
 
-  LogInfo(QString("Calculate: 5! = %1").arg(factorial(5)));
+  L_INFO(QString("Calculate: 5! = %1").arg(factorial(5)));
 
   QTimer::singleShot(3000, this, SLOT(slotRun()));
 }
 
 unsigned int Task::factorial(unsigned int n) const
 {
-  LogFunction(QString("n=%1").arg(n));
+  L_FUNC(QString("n=%1").arg(n));
 
   if(n > 2) {
     return n * factorial(n-1);

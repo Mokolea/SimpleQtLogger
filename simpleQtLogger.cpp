@@ -16,12 +16,12 @@
 #include <QtDebug>
 
 /* Log-level */
-bool SQT_LOG_ENABLE_FATAL = true;
-bool SQT_LOG_ENABLE_ERROR = true;
-bool SQT_LOG_ENABLE_WARNING = true;
-bool SQT_LOG_ENABLE_INFO = true;
-bool SQT_LOG_ENABLE_DEBUG = false;
-bool SQT_LOG_ENABLE_FUNCTION = false;
+bool SQTL_LOG_ENABLE_FATAL = true;
+bool SQTL_LOG_ENABLE_ERROR = true;
+bool SQTL_LOG_ENABLE_WARNING = true;
+bool SQTL_LOG_ENABLE_INFO = true;
+bool SQTL_LOG_ENABLE_DEBUG = false;
+bool SQTL_LOG_ENABLE_FUNCTION = false;
 
 // -------------------------------------------------------------------------------------------------
 
@@ -77,10 +77,10 @@ void SimpleQtLogger::setLogFileName(const QString& logFileName, unsigned int log
 
   checkLogFileOpen();
 
-  log("Start logger", SQT_LOG_INFO, "", "", 0);
+  log("Start logger", SQTL_LOG_INFO, "", "", 0);
 }
 
-void SimpleQtLogger::log(const QString& text, SQT_LOG_Level level, const QString& functionName, const char* fileName, unsigned int lineNumber)
+void SimpleQtLogger::log(const QString& text, SQTL_LOG_Level level, const QString& functionName, const char* fileName, unsigned int lineNumber)
 {
   // qDebug("SimpleQtLogger::log");
 
@@ -112,7 +112,7 @@ void SimpleQtLogger::log(const QString& text, SQT_LOG_Level level, const QString
   }
 }
 
-#if ENABLED_SQT_LOG_FUNCTION > 0
+#if ENABLED_SQTL_LOG_FUNCTION > 0
 
 void SimpleQtLogger::logFuncBegin(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber)
 {
@@ -127,10 +127,10 @@ void SimpleQtLogger::logFuncBegin(const QString& text, const QString& functionNa
     stackDepth += STACK_DEPTH_CHAR;
   }
   if(text.isEmpty()) {
-    log(QString("%1\\").arg(stackDepth), SQT_LOG_FUNCTION, functionName, fileName.toStdString().c_str(), lineNumber);
+    log(QString("%1\\").arg(stackDepth), SQTL_LOG_FUNCTION, functionName, fileName.toStdString().c_str(), lineNumber);
   }
   else {
-    log(QString("%1\\ %2").arg(stackDepth).arg(text), SQT_LOG_FUNCTION, functionName, fileName.toStdString().c_str(), lineNumber);
+    log(QString("%1\\ %2").arg(stackDepth).arg(text), SQTL_LOG_FUNCTION, functionName, fileName.toStdString().c_str(), lineNumber);
   }
 }
 
@@ -145,10 +145,10 @@ void SimpleQtLogger::logFuncEnd(const QString& text, const QString& functionName
     stackDepth += STACK_DEPTH_CHAR;
   }
   if(text.isEmpty()) {
-    log(QString("%1/").arg(stackDepth), SQT_LOG_FUNCTION, functionName, fileName.toStdString().c_str(), lineNumber);
+    log(QString("%1/").arg(stackDepth), SQTL_LOG_FUNCTION, functionName, fileName.toStdString().c_str(), lineNumber);
   }
   else {
-    log(QString("%1/ %2").arg(stackDepth).arg(text), SQT_LOG_FUNCTION, functionName, fileName.toStdString().c_str(), lineNumber);
+    log(QString("%1/ %2").arg(stackDepth).arg(text), SQTL_LOG_FUNCTION, functionName, fileName.toStdString().c_str(), lineNumber);
   }
 
   _stackDepth--; // adjust stack-trace depth
@@ -201,7 +201,7 @@ void SimpleQtLogger::checkLogFileRolling()
     QTimer::singleShot(CHECK_LOG_FILE_ACTIVITY_INTERVAL, this, SLOT(slotCheckLogFileActivity()));
     return;
   }
-  log(QString("Current log-file size=%1 (rolling-size=%2) --> rolling").arg(logFileSize).arg(_logFileSize), SQT_LOG_INFO, "", "", 0);
+  log(QString("Current log-file size=%1 (rolling-size=%2) --> rolling").arg(logFileSize).arg(_logFileSize), SQTL_LOG_INFO, "", "", 0);
 
   // handle file rolling
 
@@ -269,7 +269,7 @@ void SimpleQtLogger::slotCheckLogFileActivity()
 
 // -------------------------------------------------------------------------------------------------
 
-#if ENABLED_SQT_LOG_FUNCTION > 0
+#if ENABLED_SQTL_LOG_FUNCTION > 0
 
 SimpleQtLoggerFunc::SimpleQtLoggerFunc(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber)
   : _text(text)
@@ -278,13 +278,13 @@ SimpleQtLoggerFunc::SimpleQtLoggerFunc(const QString& text, const QString& funct
   , _lineNumber(lineNumber)
 {
   // qDebug("SimpleQtLoggerFunc::SimpleQtLoggerFunc");
-  if(ENABLED_SQT_LOG_FUNCTION && SQT_LOG_ENABLE_FUNCTION) simpleQtLogger_.logFuncBegin(_text, _functionName, _fileName, _lineNumber);
+  if(ENABLED_SQTL_LOG_FUNCTION && SQTL_LOG_ENABLE_FUNCTION) simpleQtLogger_.logFuncBegin(_text, _functionName, _fileName, _lineNumber);
 }
 
 SimpleQtLoggerFunc::~SimpleQtLoggerFunc()
 {
   // qDebug("SimpleQtLoggerFunc::~SimpleQtLoggerFunc");
-  if(ENABLED_SQT_LOG_FUNCTION && SQT_LOG_ENABLE_FUNCTION) simpleQtLogger_.logFuncEnd(_text, _functionName, _fileName, _lineNumber);
+  if(ENABLED_SQTL_LOG_FUNCTION && SQTL_LOG_ENABLE_FUNCTION) simpleQtLogger_.logFuncEnd(_text, _functionName, _fileName, _lineNumber);
 }
 
 #endif

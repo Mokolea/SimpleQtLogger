@@ -23,8 +23,8 @@ int main(int argc, char *argv[])
 
   // initialize SimpleQtLogger
   simpleQtLogger_.setLogFileName("testSimpleQtLogger.log", 10000, 10); // TODO test
-  SQT_LOG_ENABLE_DEBUG = false;
-  SQT_LOG_ENABLE_FUNCTION = true;
+  SQTL_LOG_ENABLE_DEBUG = false;
+  SQTL_LOG_ENABLE_FUNCTION = true;
 
   // start and initialize the main task
   Task *task = new Task(&a);
