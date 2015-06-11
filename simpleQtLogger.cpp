@@ -128,11 +128,11 @@ void SimpleQtLogger::slotLog_qDebug(const QString& ts, const QString& text, SQTL
   // qDebug("SimpleQtLogger::slotLog_qDebug");
 
   if(functionName.isEmpty()) {
-    qDebug("%s", QString("%4: %1 [%2] %3").arg(ts).arg(LOG_LEVEL_CHAR[level]).arg(text.isEmpty() ? "?" : text.trimmed()).arg(_logFileName).toStdString().c_str());
+    qDebug("%s", QString("%1 [%2] %3").arg(ts).arg(LOG_LEVEL_CHAR[level]).arg(text.isEmpty() ? "?" : text.trimmed()).toStdString().c_str());
     return;
   }
 
-  qDebug("%s", QString("%7: %1 [%2] %3 (%4@%5:%6)").arg(ts).arg(LOG_LEVEL_CHAR[level]).arg(text.isEmpty() ? "?" : text.trimmed()).arg(functionName).arg(fileName).arg(lineNumber).arg(_logFileName).toStdString().c_str());
+  qDebug("%s", QString("%1 [%2] %3 (%4@%5:%6)").arg(ts).arg(LOG_LEVEL_CHAR[level]).arg(text.isEmpty() ? "?" : text.trimmed()).arg(functionName).arg(fileName).arg(lineNumber).toStdString().c_str());
 }
 
 #if ENABLED_SQTL_LOG_FUNCTION > 0
@@ -140,8 +140,6 @@ void SimpleQtLogger::slotLog_qDebug(const QString& ts, const QString& text, SQTL
 void SimpleQtLogger::logFuncBegin(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber)
 {
   // qDebug("SimpleQtLogger::logFuncBegin");
-
-  // TODO stack-trace depth (++ before) ... (thread-id-callback?)
 
   _stackDepth++; // adjust stack-trace depth
 
@@ -160,8 +158,6 @@ void SimpleQtLogger::logFuncBegin(const QString& text, const QString& functionNa
 void SimpleQtLogger::logFuncEnd(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber)
 {
   // qDebug("SimpleQtLogger::logFuncEnd");
-
-  // TODO stack-trace depth (-- after) ... (thread-id-callback?)
 
   QString stackDepth("");
   for(unsigned int i=1; i<_stackDepth; ++i) {

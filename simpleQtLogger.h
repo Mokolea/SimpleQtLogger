@@ -15,7 +15,7 @@
    - define one global instance in main:
       SimpleQtLogger simpleQtLogger_;
    - initialize (example):
-      simpleQtLogger_.setLogFileName("testSimpleQtLogger.log", 10*1024, 10);
+      simpleQtLogger_.setLogFileName("testSimpleQtLogger.log", 10*1024*1024, 20);
       SQTL_LOG_ENABLE_INFO = true;
       SQTL_LOG_ENABLE_DEBUG = false;
       SQTL_LOG_ENABLE_FUNCTION = true;
@@ -45,7 +45,7 @@
 
 /* Log-sinks */
 #define ENABLED_SQTL_LOG_SINK_FILE     1   /* 1: enable, 0: disable; log to file (rolling) */
-#define ENABLED_SQTL_LOG_SINK_QDEBUG   1   /* 1: enable, 0: disable; log using qDebug; messages are sent to the console, if it is a console application */
+#define ENABLED_SQTL_LOG_SINK_QDEBUG   0   /* 1: enable, 0: disable; log using qDebug; messages are sent to the console, if it is a console application */
 
 /* Log-level (hard; adjust at pre-processor, compile-time) */
 #define ENABLED_SQTL_LOG_FATAL      1   /* 1: enable, 0: disable */
