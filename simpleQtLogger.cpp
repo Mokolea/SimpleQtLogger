@@ -36,8 +36,14 @@ SimpleQtLogger::SimpleQtLogger(QObject *parent)
   qDebug("SimpleQtLogger::SimpleQtLogger");
 
   Qt::ConnectionType connectionType = Qt::DirectConnection;
-  QObject::connect(this, SIGNAL(signalLog(const QString&, SQTL_LOG_Level, const QString&, const QString&, unsigned int)),
-    this, SLOT(slotLog(const QString&, SQTL_LOG_Level, const QString&, const QString&, unsigned int)), connectionType);
+#if ENABLED_SQTL_LOG_SINK_FILE > 0
+  QObject::connect(this, SIGNAL(signalLog(const QString&, const QString&, SQTL_LOG_Level, const QString&, const QString&, unsigned int)),
+    this, SLOT(slotLog_File(const QString&, const QString&, SQTL_LOG_Level, const QString&, const QString&, unsigned int)), connectionType);
+#endif
+#if ENABLED_SQTL_LOG_SINK_QDEBUG > 0
+  QObject::connect(this, SIGNAL(signalLog(const QString&, const QString&, SQTL_LOG_Level, const QString&, const QString&, unsigned int)),
+    this, SLOT(slotLog_qDebug(const QString&, const QString&, SQTL_LOG_Level, const QString&, const QString&, unsigned int)), connectionType);
+#endif
 }
 
 SimpleQtLogger::~SimpleQtLogger()
@@ -88,16 +94,16 @@ void SimpleQtLogger::log(const QString& text, SQTL_LOG_Level level, const QStrin
 {
   // qDebug("SimpleQtLogger::log");
 
-  emit signalLog(text, level, functionName, fileName, lineNumber);
-}
-
-void SimpleQtLogger::slotLog(const QString& text, SQTL_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber)
-{
-  // qDebug("SimpleQtLogger::slotLog");
-
   // time-stamp
   QDateTime dateTime = QDateTime::currentDateTime(); // or better use QDateTime::currentDateTimeUtc() instead
   QString ts = dateTime.toString("yyyy-MM-dd hh:mm:ss.zzz");
+
+  emit signalLog(ts, text, level, functionName, fileName, lineNumber);
+}
+
+void SimpleQtLogger::slotLog_File(const QString& ts, const QString& text, SQTL_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber)
+{
+  // qDebug("SimpleQtLogger::slotLog_File");
 
   if(functionName.isEmpty()) {
     // stream (append) to log file
@@ -105,9 +111,6 @@ void SimpleQtLogger::slotLog(const QString& text, SQTL_LOG_Level level, const QS
       QTextStream out(_logFile);
       out << ts << " [" << LOG_LEVEL_CHAR[level] << "] " << (text.isEmpty() ? "?" : text.trimmed()) << '\n';
       _logFileActivity = true;
-    }
-    else {
-      qDebug("%s", QString("%4: %1 [%2] %3").arg(ts).arg(LOG_LEVEL_CHAR[level]).arg(text.isEmpty() ? "?" : text.trimmed()).arg(_logFileName).toStdString().c_str());
     }
     return;
   }
@@ -118,9 +121,18 @@ void SimpleQtLogger::slotLog(const QString& text, SQTL_LOG_Level level, const QS
     out << ts << " [" << LOG_LEVEL_CHAR[level] << "] " << (text.isEmpty() ? "?" : text.trimmed()) << " (" << functionName << "@" << fileName << ":" << lineNumber << ")" << '\n';
     _logFileActivity = true;
   }
-  else {
-    qDebug("%s", QString("%7: %1 [%2] %3 (%4@%5:%6)").arg(ts).arg(LOG_LEVEL_CHAR[level]).arg(text.isEmpty() ? "?" : text.trimmed()).arg(functionName).arg(fileName).arg(lineNumber).arg(_logFileName).toStdString().c_str());
+}
+
+void SimpleQtLogger::slotLog_qDebug(const QString& ts, const QString& text, SQTL_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber)
+{
+  // qDebug("SimpleQtLogger::slotLog_qDebug");
+
+  if(functionName.isEmpty()) {
+    qDebug("%s", QString("%4: %1 [%2] %3").arg(ts).arg(LOG_LEVEL_CHAR[level]).arg(text.isEmpty() ? "?" : text.trimmed()).arg(_logFileName).toStdString().c_str());
+    return;
   }
+
+  qDebug("%s", QString("%7: %1 [%2] %3 (%4@%5:%6)").arg(ts).arg(LOG_LEVEL_CHAR[level]).arg(text.isEmpty() ? "?" : text.trimmed()).arg(functionName).arg(fileName).arg(lineNumber).arg(_logFileName).toStdString().c_str());
 }
 
 #if ENABLED_SQTL_LOG_FUNCTION > 0

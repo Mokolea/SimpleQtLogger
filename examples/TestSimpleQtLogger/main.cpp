@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
   QCoreApplication a(argc, argv);
 
   // initialize SimpleQtLogger
-  simpleQtLogger_.setLogFileName("testSimpleQtLogger.log", 10000, 10); // TODO test
+  simpleQtLogger_.setLogFileName("testSimpleQtLogger.log", 10*1024, 10); // TODO test
   SQTL_LOG_ENABLE_INFO = true;
   SQTL_LOG_ENABLE_DEBUG = false;
   SQTL_LOG_ENABLE_FUNCTION = true;

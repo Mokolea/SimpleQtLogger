@@ -4,7 +4,9 @@
   Mario Ban, 05.2015
 
   Facts:
-   - rolling file appender
+   - supported sinks:
+      - rolling file appender
+      - qDebug
    - no configuration file
    - restriction: log-file name has to end with: ".log"
 
@@ -13,7 +15,7 @@
    - define one global instance in main:
       SimpleQtLogger simpleQtLogger_;
    - initialize (example):
-      simpleQtLogger_.setLogFileName("testSimpleQtLogger.log", 10000, 10);
+      simpleQtLogger_.setLogFileName("testSimpleQtLogger.log", 10*1024, 10);
       SQTL_LOG_ENABLE_INFO = true;
       SQTL_LOG_ENABLE_DEBUG = false;
       SQTL_LOG_ENABLE_FUNCTION = true;
@@ -41,6 +43,10 @@
 #include <QString>
 #include <QFile>
 
+/* Log-sinks */
+#define ENABLED_SQTL_LOG_SINK_FILE     1   /* 1: enable, 0: disable; log to file (rolling) */
+#define ENABLED_SQTL_LOG_SINK_QDEBUG   1   /* 1: enable, 0: disable; log using qDebug; messages are sent to the console, if it is a console application */
+
 /* Log-level (hard; adjust at pre-processor, compile-time) */
 #define ENABLED_SQTL_LOG_FATAL      1   /* 1: enable, 0: disable */
 #define ENABLED_SQTL_LOG_ERROR      1   /* 1: enable, 0: disable */
@@ -48,6 +54,9 @@
 #define ENABLED_SQTL_LOG_INFO       1   /* 1: enable, 0: disable */
 #define ENABLED_SQTL_LOG_DEBUG      0   /* 1: enable, 0: disable; just for step-by-step testing */
 #define ENABLED_SQTL_LOG_FUNCTION   1   /* 1: enable, 0: disable; stack-trace */
+
+#define STACK_DEPTH_CHAR                    '.'   /* use e.g. ' ' or '.' */
+#define CHECK_LOG_FILE_ACTIVITY_INTERVAL   5000   /* [ms] */
 
 /* Log-level */
 typedef enum {
@@ -61,9 +70,6 @@ typedef enum {
 SQTL_LOG_Level;
 
 static const char LOG_LEVEL_CHAR[6] = {'!', 'E', 'W', 'I', 'D', 'F'}; /* MUST correspond to enum SQTL_LOG_Level, unchecked array!!! */
-
-#define STACK_DEPTH_CHAR   '.'   /* use e.g. ' ' or '.' */
-#define CHECK_LOG_FILE_ACTIVITY_INTERVAL   5000   /* [ms] */
 
 /* Log-level (adjust at run-time) */
 extern bool SQTL_LOG_ENABLE_FATAL;      /* Log-level: true: enable, false: disable, default: true */
@@ -103,10 +109,11 @@ public:
 #endif
 
 signals:
-  void signalLog(const QString& text, SQTL_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber);
+  void signalLog(const QString& ts, const QString& text, SQTL_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber);
 
 private slots:
-  void slotLog(const QString& text, SQTL_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber);
+  void slotLog_File(const QString& ts, const QString& text, SQTL_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber);
+  void slotLog_qDebug(const QString& ts, const QString& text, SQTL_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber);
   void slotCheckLogFileActivity();
 
 private:

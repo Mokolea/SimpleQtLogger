@@ -3,7 +3,9 @@
 Simple rolling file logger for Qt.
 
 Facts:
- - rolling file appender
+ - supported sinks:
+    - rolling file appender
+    - qDebug
  - no configuration file
 
 **TODO...**
