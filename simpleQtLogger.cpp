@@ -27,7 +27,7 @@ bool SQTL_LOG_ENABLE_FUNCTION = false;
 
 SimpleQtLogger::SimpleQtLogger(QObject *parent)
   : QObject(parent)
-  , _logFileSize(0)
+  , _logFileRotationSize(0)
   , _logFileMaxNumber(0)
   , _stackDepth(0)
   , _logFile(0)
@@ -60,12 +60,12 @@ SimpleQtLogger::~SimpleQtLogger()
   }
 }
 
-void SimpleQtLogger::setLogFileName(const QString& logFileName, unsigned int logFileSize, unsigned int logFileMaxNumber)
+void SimpleQtLogger::setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber)
 {
   qDebug("SimpleQtLogger::setLogFileName");
 
   _logFileName = logFileName;
-  _logFileSize = logFileSize;
+  _logFileRotationSize = logFileRotationSize;
   _logFileMaxNumber = logFileMaxNumber;
 
   // check valid log-file name ending
@@ -75,8 +75,8 @@ void SimpleQtLogger::setLogFileName(const QString& logFileName, unsigned int log
   }
 
   // check valid number ranges
-  if(_logFileSize < 100) {
-    _logFileSize = 100;
+  if(_logFileRotationSize < 100) {
+    _logFileRotationSize = 100;
   }
   if(_logFileMaxNumber < 1) {
     _logFileMaxNumber = 1;
@@ -214,13 +214,13 @@ void SimpleQtLogger::checkLogFileRolling()
 
   // check current log-file size
   QFileInfo logFileInfo(*_logFile);
-  qint64 logFileSize = logFileInfo.size();
+  qint64 logFileRotationSize = logFileInfo.size();
 
-  if(logFileSize < _logFileSize) {
+  if(logFileRotationSize < _logFileRotationSize) {
     QTimer::singleShot(CHECK_LOG_FILE_ACTIVITY_INTERVAL, this, SLOT(slotCheckLogFileActivity()));
     return;
   }
-  log(QString("Current log-file size=%1 (rolling-size=%2) --> rolling").arg(logFileSize).arg(_logFileSize), SQTL_LOG_INFO, "", "", 0);
+  log(QString("Current log-file size=%1 (rolling-size=%2) --> rolling").arg(logFileRotationSize).arg(_logFileRotationSize), SQTL_LOG_INFO, "", "", 0);
 
   // handle file rolling
 

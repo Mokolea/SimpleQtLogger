@@ -101,7 +101,7 @@ public:
   SimpleQtLogger(QObject *parent = 0);
   ~SimpleQtLogger();
 
-  void setLogFileName(const QString& logFileName, unsigned int logFileSize, unsigned int logFileMaxNumber);
+  void setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
   void log(const QString& text, SQTL_LOG_Level level, const QString& functionName, const char* fileName, unsigned int lineNumber);
 #if ENABLED_SQTL_LOG_FUNCTION > 0
   void logFuncBegin(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber);
@@ -121,7 +121,7 @@ private:
   void checkLogFileRolling();
 
   QString _logFileName;
-  unsigned int _logFileSize; // initiate log-file rolling
+  unsigned int _logFileRotationSize; // initiate log-file rolling
   unsigned int _logFileMaxNumber; // max number of rolling log-file history
 
   unsigned int _stackDepth; // current stack-depth for function-log
