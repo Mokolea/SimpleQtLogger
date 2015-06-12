@@ -32,7 +32,7 @@ void Task::init()
   L_INFO("--- test Logger");
 
   L_INFO(QString()); // --> "?"
-  L_INFO("\nTrimmed\n"); // --> whitespace removed from start and end
+  L_INFO(" \n Trimmed \n\n"); // --> whitespace removed from start and end
 
   QString formattedOutput1 = "JSON output 1:\n"
     "{\n"
@@ -60,7 +60,7 @@ void Task::slotRun()
 {
   L_FUNC("");
 
-  L_INFO(QString("Calculate: 5! = %1").arg(factorial(5)));
+  L_INFO(QString("Calculate: 6! = %1").arg(factorial(6)));
 
   QTimer::singleShot(3000, this, SLOT(slotRun()));
 }
