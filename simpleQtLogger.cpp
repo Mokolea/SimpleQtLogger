@@ -64,15 +64,15 @@ void SimpleQtLogger::setLogFileName(const QString& logFileName, unsigned int log
 {
   qDebug("SimpleQtLogger::setLogFileName");
 
+  // check valid log-file name ending
+  if(logFileName.right(4) != ".log") {
+    qWarning() << "Name of log-file not ending with '.log'" << logFileName;
+    return;
+  }
+
   _logFileName = logFileName;
   _logFileRotationSize = logFileRotationSize;
   _logFileMaxNumber = logFileMaxNumber;
-
-  // check valid log-file name ending
-  if(_logFileName.right(4) != ".log") {
-    qWarning() << "Name of log-file not ending with '.log'" << _logFileName;
-    return;
-  }
 
   // check valid number ranges
   if(_logFileRotationSize < 100) {
