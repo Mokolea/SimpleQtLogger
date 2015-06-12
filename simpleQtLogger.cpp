@@ -220,7 +220,7 @@ void SimpleQtLogger::checkLogFileRolling()
     QTimer::singleShot(CHECK_LOG_FILE_ACTIVITY_INTERVAL, this, SLOT(slotCheckLogFileActivity()));
     return;
   }
-  log(QString("Current log-file size=%1 (rolling-size=%2) --> rolling").arg(logFileRotationSize).arg(_logFileRotationSize), SQTL_LOG_INFO, "", "", 0);
+  log(QString("Current log-file size=%1 (rotation-size=%2) --> rolling").arg(logFileRotationSize).arg(_logFileRotationSize), SQTL_LOG_INFO, "", "", 0);
 
   // handle file rolling
 
