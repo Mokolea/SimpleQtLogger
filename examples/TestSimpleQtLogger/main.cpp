@@ -15,14 +15,12 @@
 #include "task.h"
 #include "simpleQtLogger.h"
 
-SimpleQtLogger simpleQtLogger_;
-
 int main(int argc, char *argv[])
 {
   QCoreApplication a(argc, argv);
 
   // initialize SimpleQtLogger
-  simpleQtLogger_.setLogFileName("testSimpleQtLogger.log", 10*1024, 10);
+  SimpleQtLogger::createInstance(qApp)->setLogFileName("testSimpleQtLogger.log", 10*1024, 10);
   SQTL_LOG_ENABLE_INFO = true;
   SQTL_LOG_ENABLE_DEBUG = false;
   SQTL_LOG_ENABLE_FUNCTION = true;

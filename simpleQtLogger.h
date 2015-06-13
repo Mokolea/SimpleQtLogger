@@ -12,10 +12,9 @@
 
   Usage:
    - moc has to be applied
-   - define one global instance in main:
-      SimpleQtLogger simpleQtLogger_;
-   - initialize (example):
-      simpleQtLogger_.setLogFileName("testSimpleQtLogger.log", 10*1024*1024, 20);
+   - create instance in main and initialize (example):
+      SimpleQtLogger::createInstance(qApp)->setLogFileName("testSimpleQtLogger.log", 10*1024*1024, 20);
+   - initialize log-levels (example):
       SQTL_LOG_ENABLE_INFO = true;
       SQTL_LOG_ENABLE_DEBUG = false;
       SQTL_LOG_ENABLE_FUNCTION = true;
@@ -81,11 +80,11 @@ extern bool SQTL_LOG_ENABLE_DEBUG;      /* Log-level: true: enable, false: disab
 extern bool SQTL_LOG_ENABLE_FUNCTION;   /* Log-level: true: enable, false: disable, default: false; stack-trace */
 
 /* Use these macros to have function-, filename and linenumber set correct */
-#define L_FATAL(text)   do { if(ENABLED_SQTL_LOG_FATAL && SQTL_LOG_ENABLE_FATAL) simpleQtLogger_.log(text, SQTL_LOG_FATAL, __FUNCTION__, __FILE__, __LINE__); } while(0)
-#define L_ERROR(text)   do { if(ENABLED_SQTL_LOG_ERROR && SQTL_LOG_ENABLE_ERROR) simpleQtLogger_.log(text, SQTL_LOG_ERROR, __FUNCTION__, __FILE__, __LINE__); } while(0)
-#define L_WARN(text)    do { if(ENABLED_SQTL_LOG_WARNING && SQTL_LOG_ENABLE_WARNING) simpleQtLogger_.log(text, SQTL_LOG_WARNING, __FUNCTION__, __FILE__, __LINE__); } while(0)
-#define L_INFO(text)    do { if(ENABLED_SQTL_LOG_INFO && SQTL_LOG_ENABLE_INFO) simpleQtLogger_.log(text, SQTL_LOG_INFO, __FUNCTION__, __FILE__, __LINE__); } while(0)
-#define L_DEBUG(text)   do { if(ENABLED_SQTL_LOG_DEBUG && SQTL_LOG_ENABLE_DEBUG) simpleQtLogger_.log(text, SQTL_LOG_DEBUG, __FUNCTION__, __FILE__, __LINE__); } while(0)
+#define L_FATAL(text)   do { if(ENABLED_SQTL_LOG_FATAL && SQTL_LOG_ENABLE_FATAL) SimpleQtLogger::getInstance()->log(text, SQTL_LOG_FATAL, __FUNCTION__, __FILE__, __LINE__); } while(0)
+#define L_ERROR(text)   do { if(ENABLED_SQTL_LOG_ERROR && SQTL_LOG_ENABLE_ERROR) SimpleQtLogger::getInstance()->log(text, SQTL_LOG_ERROR, __FUNCTION__, __FILE__, __LINE__); } while(0)
+#define L_WARN(text)    do { if(ENABLED_SQTL_LOG_WARNING && SQTL_LOG_ENABLE_WARNING) SimpleQtLogger::getInstance()->log(text, SQTL_LOG_WARNING, __FUNCTION__, __FILE__, __LINE__); } while(0)
+#define L_INFO(text)    do { if(ENABLED_SQTL_LOG_INFO && SQTL_LOG_ENABLE_INFO) SimpleQtLogger::getInstance()->log(text, SQTL_LOG_INFO, __FUNCTION__, __FILE__, __LINE__); } while(0)
+#define L_DEBUG(text)   do { if(ENABLED_SQTL_LOG_DEBUG && SQTL_LOG_ENABLE_DEBUG) SimpleQtLogger::getInstance()->log(text, SQTL_LOG_DEBUG, __FUNCTION__, __FILE__, __LINE__); } while(0)
 #if ENABLED_SQTL_LOG_FUNCTION > 0
 #define L_FUNC(text)    SimpleQtLoggerFunc _simpleQtLoggerFunc_(text, __FUNCTION__, __FILE__, __LINE__)
 #else
@@ -99,7 +98,9 @@ class SimpleQtLogger : public QObject
   Q_OBJECT
 
 public:
-  SimpleQtLogger(QObject *parent = 0);
+  static SimpleQtLogger* createInstance(QObject *parent);
+  static SimpleQtLogger* getInstance(); // may return NULL pointer!
+
   ~SimpleQtLogger();
 
   void setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
@@ -118,8 +119,12 @@ private slots:
   void slotCheckLogFileActivity();
 
 private:
+  SimpleQtLogger(QObject *parent = 0);
+
   void checkLogFileOpen();
   void checkLogFileRolling();
+
+  static SimpleQtLogger* instance;
 
   QString _logFileName;
   unsigned int _logFileRotationSize; // initiate log-file rolling
@@ -149,10 +154,6 @@ private:
 };
 
 #endif
-
-// -------------------------------------------------------------------------------------------------
-
-extern SimpleQtLogger simpleQtLogger_;
 
 // -------------------------------------------------------------------------------------------------
 

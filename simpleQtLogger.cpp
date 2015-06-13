@@ -25,6 +25,22 @@ bool SQTL_LOG_ENABLE_FUNCTION = false;
 
 // -------------------------------------------------------------------------------------------------
 
+SimpleQtLogger* SimpleQtLogger::instance = 0;
+
+SimpleQtLogger* SimpleQtLogger::createInstance(QObject *parent)
+{
+  if(instance) {
+    delete instance;
+  }
+  instance = new SimpleQtLogger(parent);
+  return instance;
+}
+
+SimpleQtLogger* SimpleQtLogger::getInstance()
+{
+  return instance;
+}
+
 SimpleQtLogger::SimpleQtLogger(QObject *parent)
   : QObject(parent)
   , _logFileRotationSize(0)
@@ -297,13 +313,13 @@ SimpleQtLoggerFunc::SimpleQtLoggerFunc(const QString& text, const QString& funct
   , _lineNumber(lineNumber)
 {
   // qDebug("SimpleQtLoggerFunc::SimpleQtLoggerFunc");
-  if(ENABLED_SQTL_LOG_FUNCTION && SQTL_LOG_ENABLE_FUNCTION) simpleQtLogger_.logFuncBegin(_text, _functionName, _fileName, _lineNumber);
+  if(ENABLED_SQTL_LOG_FUNCTION && SQTL_LOG_ENABLE_FUNCTION) SimpleQtLogger::getInstance()->logFuncBegin(_text, _functionName, _fileName, _lineNumber);
 }
 
 SimpleQtLoggerFunc::~SimpleQtLoggerFunc()
 {
   // qDebug("SimpleQtLoggerFunc::~SimpleQtLoggerFunc");
-  if(ENABLED_SQTL_LOG_FUNCTION && SQTL_LOG_ENABLE_FUNCTION) simpleQtLogger_.logFuncEnd(_text, _functionName, _fileName, _lineNumber);
+  if(ENABLED_SQTL_LOG_FUNCTION && SQTL_LOG_ENABLE_FUNCTION) SimpleQtLogger::getInstance()->logFuncEnd(_text, _functionName, _fileName, _lineNumber);
 }
 
 #endif
