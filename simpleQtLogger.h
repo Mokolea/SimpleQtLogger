@@ -21,6 +21,7 @@
       SQTL_LOG_ENABLE_FUNCTION = true;
 
   TODO:
+   - allocate SimpleQtLogger on heap, set qApp as parent
    - enable pedantic-errors, check for no compiler warnings, use e.g.: -Wall -Wextra -Werror -pedantic-errors -Wwrite-strings
    - add different set of log macros to compose messages using stream operator
    - maybe allow message-buffering, processing on idle-time
