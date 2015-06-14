@@ -238,6 +238,9 @@ void SimpleQtLogger::checkLogFileRolling()
   }
   log(QString("Current log-file size=%1 (rotation-size=%2) --> rolling").arg(logFileSize).arg(_logFileRotationSize), SQTL_LOG_INFO, "", "", 0);
 
+  QTime timeRolling;
+  timeRolling.start();
+
   // handle file rolling
 
   // delete last file
@@ -283,6 +286,8 @@ void SimpleQtLogger::checkLogFileRolling()
   }
 
   checkLogFileOpen();
+
+  log(QString("Log-file rolling done (time elapsed: %1 ms)").arg(timeRolling.elapsed()), SQTL_LOG_INFO, "", "", 0);
 }
 
 void SimpleQtLogger::slotCheckLogFileActivity()
