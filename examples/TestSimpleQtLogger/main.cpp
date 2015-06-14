@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 {
   QCoreApplication a(argc, argv);
 
-  // initialize SimpleQtLogger
+  // initialize SimpleQtLogger (step 1/2)
   SimpleQtLogger::createInstance(qApp)->setLogFileName("testSimpleQtLogger.log", 10*1024, 10);
   SQTL_LOG_ENABLE_INFO = true;
   SQTL_LOG_ENABLE_DEBUG = false;
@@ -29,6 +29,9 @@ int main(int argc, char *argv[])
   Task *task = new Task(&a);
   QObject::connect(task, SIGNAL(finished()), &a, SLOT(quit()));
   QTimer::singleShot(0, task, SLOT(init()));
+
+  // initialize SimpleQtLogger (step 2/2)
+  SimpleQtLogger::getInstance()->setParent(task);
 
   return a.exec();
 }

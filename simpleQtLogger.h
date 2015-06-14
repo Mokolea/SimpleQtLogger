@@ -12,12 +12,14 @@
 
   Usage:
    - moc has to be applied
-   - create instance in main and initialize (example):
+   - create logger instance in main (set qApp as parent object) and initialize (example):
       SimpleQtLogger::createInstance(qApp)->setLogFileName("testSimpleQtLogger.log", 10*1024*1024, 20);
    - initialize log-levels (example):
       SQTL_LOG_ENABLE_INFO = true;
       SQTL_LOG_ENABLE_DEBUG = false;
       SQTL_LOG_ENABLE_FUNCTION = true;
+   - set main task (widget) as parent object for the logger instance (example):
+      SimpleQtLogger::getInstance()->setParent(task);
 
   TODO:
    - enable pedantic-errors, check for no compiler warnings, use e.g.: -Wall -Wextra -Werror -pedantic-errors -Wwrite-strings
