@@ -18,6 +18,7 @@ class Task : public QObject
 
 public:
   explicit Task(QObject *parent = 0);
+  ~Task();
 
 private slots:
   void init();

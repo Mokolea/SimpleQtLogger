@@ -49,7 +49,7 @@ SimpleQtLogger::SimpleQtLogger(QObject *parent)
   , _logFile(0)
   , _logFileActivity(false)
 {
-  qDebug("SimpleQtLogger::SimpleQtLogger");
+  qDebug("SimpleQtLogger::SimpleQtLogger"); // TODO comment this
 
   Qt::ConnectionType connectionType = Qt::DirectConnection;
 #if ENABLED_SQTL_LOG_SINK_FILE > 0
@@ -64,7 +64,7 @@ SimpleQtLogger::SimpleQtLogger(QObject *parent)
 
 SimpleQtLogger::~SimpleQtLogger()
 {
-  qDebug("SimpleQtLogger::~SimpleQtLogger");
+  qDebug("SimpleQtLogger::~SimpleQtLogger"); // TODO comment this
 
   // check close log file
   if(_logFile) {

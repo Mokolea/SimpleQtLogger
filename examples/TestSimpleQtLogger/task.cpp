@@ -17,6 +17,13 @@ Task::Task(QObject *parent)
   : QObject(parent)
 {
   L_FUNC("");
+  qDebug("Task::Task"); // TODO comment this
+}
+
+Task::~Task()
+{
+  L_FUNC("");
+  qDebug("Task::~Task"); // TODO comment this
 }
 
 void Task::init()
