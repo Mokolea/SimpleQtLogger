@@ -22,6 +22,8 @@
       SimpleQtLogger::getInstance()->setParent(task);
 
   TODO:
+   - provide to add/remove user defined sinks
+   - set (enable/disable) log-levels per sink
    - enable pedantic-errors, check for no compiler warnings, use e.g.: -Wall -Wextra -Werror -pedantic-errors -Wwrite-strings
    - add different set of log macros to compose messages using stream operator
    - maybe allow message-buffering, processing on idle-time
