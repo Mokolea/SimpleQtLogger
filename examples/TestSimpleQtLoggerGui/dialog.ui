@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>620</width>
-    <height>400</height>
+    <width>520</width>
+    <height>320</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item>
     <widget class="QGroupBox" name="groupBoxLog">
      <property name="title">
-      <string>Logging</string>
+      <string>Logging QEvent type</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
