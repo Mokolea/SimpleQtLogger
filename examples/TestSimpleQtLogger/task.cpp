@@ -43,13 +43,13 @@ void Task::init()
 
   QString formattedOutput1 = "JSON output 1:\n"
     "{\n"
-    "  \"firstName\": \"Mario\"\n"
+    "  \"firstName\": \"Mario\",\n"
     "  \"age\": 44\n"
     "}"
   ;
   L_INFO(formattedOutput1);
 
-  QString formattedOutput2 = "{<br>  \"firstName\": \"Mario\"<br>  \"age\": 44<br>}";
+  QString formattedOutput2 = "{<br>  \"firstName\": \"Mario\",<br>  \"age\": 44<br>}";
   L_INFO(formattedOutput2.prepend("JSON output 2:<br>").replace("<br>", "\n"));
 
   QTimer::singleShot(100, this, SLOT(slotRun()));

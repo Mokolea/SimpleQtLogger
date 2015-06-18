@@ -27,12 +27,12 @@ Marios-iMac:Qt mario$ tail -Fn100 testSimpleQtLogger.log
 2015-06-14 11:27:02.070 [I] Trimmed (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:42)
 2015-06-14 11:27:02.070 [I] JSON output 1:
 {
-  "firstName": "Mario"
+  "firstName": "Mario",
   "age": 44
 } (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:50)
 2015-06-14 11:27:02.070 [I] JSON output 2:
 {
-  "firstName": "Mario"
+  "firstName": "Mario",
   "age": 44
 } (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:53)
 2015-06-14 11:27:02.070 [F] / (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:31)
