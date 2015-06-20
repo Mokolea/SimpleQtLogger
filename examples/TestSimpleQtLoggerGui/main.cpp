@@ -16,7 +16,8 @@ int main(int argc, char *argv[])
   QApplication a(argc, argv);
 
   // initialize SimpleQtLogger (step 1/2)
-  SimpleQtLogger::createInstance(qApp)->setLogFileName(QDir::home().filePath("Documents/Qt/testSimpleQtLoggerGui.log"), 10*1024, 10);
+  SimpleQtLogger::createInstance(qApp)->setLogFormat("<TS> [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)", "<TS> [<LL>] <TEXT>");
+  SimpleQtLogger::getInstance()->setLogFileName(QDir::home().filePath("Documents/Qt/testSimpleQtLoggerGui.log"), 10*1024, 10);
   SQTL_LOG_ENABLE_INFO = true;
   SQTL_LOG_ENABLE_DEBUG = false;
   SQTL_LOG_ENABLE_FUNCTION = true;
