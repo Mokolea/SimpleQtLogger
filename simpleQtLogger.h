@@ -96,6 +96,34 @@ extern bool SQTL_LOG_ENABLE_FUNCTION;   /* Log-level: true: enable, false: disab
 
 // -------------------------------------------------------------------------------------------------
 
+class SinkFileLog : public QObject
+{
+  Q_OBJECT
+
+public:
+  SinkFileLog(QObject *parent = 0);
+  ~SinkFileLog();
+
+  void setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
+
+private slots:
+  void slotLog_File(const QString& ts, const QString& text, SQTL_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber);
+  void slotCheckLogFileActivity();
+
+private:
+  void checkLogFileOpen();
+  void checkLogFileRolling();
+
+  QString _logFileName;
+  unsigned int _logFileRotationSize; // initiate log-file rolling
+  unsigned int _logFileMaxNumber; // max number of rolling log-file history
+
+  QFile* _logFile;
+  bool _logFileActivity; // track log-file write (append) activity
+};
+
+// -------------------------------------------------------------------------------------------------
+
 class SimpleQtLogger : public QObject
 {
   Q_OBJECT
@@ -107,6 +135,9 @@ public:
   ~SimpleQtLogger();
 
   void setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
+
+  static QString timeStamp();
+
   void log(const QString& text, SQTL_LOG_Level level, const QString& functionName, const char* fileName, unsigned int lineNumber);
 #if ENABLED_SQTL_LOG_FUNCTION > 0
   void logFuncBegin(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber);
@@ -117,26 +148,16 @@ signals:
   void signalLog(const QString& ts, const QString& text, SQTL_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber);
 
 private slots:
-  void slotLog_File(const QString& ts, const QString& text, SQTL_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber);
   void slotLog_qDebug(const QString& ts, const QString& text, SQTL_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber);
-  void slotCheckLogFileActivity();
 
 private:
   SimpleQtLogger(QObject *parent = 0);
 
-  void checkLogFileOpen();
-  void checkLogFileRolling();
-
   static SimpleQtLogger* instance;
-
-  QString _logFileName;
-  unsigned int _logFileRotationSize; // initiate log-file rolling
-  unsigned int _logFileMaxNumber; // max number of rolling log-file history
 
   unsigned int _stackDepth; // current stack-depth for function-log
 
-  QFile* _logFile;
-  bool _logFileActivity; // track log-file write (append) activity
+  SinkFileLog* _sinkFileLog;
 };
 
 // -------------------------------------------------------------------------------------------------
