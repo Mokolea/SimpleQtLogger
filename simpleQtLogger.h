@@ -15,6 +15,12 @@
    - moc has to be applied
    - create logger instance in main (set qApp as parent object) and initialize (example):
       SimpleQtLogger::createInstance(qApp)->setLogFileName("testSimpleQtLogger.log", 10*1024*1024, 20);
+     or:
+      SimpleQtLogger::createInstance(qApp)->setLogFormat("<TS> [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)", "<TS> [<LL>] <TEXT>");
+      SimpleQtLogger::getInstance()->setLogFileName(QDir::home().filePath("Documents/Qt/testSimpleQtLoggerGui.log"), 10*1024, 10);
+     or with thread-id (default):
+      SimpleQtLogger::createInstance(qApp)->setLogFormat("<TS> [<TID>] [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)", "<TS> [<TID>] [<LL>] <TEXT>");
+      SimpleQtLogger::getInstance()->setLogFileName(QDir::home().filePath("Documents/Qt/testSimpleQtLoggerGui.log"), 10*1024, 10);
    - initialize log-levels (example):
       SQTL_LOG_ENABLE_INFO = true;
       SQTL_LOG_ENABLE_DEBUG = false;
@@ -66,6 +72,9 @@
 #define STACK_DEPTH_CHAR                    '.'   /* use e.g. ' ' or '.' */
 #define CHECK_LOG_FILE_ACTIVITY_INTERVAL   5000   /* [ms] */
 
+#define DEFAULT_LOG_FORMAT            "<TS> [<TID>] [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)"
+#define DEFAULT_LOG_FORMAT_INTERNAL   "<TS> [<TID>] [<LL>] <TEXT>"
+
 /* Log-level */
 typedef enum {
   SQTL_LOG_FATAL = 0, /* Fatal error, the program execution has to be aborted */
@@ -109,6 +118,7 @@ public:
   SinkFileLog(QObject *parent = 0);
   ~SinkFileLog();
 
+  void setLogFormat(const QString& logFormat, const QString& logFormatInt);
   bool setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
 
 private slots:
@@ -122,6 +132,8 @@ private:
   QString _logFileName;
   unsigned int _logFileRotationSize; // initiate log-file rolling
   unsigned int _logFileMaxNumber; // max number of rolling log-file history
+  QString _logFormat;
+  QString _logFormatInt;
 
   QFile* _logFile;
   bool _logFileActivity; // track log-file write (append) activity
@@ -138,6 +150,7 @@ public:
   static SimpleQtLogger* getInstance(); // may return NULL pointer!
   ~SimpleQtLogger();
 
+  void setLogFormat(const QString& logFormat = DEFAULT_LOG_FORMAT, const QString& logFormatInt = DEFAULT_LOG_FORMAT_INTERNAL);
   bool setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
 
   static QString timeStamp();
@@ -158,6 +171,9 @@ private slots:
 private:
   SimpleQtLogger(QObject *parent = 0);
   static SimpleQtLogger* instance;
+
+  QString _logFormat;
+  QString _logFormatInt;
 
   SinkFileLog* _sinkFileLog;
 

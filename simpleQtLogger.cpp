@@ -49,6 +49,14 @@ SinkFileLog::~SinkFileLog()
   }
 }
 
+void SinkFileLog::setLogFormat(const QString& logFormat, const QString& logFormatInt)
+{
+  qDebug("SinkFileLog::setLogFormat");
+
+  _logFormat = logFormat;
+  _logFormatInt = logFormatInt;
+}
+
 bool SinkFileLog::setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber)
 {
   qDebug("SinkFileLog::setLogFileName");
@@ -85,7 +93,7 @@ void SinkFileLog::slotLog_File(const QString& ts, const QString& tid, const QStr
     // stream (append) to log file
     if(_logFile && _logFile->isOpen()) {
       QTextStream out(_logFile);
-      out << ts << " [" << tid << "] [" << LOG_LEVEL_CHAR[level] << "] " << (text.isEmpty() ? "?" : text.trimmed()) << '\n';
+      out << QString(_logFormatInt).replace("<TS>", ts).replace("<TID>", tid).replace("<LL>", QString(LOG_LEVEL_CHAR[level])).replace("<TEXT>", text.isEmpty() ? "?" : text.trimmed()) << '\n';
       _logFileActivity = true;
     }
     return;
@@ -94,7 +102,7 @@ void SinkFileLog::slotLog_File(const QString& ts, const QString& tid, const QStr
   // stream (append) to log file
   if(_logFile && _logFile->isOpen()) {
     QTextStream out(_logFile);
-    out << ts << " [" << tid << "] [" << LOG_LEVEL_CHAR[level] << "] " << (text.isEmpty() ? "?" : text.trimmed()) << " (" << functionName << "@" << fileName << ":" << lineNumber << ")" << '\n';
+    out << QString(_logFormat).replace("<TS>", ts).replace("<TID>", tid).replace("<LL>", QString(LOG_LEVEL_CHAR[level])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? "?" : text.trimmed()) << '\n';
     _logFileActivity = true;
   }
 }
@@ -256,11 +264,25 @@ SimpleQtLogger::SimpleQtLogger(QObject *parent)
   QObject::connect(this, SIGNAL(signalLog(const QString&, const QString&, const QString&, SQTL_LOG_Level, const QString&, const QString&, unsigned int)),
     this, SLOT(slotLog_qDebug(const QString&, const QString&, const QString&, SQTL_LOG_Level, const QString&, const QString&, unsigned int)));
 #endif
+
+  setLogFormat(); // Default
 }
 
 SimpleQtLogger::~SimpleQtLogger()
 {
   qDebug("SimpleQtLogger::~SimpleQtLogger"); // TODO comment this
+}
+
+void SimpleQtLogger::setLogFormat(const QString& logFormat, const QString& logFormatInt)
+{
+  qDebug("SimpleQtLogger::setLogFormat");
+
+  _logFormat = logFormat;
+  _logFormatInt = logFormatInt;
+
+  if(_sinkFileLog) {
+    _sinkFileLog->setLogFormat(_logFormat, _logFormatInt);
+  }
 }
 
 bool SimpleQtLogger::setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber)
@@ -359,11 +381,11 @@ void SimpleQtLogger::slotLog_qDebug(const QString& ts, const QString& tid, const
   // qDebug("SimpleQtLogger::slotLog_qDebug");
 
   if(functionName.isEmpty()) {
-    qDebug("%s", QString("%1 [%2] [%3] %4").arg(ts).arg(tid).arg(LOG_LEVEL_CHAR[level]).arg(text.isEmpty() ? "?" : text.trimmed()).toStdString().c_str());
+    qDebug("%s", QString(_logFormatInt).replace("<TS>", ts).replace("<TID>", tid).replace("<LL>", QString(LOG_LEVEL_CHAR[level])).replace("<TEXT>", text.isEmpty() ? "?" : text.trimmed()).toStdString().c_str());
     return;
   }
 
-  qDebug("%s", QString("%1 [%2] [%3] %4 (%5@%6:%7)").arg(ts).arg(tid).arg(LOG_LEVEL_CHAR[level]).arg(text.isEmpty() ? "?" : text.trimmed()).arg(functionName).arg(fileName).arg(lineNumber).toStdString().c_str());
+  qDebug("%s", QString(_logFormat).replace("<TS>", ts).replace("<TID>", tid).replace("<LL>", QString(LOG_LEVEL_CHAR[level])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? "?" : text.trimmed()).toStdString().c_str());
 }
 
 // -------------------------------------------------------------------------------------------------
