@@ -86,7 +86,7 @@ void Task::startWorkerThread(const QString &id)
 
   WorkerThread *workerThread = new WorkerThread(id, this);
   connect(workerThread, SIGNAL(resultReady(const QString&)), this, SLOT(slotResultReady(const QString&)));
-  connect(workerThread, &WorkerThread::finished, workerThread, &QObject::deleteLater);
+  connect(workerThread, SIGNAL(finished()), workerThread, SLOT(deleteLater()));
   workerThread->start();
 }
 
@@ -106,7 +106,7 @@ WorkerThread::~WorkerThread()
   qDebug("WorkerThread::~WorkerThread"); // TODO comment this
 }
 
-void WorkerThread::run() Q_DECL_OVERRIDE
+void WorkerThread::run()
 {
   L_FUNC(QString("_id='%1'").arg(_id));
   qDebug("WorkerThread::run"); // TODO comment this

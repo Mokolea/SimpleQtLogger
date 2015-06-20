@@ -48,7 +48,7 @@ public:
   ~WorkerThread();
 
 protected:
-  void run() Q_DECL_OVERRIDE;
+  void run();
 
 signals:
   void resultReady(const QString &result);
