@@ -9,6 +9,7 @@
 #include "simpleQtLogger.h"
 
 #include <QTimer>
+#include <QThread>
 #include <QtDebug>
 
 // -------------------------------------------------------------------------------------------------
@@ -40,6 +41,7 @@ void Task::init()
 
   L_INFO(QString()); // --> "?"
   L_INFO(" \n Trimmed \n\n"); // --> whitespace removed from start and end
+  L_INFO(QString("[%1]").arg((unsigned long int)QThread::currentThreadId(),8,16,QLatin1Char('0'))); // field-with just for 32bit
 
   QString formattedOutput1 = "JSON output 1:\n"
     "{\n"
