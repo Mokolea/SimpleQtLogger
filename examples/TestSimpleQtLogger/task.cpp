@@ -56,7 +56,7 @@ void Task::init()
   QTimer::singleShot(1000, this, SLOT(slotRun()));
   QTimer::singleShot(1000, this, SLOT(slotRun()));
   QTimer::singleShot(3000, this, SLOT(slotRun()));
-  QTimer::singleShot(5000, this, SLOT(theEnd()));
+  QTimer::singleShot(6000, this, SLOT(theEnd()));
 }
 
 void Task::theEnd()
