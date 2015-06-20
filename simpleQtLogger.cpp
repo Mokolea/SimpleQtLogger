@@ -49,14 +49,14 @@ SinkFileLog::~SinkFileLog()
   }
 }
 
-void SinkFileLog::setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber)
+bool SinkFileLog::setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber)
 {
   qDebug("SinkFileLog::setLogFileName");
 
   // check valid log-file name ending
   if(logFileName.right(4) != ".log") {
     qWarning() << "Name of log-file not ending with '.log'" << logFileName;
-    return;
+    return false;
   }
 
   _logFileName = logFileName;
@@ -74,7 +74,7 @@ void SinkFileLog::setLogFileName(const QString& logFileName, unsigned int logFil
     _logFileMaxNumber = 99;
   }
 
-  checkLogFileOpen();
+  return checkLogFileOpen();
 }
 
 void SinkFileLog::slotLog_File(const QString& ts, const QString& text, SQTL_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber)
@@ -99,7 +99,7 @@ void SinkFileLog::slotLog_File(const QString& ts, const QString& text, SQTL_LOG_
   }
 }
 
-void SinkFileLog::checkLogFileOpen()
+bool SinkFileLog::checkLogFileOpen()
 {
   // qDebug("SinkFileLog::checkLogFileOpen");
 
@@ -120,12 +120,14 @@ void SinkFileLog::checkLogFileOpen()
   }
 
   if(!_logFile) {
-    return;
+    return false;
   }
 
   qDebug() << "Current log-file:" << _logFileName;
 
   QTimer::singleShot(CHECK_LOG_FILE_ACTIVITY_INTERVAL, this, SLOT(slotCheckLogFileActivity()));
+
+  return true;
 }
 
 void SinkFileLog::checkLogFileRolling()
@@ -258,15 +260,15 @@ SimpleQtLogger::~SimpleQtLogger()
   qDebug("SimpleQtLogger::~SimpleQtLogger"); // TODO comment this
 }
 
-void SimpleQtLogger::setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber)
+bool SimpleQtLogger::setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber)
 {
   qDebug("SimpleQtLogger::setLogFileName");
 
-  if(_sinkFileLog) {
-    _sinkFileLog->setLogFileName(logFileName, logFileRotationSize, logFileMaxNumber);
-
-    log("Start logger", SQTL_LOG_INFO, "", "", 0);
+  if(_sinkFileLog && _sinkFileLog->setLogFileName(logFileName, logFileRotationSize, logFileMaxNumber)) {
+    log("Start file-log", SQTL_LOG_INFO, "", "", 0);
+    return true;
   }
+  return false;
 }
 
 QString SimpleQtLogger::timeStamp()

@@ -104,14 +104,14 @@ public:
   SinkFileLog(QObject *parent = 0);
   ~SinkFileLog();
 
-  void setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
+  bool setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
 
 private slots:
   void slotLog_File(const QString& ts, const QString& text, SQTL_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber);
   void slotCheckLogFileActivity();
 
 private:
-  void checkLogFileOpen();
+  bool checkLogFileOpen();
   void checkLogFileRolling();
 
   QString _logFileName;
@@ -131,10 +131,9 @@ class SimpleQtLogger : public QObject
 public:
   static SimpleQtLogger* createInstance(QObject *parent);
   static SimpleQtLogger* getInstance(); // may return NULL pointer!
-
   ~SimpleQtLogger();
 
-  void setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
+  bool setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
 
   static QString timeStamp();
 
@@ -152,7 +151,6 @@ private slots:
 
 private:
   SimpleQtLogger(QObject *parent = 0);
-
   static SimpleQtLogger* instance;
 
   unsigned int _stackDepth; // current stack-depth for function-log
