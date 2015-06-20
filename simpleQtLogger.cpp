@@ -244,14 +244,16 @@ SimpleQtLogger::SimpleQtLogger(QObject *parent)
 
   _sinkFileLog = new SinkFileLog(this);
 
-  Qt::ConnectionType connectionType = Qt::DirectConnection;
+  // Qt::ConnectionType is Qt::AutoConnection (Default)
+  // If the receiver lives in the thread that emits the signal, Qt::DirectConnection is used.
+  // Otherwise, Qt::QueuedConnection is used. The connection type is determined when the signal is emitted.
 #if ENABLED_SQTL_LOG_SINK_FILE > 0
   QObject::connect(this, SIGNAL(signalLog(const QString&, const QString&, SQTL_LOG_Level, const QString&, const QString&, unsigned int)),
-    _sinkFileLog, SLOT(slotLog_File(const QString&, const QString&, SQTL_LOG_Level, const QString&, const QString&, unsigned int)), connectionType);
+    _sinkFileLog, SLOT(slotLog_File(const QString&, const QString&, SQTL_LOG_Level, const QString&, const QString&, unsigned int)));
 #endif
 #if ENABLED_SQTL_LOG_SINK_QDEBUG > 0
   QObject::connect(this, SIGNAL(signalLog(const QString&, const QString&, SQTL_LOG_Level, const QString&, const QString&, unsigned int)),
-    this, SLOT(slotLog_qDebug(const QString&, const QString&, SQTL_LOG_Level, const QString&, const QString&, unsigned int)), connectionType);
+    this, SLOT(slotLog_qDebug(const QString&, const QString&, SQTL_LOG_Level, const QString&, const QString&, unsigned int)));
 #endif
 }
 
