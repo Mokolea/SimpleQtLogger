@@ -9,6 +9,8 @@
 #define _TASK_H
 
 #include <QObject>
+#include <QString>
+#include <QThread>
 
 // -------------------------------------------------------------------------------------------------
 
@@ -26,13 +28,35 @@ private slots:
 
 public slots:
   void slotRun();
+  void slotResultReady(const QString &result);
 
 signals:
   void finished();
 
 private:
-  unsigned int factorial(unsigned int n) const;
+  void startWorkerThread(const QString &id);
+};
 
+// -------------------------------------------------------------------------------------------------
+
+class WorkerThread : public QThread
+{
+  Q_OBJECT
+
+public:
+  WorkerThread(const QString &id, QObject * parent = 0);
+  ~WorkerThread();
+
+protected:
+  void run() Q_DECL_OVERRIDE;
+
+signals:
+  void resultReady(const QString &result);
+
+private:
+  static unsigned int factorial(unsigned int n);
+
+  const QString _id;
 };
 
 #endif // _TASK_H

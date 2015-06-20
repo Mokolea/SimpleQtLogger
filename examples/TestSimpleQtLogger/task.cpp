@@ -41,7 +41,6 @@ void Task::init()
 
   L_INFO(QString()); // --> "?"
   L_INFO(" \n Trimmed \n\n"); // --> whitespace removed from start and end
-  L_INFO(QString("[%1]").arg((unsigned long int)QThread::currentThreadId(),8,16,QLatin1Char('0'))); // field-with just for 32bit
 
   QString formattedOutput1 = "JSON output 1:\n"
     "{\n"
@@ -54,8 +53,10 @@ void Task::init()
   QString formattedOutput2 = "{<br>  \"firstName\": \"Mario\",<br>  \"age\": 44<br>}";
   L_INFO(formattedOutput2.prepend("JSON output 2:<br>").replace("<br>", "\n"));
 
-  QTimer::singleShot(100, this, SLOT(slotRun()));
-  QTimer::singleShot(7000, this, SLOT(theEnd()));
+  QTimer::singleShot(1000, this, SLOT(slotRun()));
+  QTimer::singleShot(1000, this, SLOT(slotRun()));
+  QTimer::singleShot(3000, this, SLOT(slotRun()));
+  QTimer::singleShot(5000, this, SLOT(theEnd()));
 }
 
 void Task::theEnd()
@@ -68,13 +69,57 @@ void Task::theEnd()
 void Task::slotRun()
 {
   L_FUNC("");
+  static unsigned int id = 0;
 
-  L_INFO(QString("Calculate: 6! = %1").arg(factorial(6)));
-
-  QTimer::singleShot(3000, this, SLOT(slotRun()));
+  startWorkerThread(QString("%1").arg(++id, 2, 10, QLatin1Char('0')));
 }
 
-unsigned int Task::factorial(unsigned int n) const
+void Task::slotResultReady(const QString &result)
+{
+  L_FUNC("");
+  L_INFO(QString("WorkerThread: %1").arg(result));
+}
+
+void Task::startWorkerThread(const QString &id)
+{
+  L_FUNC(QString("id='%1'").arg(id));
+
+  WorkerThread *workerThread = new WorkerThread(id, this);
+  connect(workerThread, SIGNAL(resultReady(const QString&)), this, SLOT(slotResultReady(const QString&)));
+  connect(workerThread, &WorkerThread::finished, workerThread, &QObject::deleteLater);
+  workerThread->start();
+}
+
+// -------------------------------------------------------------------------------------------------
+
+WorkerThread::WorkerThread(const QString &id, QObject *parent)
+  : QThread(parent)
+  , _id(id)
+{
+  L_FUNC(QString("_id='%1'").arg(_id));
+  qDebug("WorkerThread::WorkerThread"); // TODO comment this
+}
+
+WorkerThread::~WorkerThread()
+{
+  L_FUNC(QString("_id='%1'").arg(_id));
+  qDebug("WorkerThread::~WorkerThread"); // TODO comment this
+}
+
+void WorkerThread::run() Q_DECL_OVERRIDE
+{
+  L_FUNC(QString("_id='%1'").arg(_id));
+  qDebug("WorkerThread::run"); // TODO comment this
+
+  msleep(500); // [ms]
+  QString result = QString("%1: Calculate: 6! = %2").arg(_id).arg(factorial(6));
+  L_INFO(result);
+  msleep(500); // [ms]
+
+  emit resultReady(result);
+}
+
+unsigned int WorkerThread::factorial(unsigned int n)
 {
   L_FUNC(QString("n=%1").arg(n));
 
