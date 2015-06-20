@@ -8,6 +8,8 @@ Facts:
     - qDebug
  - no configuration file
  - thread-safe use of log-macros
+ - single source-file
+ - specify log-format
 
 **TODO...**
 
