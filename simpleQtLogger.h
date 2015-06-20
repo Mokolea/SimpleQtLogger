@@ -8,6 +8,7 @@
       - rolling file appender
       - qDebug
    - no configuration file
+   - thread-safe use of log-macros
    - restriction: log-file name has to end with: ".log"
 
   Usage:
@@ -29,7 +30,7 @@
    - maybe allow message-buffering, processing on idle-time
    - maybe flush periodically on idle-time
    - maybe do file rolling (check file size periodically) on idle-time
-   - currently not thread-safe, stack-depth not tracked per thread (thread-id-callback?)
+   - maybe do all file-operations in worker-thread
 
   Tested using:
    - Qt 5.4.2 (Community Open Source), Clang 6.0 (Apple) 64 bit
@@ -45,6 +46,10 @@
 #include <QObject>
 #include <QString>
 #include <QFile>
+#include <QThread>
+#include <QMutex>
+#include <QMutexLocker>
+#include <QMap>
 
 /* Log-sinks */
 #define ENABLED_SQTL_LOG_SINK_FILE     1   /* 1: enable, 0: disable; log to file (rolling) */
@@ -82,7 +87,7 @@ extern bool SQTL_LOG_ENABLE_INFO;       /* Log-level: true: enable, false: disab
 extern bool SQTL_LOG_ENABLE_DEBUG;      /* Log-level: true: enable, false: disable, default: false; just for step-by-step testing */
 extern bool SQTL_LOG_ENABLE_FUNCTION;   /* Log-level: true: enable, false: disable, default: false; stack-trace */
 
-/* Use these macros to have function-, filename and linenumber set correct */
+/* Use these macros (thread-safe) to have function-, filename and linenumber set correct */
 #define L_FATAL(text)   do { if(ENABLED_SQTL_LOG_FATAL && SQTL_LOG_ENABLE_FATAL) SimpleQtLogger::getInstance()->log(text, SQTL_LOG_FATAL, __FUNCTION__, __FILE__, __LINE__); } while(0)
 #define L_ERROR(text)   do { if(ENABLED_SQTL_LOG_ERROR && SQTL_LOG_ENABLE_ERROR) SimpleQtLogger::getInstance()->log(text, SQTL_LOG_ERROR, __FUNCTION__, __FILE__, __LINE__); } while(0)
 #define L_WARN(text)    do { if(ENABLED_SQTL_LOG_WARNING && SQTL_LOG_ENABLE_WARNING) SimpleQtLogger::getInstance()->log(text, SQTL_LOG_WARNING, __FUNCTION__, __FILE__, __LINE__); } while(0)
@@ -107,7 +112,7 @@ public:
   bool setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
 
 private slots:
-  void slotLog_File(const QString& ts, const QString& text, SQTL_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber);
+  void slotLog_File(const QString& ts, const QString& tid, const QString& text, SQTL_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber);
   void slotCheckLogFileActivity();
 
 private:
@@ -136,6 +141,7 @@ public:
   bool setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
 
   static QString timeStamp();
+  static QString threadId();
 
   void log(const QString& text, SQTL_LOG_Level level, const QString& functionName, const char* fileName, unsigned int lineNumber);
 #if ENABLED_SQTL_LOG_FUNCTION > 0
@@ -144,18 +150,19 @@ public:
 #endif
 
 signals:
-  void signalLog(const QString& ts, const QString& text, SQTL_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber);
+  void signalLog(const QString& ts, const QString& tid, const QString& text, SQTL_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber);
 
 private slots:
-  void slotLog_qDebug(const QString& ts, const QString& text, SQTL_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber);
+  void slotLog_qDebug(const QString& ts, const QString& tid, const QString& text, SQTL_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber);
 
 private:
   SimpleQtLogger(QObject *parent = 0);
   static SimpleQtLogger* instance;
 
-  unsigned int _stackDepth; // current stack-depth for function-log
-
   SinkFileLog* _sinkFileLog;
+
+  QMutex _mutex;
+  QMap<unsigned long int, unsigned int> _stackDepth; // current stack-depth per thread-id for function-log
 };
 
 // -------------------------------------------------------------------------------------------------

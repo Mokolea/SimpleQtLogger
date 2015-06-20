@@ -7,6 +7,7 @@ Facts:
     - rolling file appender
     - qDebug
  - no configuration file
+ - thread-safe use of log-macros
 
 **TODO...**
 
