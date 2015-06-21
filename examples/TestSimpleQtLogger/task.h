@@ -12,6 +12,8 @@
 #include <QString>
 #include <QThread>
 
+#define TEST_BURST   0   /* 1: enable, 0: disable */
+
 // -------------------------------------------------------------------------------------------------
 
 class Task : public QObject
@@ -55,6 +57,7 @@ signals:
 
 private:
   static unsigned int factorial(unsigned int n);
+  void burst(unsigned int n);
 
   const QString _id;
 };

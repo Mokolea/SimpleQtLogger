@@ -114,7 +114,11 @@ void WorkerThread::run()
   msleep(500); // [ms]
   QString result = QString("%1: Calculate: 6! = %2").arg(_id).arg(factorial(6));
   L_INFO(result);
-  msleep(500); // [ms]
+  msleep(250); // [ms]
+#if TEST_BURST > 0
+  burst(10*1000); // queue full at ~49'000 ?!
+#endif
+  msleep(250); // [ms]
 
   emit resultReady(result);
 }
@@ -127,4 +131,12 @@ unsigned int WorkerThread::factorial(unsigned int n)
     return n * factorial(n-1);
   }
   return n;
+}
+
+void WorkerThread::burst(unsigned int n)
+{
+  L_FUNC(QString("n=%1").arg(n));
+  for(unsigned int i=0; i<n; ++i){
+    L_INFO(QString("%1: Burst: %2").arg(_id).arg(i, 6, 10, QLatin1Char('0')));
+  }
 }
