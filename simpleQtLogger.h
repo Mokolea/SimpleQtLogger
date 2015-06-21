@@ -30,6 +30,16 @@
    - set main task (widget) as parent object for the logger instance (example):
       SimpleQtLogger::getInstance()->setParent(task);
 
+  Log-format:
+  The following TAGs are available and expand to:
+   - <TS> --> Time-stamp, "YYYY-MM-DD HH:MM:SS.SSS"
+   - <TID> --> Thread-Id, 64bit value in hexadecimal
+   - <LL> --> Log-level, one character: '!', 'E', 'W', 'I', 'D' or 'F'
+   - <TEXT> --> The log-message
+   - <FUNC> --> Function-name
+   - <FILE> --> File-name
+   - <LINE> --> Line-number
+
   TODO:
    - provide to add/remove user defined sinks
    - set (enable/disable) log-levels per sink
