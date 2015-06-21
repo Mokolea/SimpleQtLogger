@@ -158,6 +158,7 @@ public:
   static QString timeStamp();
   static QString threadId();
 
+  // log-functions used by log-macros are thread-safe
   void log(const QString& text, SQTL_LOG_Level level, const QString& functionName, const char* fileName, unsigned int lineNumber);
 #if ENABLED_SQTL_LOG_FUNCTION > 0
   void logFuncBegin(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber);
