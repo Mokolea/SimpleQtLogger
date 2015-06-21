@@ -11,6 +11,21 @@ Facts:
  - single source-file
  - specify log-format
 
+## Log-format
+The following TAGs are available and expand to:
+ - **\<TS\>** --> "YYYY-MM-DD HH:MM:SS.SSS"
+ - **\<TID\>** --> Thread-Id, 64bit value in hexadecimal
+ - **\<LL\>** --> Log-level, one character: '!', 'E', 'W', 'I', 'D' or 'F'
+ - **\<TEXT\>** --> The log-message
+ - **\<FUNC\>** --> Function-name
+ - **\<FILE\>** --> File-name
+ - **\<LINE\>** --> Line-number
+
+Using the default log-format `"<TS> [<TID>] [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)"` creates log-entries like:
+```
+2015-06-20 19:06:03.269 [0000000108bdc000] [I] 03: Calculate: 6! = 720 (run@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:116)
+```
+
 **TODO...**
 
 Example log-file content:
