@@ -7,6 +7,7 @@ Facts:
     - rolling file appender
     - qDebug
  - no configuration file
+ - log-levels, function-log (stack-trace)
  - thread-safe use of log-macros
  - single source-file
  - specify log-format
