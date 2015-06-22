@@ -70,7 +70,7 @@
 #include <QMutexLocker>
 #include <QMap>
 
-/* Log-sinks */
+/* Log-sinks (hard; adjust at pre-processor, compile-time) */
 #define ENABLED_SQTL_LOG_SINK_FILE     1   /* 1: enable, 0: disable; log to file (rolling) */
 #define ENABLED_SQTL_LOG_SINK_QDEBUG   0   /* 1: enable, 0: disable; log using qDebug; messages are sent to the console, if it is a console application */
 
@@ -100,6 +100,10 @@ typedef enum {
 SQTL_LOG_Level;
 
 static const char LOG_LEVEL_CHAR[6] = {'!', 'E', 'W', 'I', 'D', 'F'}; /* MUST correspond to enum SQTL_LOG_Level, unchecked array!!! */
+
+/* Log-sinks (adjust at run-time) */
+extern bool SQTL_LOG_ENABLE_SINK_FILE;     /* Log-sink: true: enable, false: disable, default: true */
+extern bool SQTL_LOG_ENABLE_SINK_QDEBUG;   /* Log-sink: true: enable, false: disable, default: false */
 
 /* Log-level (adjust at run-time) */
 extern bool SQTL_LOG_ENABLE_FATAL;      /* Log-level: true: enable, false: disable, default: true */

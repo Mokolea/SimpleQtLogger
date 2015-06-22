@@ -15,6 +15,10 @@
 #include <QFileInfo>
 #include <QtDebug>
 
+/* Log-sinks */
+bool SQTL_LOG_ENABLE_SINK_FILE = true;
+bool SQTL_LOG_ENABLE_SINK_QDEBUG = false;
+
 /* Log-level */
 bool SQTL_LOG_ENABLE_FATAL = true;
 bool SQTL_LOG_ENABLE_ERROR = true;
@@ -88,6 +92,10 @@ bool SinkFileLog::setLogFileName(const QString& logFileName, unsigned int logFil
 void SinkFileLog::slotLog_File(const QString& ts, const QString& tid, const QString& text, SQTL_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber)
 {
   // qDebug("SinkFileLog::slotLog_File");
+
+  if(!SQTL_LOG_ENABLE_SINK_FILE) {
+    return;
+  }
 
   if(functionName.isEmpty()) {
     // stream (append) to log file
@@ -381,6 +389,10 @@ void SimpleQtLogger::logFuncEnd(const QString& text, const QString& functionName
 void SimpleQtLogger::slotLog_qDebug(const QString& ts, const QString& tid, const QString& text, SQTL_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber)
 {
   // qDebug("SimpleQtLogger::slotLog_qDebug");
+
+  if(!SQTL_LOG_ENABLE_SINK_QDEBUG) {
+    return;
+  }
 
   if(functionName.isEmpty()) {
     qDebug("%s", QString(_logFormatInt).replace("<TS>", ts).replace("<TID>", tid).replace("<LL>", QString(LOG_LEVEL_CHAR[level])).replace("<TEXT>", text.isEmpty() ? "?" : text.trimmed()).toStdString().c_str());
