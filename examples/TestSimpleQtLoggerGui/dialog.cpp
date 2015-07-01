@@ -19,7 +19,7 @@ Dialog::Dialog(QWidget *parent)
   ui->setupUi(this);
 
   EventLog *eventLog = new EventLog(this);
-  QObject::connect(eventLog, SIGNAL(eventInfo(const QString&)), this, SLOT(eventInfo(const QString&)));
+  QObject::connect(eventLog, SIGNAL(eventInfo(const QString&)), this, SLOT(eventInfo(const QString&)), Qt::QueuedConnection); // Qt::QueuedConnection: Qt 5.4.x Debian
   installEventFilter(eventLog);
 }
 
