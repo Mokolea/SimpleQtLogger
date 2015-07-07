@@ -190,6 +190,9 @@ private slots:
 private:
   SimpleQtLogger(QObject *parent);
   static SimpleQtLogger* instance;
+  // implicitly implemented, not to be used
+  SimpleQtLogger(const SimpleQtLogger& other);
+  SimpleQtLogger& operator=(const SimpleQtLogger& other);
 
   QString _logFormat;
   QString _logFormatInt;
