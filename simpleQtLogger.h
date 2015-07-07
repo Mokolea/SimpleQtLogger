@@ -133,7 +133,7 @@ class SinkFileLog : public QObject
   Q_OBJECT
 
 public:
-  SinkFileLog(QObject *parent = 0);
+  SinkFileLog(QObject *parent);
   ~SinkFileLog();
 
   void setLogFormat(const QString& logFormat, const QString& logFormatInt);
@@ -188,7 +188,7 @@ private slots:
   void slotLog_qDebug(const QString& ts, const QString& tid, const QString& text, SQTL_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber);
 
 private:
-  SimpleQtLogger(QObject *parent = 0);
+  SimpleQtLogger(QObject *parent);
   static SimpleQtLogger* instance;
 
   QString _logFormat;
