@@ -35,6 +35,7 @@
   The following TAGs are available and expand to:
    - <TS> --> Time-stamp, "YYYY-MM-DD HH:MM:SS.SSS"
    - <TID> --> Thread-Id, 64bit value in hexadecimal
+   - <TID32> --> Thread-Id, 32bit value in hexadecimal
    - <LL> --> Log-level, one character: '!', 'E', 'W', 'I', 'D' or 'F'
    - <TEXT> --> The log-message
    - <FUNC> --> Function-name
