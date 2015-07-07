@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
   SQTL_LOG_ENABLE_FUNCTION = true;
 
   // start and initialize the main widget
-  Dialog w;
+  Dialog w(0);
   w.show();
 
   // initialize SimpleQtLogger (step 2/2)

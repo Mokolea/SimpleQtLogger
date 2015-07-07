@@ -21,7 +21,7 @@ class Task : public QObject
   Q_OBJECT
 
 public:
-  explicit Task(QObject *parent = 0);
+  explicit Task(QObject *parent);
   ~Task();
 
 private slots:
@@ -46,7 +46,7 @@ class WorkerThread : public QThread
   Q_OBJECT
 
 public:
-  WorkerThread(const QString &id, QObject * parent = 0);
+  WorkerThread(const QString &id, QObject * parent);
   ~WorkerThread();
 
 protected:

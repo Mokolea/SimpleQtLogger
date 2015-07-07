@@ -16,7 +16,7 @@ class EventLog : public QObject
   Q_OBJECT
 
 public:
-  explicit EventLog(QObject *parent = 0);
+  explicit EventLog(QObject *parent);
   ~EventLog();
 
 protected:
