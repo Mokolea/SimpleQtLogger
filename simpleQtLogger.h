@@ -144,6 +144,10 @@ private slots:
   void slotCheckLogFileActivity();
 
 private:
+  // implicitly implemented, not to be used
+  SinkFileLog(const SinkFileLog&);
+  SinkFileLog& operator=(const SinkFileLog&);
+
   bool checkLogFileOpen();
   void checkLogFileRolling();
 
@@ -191,8 +195,8 @@ private:
   SimpleQtLogger(QObject *parent);
   static SimpleQtLogger* instance;
   // implicitly implemented, not to be used
-  SimpleQtLogger(const SimpleQtLogger& other);
-  SimpleQtLogger& operator=(const SimpleQtLogger& other);
+  SimpleQtLogger(const SimpleQtLogger&);
+  SimpleQtLogger& operator=(const SimpleQtLogger&);
 
   QString _logFormat;
   QString _logFormatInt;
@@ -214,9 +218,13 @@ public:
   ~SimpleQtLoggerFunc();
 
 private:
-  const QString _text;
-  const QString _functionName;
-  const QString _fileName;
+  // implicitly implemented, not to be used
+  SimpleQtLoggerFunc(const SimpleQtLoggerFunc&);
+  SimpleQtLoggerFunc& operator=(const SimpleQtLoggerFunc&);
+
+  QString _text;
+  QString _functionName;
+  QString _fileName;
   unsigned int _lineNumber;
 };
 
