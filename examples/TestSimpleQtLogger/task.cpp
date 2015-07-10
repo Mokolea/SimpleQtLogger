@@ -76,8 +76,8 @@ void Task::slotRun()
 
 void Task::slotResultReady(const QString &result)
 {
-  L_FUNC("");
-  L_INFO(QString("WorkerThread: %1").arg(result));
+  LS_FUNC("");
+  LS_INFO("WorkerThread: " << result);
 }
 
 void Task::startWorkerThread(const QString &id)
@@ -125,7 +125,7 @@ void WorkerThread::run()
 
 unsigned int WorkerThread::factorial(unsigned int n)
 {
-  L_FUNC(QString("n=%1").arg(n));
+  LS_FUNC("n=" << n);
 
   if(n > 2) {
     return n * factorial(n-1);
@@ -135,7 +135,7 @@ unsigned int WorkerThread::factorial(unsigned int n)
 
 void WorkerThread::burst(unsigned int n)
 {
-  L_FUNC(QString("n=%1").arg(n));
+  LS_FUNC("n=" << n);
   for(unsigned int i=0; i<n; ++i){
     L_INFO(QString("%1: Burst: %2").arg(_id).arg(i, 6, 10, QLatin1Char('0')));
   }

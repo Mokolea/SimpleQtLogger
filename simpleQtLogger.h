@@ -70,6 +70,7 @@
 #include <QMutex>
 #include <QMutexLocker>
 #include <QMap>
+#include <QTextStream>
 
 /* Log-sinks (hard; adjust at pre-processor, compile-time) */
 #define ENABLED_SQTL_LOG_SINK_FILE     1   /* 1: enable, 0: disable; log to file (rolling) */
@@ -124,6 +125,23 @@ extern bool SQTL_LOG_ENABLE_FUNCTION;   /* Log-level: true: enable, false: disab
 #define L_FUNC(text)    SimpleQtLoggerFunc _simpleQtLoggerFunc_(text, __FUNCTION__, __FILE__, __LINE__)
 #else
 #define L_FUNC(text)    /* nop */
+#endif
+
+/* Support use of streaming operators */
+#define LS_FATAL(text)   do { if(ENABLED_SQTL_LOG_FATAL && SQTL_LOG_ENABLE_FATAL) { QString s; QTextStream ts(&s); ts << text; \
+  SimpleQtLogger::getInstance()->log(s, SQTL_LOG_FATAL, __FUNCTION__, __FILE__, __LINE__); } } while(0)
+#define LS_ERROR(text)   do { if(ENABLED_SQTL_LOG_ERROR && SQTL_LOG_ENABLE_ERROR) { QString s; QTextStream ts(&s); ts << text; \
+  SimpleQtLogger::getInstance()->log(s, SQTL_LOG_ERROR, __FUNCTION__, __FILE__, __LINE__); } } while(0)
+#define LS_WARN(text)    do { if(ENABLED_SQTL_LOG_WARN && SQTL_LOG_ENABLE_WARN) { QString s; QTextStream ts(&s); ts << text; \
+  SimpleQtLogger::getInstance()->log(s, SQTL_LOG_WARN, __FUNCTION__, __FILE__, __LINE__); } } while(0)
+#define LS_INFO(text)    do { if(ENABLED_SQTL_LOG_INFO && SQTL_LOG_ENABLE_INFO) { QString s; QTextStream ts(&s); ts << text; \
+  SimpleQtLogger::getInstance()->log(s, SQTL_LOG_INFO, __FUNCTION__, __FILE__, __LINE__); } } while(0)
+#define LS_DEBUG(text)   do { if(ENABLED_SQTL_LOG_DEBUG && SQTL_LOG_ENABLE_DEBUG) { QString s; QTextStream ts(&s); ts << text; \
+  SimpleQtLogger::getInstance()->log(s, SQTL_LOG_DEBUG, __FUNCTION__, __FILE__, __LINE__); } } while(0)
+#if ENABLED_SQTL_LOG_FUNCTION > 0
+#define LS_FUNC(text)    QString _s_; { QTextStream _ts_(&_s_); _ts_ << text; } SimpleQtLoggerFunc _simpleQtLoggerFunc_(_s_, __FUNCTION__, __FILE__, __LINE__)
+#else
+#define LS_FUNC(text)    /* nop */
 #endif
 
 // -------------------------------------------------------------------------------------------------
