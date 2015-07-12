@@ -12,6 +12,10 @@ TARGET = TestSimpleQtLoggerGui
 
 TEMPLATE = app
 
+QMAKE_CXXFLAGS_DEBUG += -Wextra
+#QMAKE_CXXFLAGS_DEBUG += -std=c++11
+QMAKE_CXXFLAGS_DEBUG += -pedantic-errors -Wc++11-long-long
+
 INCLUDEPATH += ../..
 
 SOURCES += main.cpp \
