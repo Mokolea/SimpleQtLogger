@@ -21,6 +21,7 @@ int main(int argc, char *argv[])
   SQTL_LOG_ENABLE_INFO = true;
   SQTL_LOG_ENABLE_DEBUG = false;
   SQTL_LOG_ENABLE_FUNCTION = true;
+  SQTL_LOG_ENABLE_FUNCTION_STACK_TRACE = true;
 
   // start and initialize the main widget
   Dialog w(0);
