@@ -115,6 +115,9 @@ extern bool SQTL_LOG_ENABLE_INFO;       /* Log-level: true: enable, false: disab
 extern bool SQTL_LOG_ENABLE_DEBUG;      /* Log-level: true: enable, false: disable, default: false; just for step-by-step testing */
 extern bool SQTL_LOG_ENABLE_FUNCTION;   /* Log-level: true: enable, false: disable, default: false; stack-trace */
 
+/* Log-function stack-trace */
+extern bool SQTL_LOG_ENABLE_FUNCTION_STACK_TRACE;   /* Log-function stack-trace: true: enable, false: disable, default: true */
+
 /* Use these macros (thread-safe) to have function-, filename and linenumber set correct */
 #define L_FATAL(text)   do { if(ENABLED_SQTL_LOG_FATAL && SQTL_LOG_ENABLE_FATAL) SimpleQtLogger::getInstance()->log(text, SQTL_LOG_FATAL, __FUNCTION__, __FILE__, __LINE__); } while(0)
 #define L_ERROR(text)   do { if(ENABLED_SQTL_LOG_ERROR && SQTL_LOG_ENABLE_ERROR) SimpleQtLogger::getInstance()->log(text, SQTL_LOG_ERROR, __FUNCTION__, __FILE__, __LINE__); } while(0)

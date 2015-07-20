@@ -27,6 +27,9 @@ bool SQTL_LOG_ENABLE_INFO = true;
 bool SQTL_LOG_ENABLE_DEBUG = false;
 bool SQTL_LOG_ENABLE_FUNCTION = false;
 
+/* Log-function stack-trace */
+bool SQTL_LOG_ENABLE_FUNCTION_STACK_TRACE = true;
+
 // -------------------------------------------------------------------------------------------------
 
 SinkFileLog::SinkFileLog(QObject *parent)
@@ -101,7 +104,7 @@ void SinkFileLog::slotLog_File(const QString& ts, const QString& tid, const QStr
     // stream (append) to log file
     if(_logFile && _logFile->isOpen()) {
       QTextStream out(_logFile);
-      out << QString(_logFormatInt).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[level])).replace("<TEXT>", text.isEmpty() ? "?" : text.trimmed()) << '\n';
+      out << QString(_logFormatInt).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[level])).replace("<TEXT>", text.isEmpty() ? "-" : text.trimmed()) << '\n';
       _logFileActivity = true;
     }
     return;
@@ -110,7 +113,7 @@ void SinkFileLog::slotLog_File(const QString& ts, const QString& tid, const QStr
   // stream (append) to log file
   if(_logFile && _logFile->isOpen()) {
     QTextStream out(_logFile);
-    out << QString(_logFormat).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[level])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? "?" : text.trimmed()) << '\n';
+    out << QString(_logFormat).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[level])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? "-" : text.trimmed()) << '\n';
     _logFileActivity = true;
   }
 }
@@ -338,6 +341,11 @@ void SimpleQtLogger::logFuncBegin(const QString& text, const QString& functionNa
 
   // thread-safe
 
+  if(!SQTL_LOG_ENABLE_FUNCTION_STACK_TRACE) {
+    log(QString("%1").arg(text), SQTL_LOG_FUNCTION, functionName, fileName.toStdString().c_str(), lineNumber);
+    return;
+  }
+
   unsigned int stackDepthThread;
   {
     QMutexLocker locker(&_mutex);
@@ -363,6 +371,10 @@ void SimpleQtLogger::logFuncEnd(const QString& text, const QString& functionName
   // qDebug("SimpleQtLogger::logFuncEnd");
 
   // thread-safe
+
+  if(!SQTL_LOG_ENABLE_FUNCTION_STACK_TRACE) {
+    return;
+  }
 
   unsigned int stackDepthThread;
   {
@@ -395,11 +407,11 @@ void SimpleQtLogger::slotLog_qDebug(const QString& ts, const QString& tid, const
   }
 
   if(functionName.isEmpty()) {
-    qDebug("%s", QString(_logFormatInt).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[level])).replace("<TEXT>", text.isEmpty() ? "?" : text.trimmed()).toStdString().c_str());
+    qDebug("%s", QString(_logFormatInt).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[level])).replace("<TEXT>", text.isEmpty() ? "-" : text.trimmed()).toStdString().c_str());
     return;
   }
 
-  qDebug("%s", QString(_logFormat).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[level])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? "?" : text.trimmed()).toStdString().c_str());
+  qDebug("%s", QString(_logFormat).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[level])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? "-" : text.trimmed()).toStdString().c_str());
 }
 
 // -------------------------------------------------------------------------------------------------
