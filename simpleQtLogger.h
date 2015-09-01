@@ -118,29 +118,49 @@ extern bool SQTL_LOG_ENABLE_FUNCTION;   /* Log-level: true: enable, false: disab
 /* Log-function stack-trace */
 extern bool SQTL_LOG_ENABLE_FUNCTION_STACK_TRACE;   /* Log-function stack-trace: true: enable, false: disable, default: true */
 
+/* Microsoft Visual C++ compiler specific */
+#if defined(_MSC_VER)
+#define SQTL_MSVC_WARNING_SUPPRESS \
+  __pragma(warning(push)) \
+  __pragma(warning(disable:4127))   /* suppress "do { ... } while(0)" warning */
+#define SQTL_MSVC_WARNING_RESTORE \
+  __pragma(warning(pop))
+#else
+#define SQTL_MSVC_WARNING_SUPPRESS    /* nop */
+#define SQTL_MSVC_WARNING_RESTORE     /* nop */
+#endif
+
+/* Body */
+#define SQTL_L_BODY(text,levelEnabledHard,levelEnabledSoft,level) \
+  SQTL_MSVC_WARNING_SUPPRESS \
+  do { if(levelEnabledHard && levelEnabledSoft) SimpleQtLogger::getInstance()->log(text, level, __FUNCTION__, __FILE__, __LINE__); } while(0) \
+  SQTL_MSVC_WARNING_RESTORE
+
 /* Use these macros (thread-safe) to have function-, filename and linenumber set correct */
-#define L_FATAL(text)   do { if(ENABLED_SQTL_LOG_FATAL && SQTL_LOG_ENABLE_FATAL) SimpleQtLogger::getInstance()->log(text, SQTL_LOG_FATAL, __FUNCTION__, __FILE__, __LINE__); } while(0)
-#define L_ERROR(text)   do { if(ENABLED_SQTL_LOG_ERROR && SQTL_LOG_ENABLE_ERROR) SimpleQtLogger::getInstance()->log(text, SQTL_LOG_ERROR, __FUNCTION__, __FILE__, __LINE__); } while(0)
-#define L_WARN(text)    do { if(ENABLED_SQTL_LOG_WARNING && SQTL_LOG_ENABLE_WARNING) SimpleQtLogger::getInstance()->log(text, SQTL_LOG_WARNING, __FUNCTION__, __FILE__, __LINE__); } while(0)
-#define L_INFO(text)    do { if(ENABLED_SQTL_LOG_INFO && SQTL_LOG_ENABLE_INFO) SimpleQtLogger::getInstance()->log(text, SQTL_LOG_INFO, __FUNCTION__, __FILE__, __LINE__); } while(0)
-#define L_DEBUG(text)   do { if(ENABLED_SQTL_LOG_DEBUG && SQTL_LOG_ENABLE_DEBUG) SimpleQtLogger::getInstance()->log(text, SQTL_LOG_DEBUG, __FUNCTION__, __FILE__, __LINE__); } while(0)
+#define L_FATAL(text)   SQTL_L_BODY(text,ENABLED_SQTL_LOG_FATAL,SQTL_LOG_ENABLE_FATAL,SQTL_LOG_FATAL)
+#define L_ERROR(text)   SQTL_L_BODY(text,ENABLED_SQTL_LOG_ERROR,SQTL_LOG_ENABLE_ERROR,SQTL_LOG_ERROR)
+#define L_WARN(text)    SQTL_L_BODY(text,ENABLED_SQTL_LOG_WARNING,SQTL_LOG_ENABLE_WARNING,SQTL_LOG_WARNING)
+#define L_INFO(text)    SQTL_L_BODY(text,ENABLED_SQTL_LOG_INFO,SQTL_LOG_ENABLE_INFO,SQTL_LOG_INFO)
+#define L_DEBUG(text)   SQTL_L_BODY(text,ENABLED_SQTL_LOG_DEBUG,SQTL_LOG_ENABLE_DEBUG,SQTL_LOG_DEBUG)
 #if ENABLED_SQTL_LOG_FUNCTION > 0
 #define L_FUNC(text)    SimpleQtLoggerFunc _simpleQtLoggerFunc_(text, __FUNCTION__, __FILE__, __LINE__)
 #else
 #define L_FUNC(text)    /* nop */
 #endif
 
+/* Body */
+#define SQTL_LS_BODY(text,levelEnabledHard,levelEnabledSoft,level) \
+  SQTL_MSVC_WARNING_SUPPRESS \
+  do { if(levelEnabledHard && levelEnabledSoft) { QString s; QTextStream ts(&s); ts << text; \
+    SimpleQtLogger::getInstance()->log(s, level, __FUNCTION__, __FILE__, __LINE__); } } while(0) \
+  SQTL_MSVC_WARNING_RESTORE
+
 /* Support use of streaming operators */
-#define LS_FATAL(text)   do { if(ENABLED_SQTL_LOG_FATAL && SQTL_LOG_ENABLE_FATAL) { QString s; QTextStream ts(&s); ts << text; \
-  SimpleQtLogger::getInstance()->log(s, SQTL_LOG_FATAL, __FUNCTION__, __FILE__, __LINE__); } } while(0)
-#define LS_ERROR(text)   do { if(ENABLED_SQTL_LOG_ERROR && SQTL_LOG_ENABLE_ERROR) { QString s; QTextStream ts(&s); ts << text; \
-  SimpleQtLogger::getInstance()->log(s, SQTL_LOG_ERROR, __FUNCTION__, __FILE__, __LINE__); } } while(0)
-#define LS_WARN(text)    do { if(ENABLED_SQTL_LOG_WARN && SQTL_LOG_ENABLE_WARN) { QString s; QTextStream ts(&s); ts << text; \
-  SimpleQtLogger::getInstance()->log(s, SQTL_LOG_WARN, __FUNCTION__, __FILE__, __LINE__); } } while(0)
-#define LS_INFO(text)    do { if(ENABLED_SQTL_LOG_INFO && SQTL_LOG_ENABLE_INFO) { QString s; QTextStream ts(&s); ts << text; \
-  SimpleQtLogger::getInstance()->log(s, SQTL_LOG_INFO, __FUNCTION__, __FILE__, __LINE__); } } while(0)
-#define LS_DEBUG(text)   do { if(ENABLED_SQTL_LOG_DEBUG && SQTL_LOG_ENABLE_DEBUG) { QString s; QTextStream ts(&s); ts << text; \
-  SimpleQtLogger::getInstance()->log(s, SQTL_LOG_DEBUG, __FUNCTION__, __FILE__, __LINE__); } } while(0)
+#define LS_FATAL(text)   SQTL_LS_BODY(text,ENABLED_SQTL_LOG_FATAL,SQTL_LOG_ENABLE_FATAL,SQTL_LOG_FATAL)
+#define LS_ERROR(text)   SQTL_LS_BODY(text,ENABLED_SQTL_LOG_ERROR,SQTL_LOG_ENABLE_ERROR,SQTL_LOG_ERROR)
+#define LS_WARN(text)    SQTL_LS_BODY(text,ENABLED_SQTL_LOG_WARNING,SQTL_LOG_ENABLE_WARNING,SQTL_LOG_WARNING)
+#define LS_INFO(text)    SQTL_LS_BODY(text,ENABLED_SQTL_LOG_INFO,SQTL_LOG_ENABLE_INFO,SQTL_LOG_INFO)
+#define LS_DEBUG(text)   SQTL_LS_BODY(text,ENABLED_SQTL_LOG_DEBUG,SQTL_LOG_ENABLE_DEBUG,SQTL_LOG_DEBUG)
 #if ENABLED_SQTL_LOG_FUNCTION > 0
 #define LS_FUNC(text)    QString _s_; { QTextStream ts(&_s_); ts << text; } SimpleQtLoggerFunc _simpleQtLoggerFunc_(_s_, __FUNCTION__, __FILE__, __LINE__)
 #else
