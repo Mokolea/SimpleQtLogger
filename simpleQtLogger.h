@@ -126,11 +126,11 @@ extern bool SQTL_LOG_ENABLE_FUNCTION_STACK_TRACE;   /* Log-function stack-trace:
 #define SQTL_MSVC_WARNING_RESTORE \
   __pragma(warning(pop))
 #else
-#define SQTL_MSVC_WARNING_SUPPRESS    /* nop */
-#define SQTL_MSVC_WARNING_RESTORE     /* nop */
+#define SQTL_MSVC_WARNING_SUPPRESS   /* nop */
+#define SQTL_MSVC_WARNING_RESTORE    /* nop */
 #endif
 
-/* Body */
+/* Macro body */
 #define SQTL_L_BODY(text,levelEnabledHard,levelEnabledSoft,level) \
   SQTL_MSVC_WARNING_SUPPRESS \
   do { if(levelEnabledHard && levelEnabledSoft) SimpleQtLogger::getInstance()->log(text, level, __FUNCTION__, __FILE__, __LINE__); } while(0) \
@@ -148,7 +148,7 @@ extern bool SQTL_LOG_ENABLE_FUNCTION_STACK_TRACE;   /* Log-function stack-trace:
 #define L_FUNC(text)    /* nop */
 #endif
 
-/* Body */
+/* Macro body */
 #define SQTL_LS_BODY(text,levelEnabledHard,levelEnabledSoft,level) \
   SQTL_MSVC_WARNING_SUPPRESS \
   do { if(levelEnabledHard && levelEnabledSoft) { QString s; QTextStream ts(&s); ts << text; \
