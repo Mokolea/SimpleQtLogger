@@ -41,6 +41,7 @@ void Task::init()
 
   L_INFO(QString()); // --> "?"
   L_INFO(" \n Trimmed \n\n"); // --> whitespace removed from start and end
+  L_INFO("UTF-8 Unicode text: äöü àéè");
 
   QString formattedOutput1 = "JSON output 1:\n"
     "{\n"
