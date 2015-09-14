@@ -39,12 +39,12 @@ SinkFileLog::SinkFileLog(QObject *parent)
   , _logFile(0)
   , _logFileActivity(false)
 {
-  qDebug("SinkFileLog::SinkFileLog"); // TODO comment this
+  // qDebug("SinkFileLog::SinkFileLog");
 }
 
 SinkFileLog::~SinkFileLog()
 {
-  qDebug("SinkFileLog::~SinkFileLog"); // TODO comment this
+  // qDebug("SinkFileLog::~SinkFileLog");
 
   // check close log file
   if(_logFile) {
@@ -58,7 +58,7 @@ SinkFileLog::~SinkFileLog()
 
 void SinkFileLog::setLogFormat(const QString& logFormat, const QString& logFormatInt)
 {
-  qDebug("SinkFileLog::setLogFormat");
+  // qDebug("SinkFileLog::setLogFormat");
 
   _logFormat = logFormat;
   _logFormatInt = logFormatInt;
@@ -66,7 +66,7 @@ void SinkFileLog::setLogFormat(const QString& logFormat, const QString& logForma
 
 bool SinkFileLog::setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber)
 {
-  qDebug("SinkFileLog::setLogFileName");
+  // qDebug("SinkFileLog::setLogFileName");
 
   // check valid log-file name ending
   if(logFileName.right(4) != ".log") {
@@ -291,7 +291,7 @@ SimpleQtLogger::~SimpleQtLogger()
 
 void SimpleQtLogger::setLogFormat(const QString& logFormat, const QString& logFormatInt)
 {
-  qDebug("SimpleQtLogger::setLogFormat");
+  // qDebug("SimpleQtLogger::setLogFormat");
 
   _logFormat = logFormat;
   _logFormatInt = logFormatInt;
@@ -303,7 +303,7 @@ void SimpleQtLogger::setLogFormat(const QString& logFormat, const QString& logFo
 
 bool SimpleQtLogger::setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber)
 {
-  qDebug("SimpleQtLogger::setLogFileName");
+  // qDebug("SimpleQtLogger::setLogFileName");
 
   if(_sinkFileLog && _sinkFileLog->setLogFileName(logFileName, logFileRotationSize, logFileMaxNumber)) {
     log("Start file-log", SQTL_LOG_INFO, "", "", 0);
