@@ -12,6 +12,7 @@
    - thread-safe use of log-macros
    - single source-file
    - specify log-format
+   - log-file encoding: utf-8
    - restriction: log-file name has to end with: ".log"
 
   Usage:

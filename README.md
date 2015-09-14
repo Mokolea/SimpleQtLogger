@@ -11,6 +11,7 @@ Facts:
  - thread-safe use of log-macros
  - single source-file
  - specify log-format
+ - log-file encoding: utf-8
 
 **TODO...**
 

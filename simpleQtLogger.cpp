@@ -109,6 +109,7 @@ void SinkFileLog::slotLog_File(const QString& ts, const QString& tid, const QStr
     // stream (append) to log file
     if(_logFile && _logFile->isOpen()) {
       QTextStream out(_logFile);
+      out.setCodec("UTF-8");
       out << QString(_logFormatInt).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[level])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()) << '\n';
       _logFileActivity = true;
     }
@@ -118,6 +119,7 @@ void SinkFileLog::slotLog_File(const QString& ts, const QString& tid, const QStr
   // stream (append) to log file
   if(_logFile && _logFile->isOpen()) {
     QTextStream out(_logFile);
+    out.setCodec("UTF-8");
     out << QString(_logFormat).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[level])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()) << '\n';
     _logFileActivity = true;
   }
