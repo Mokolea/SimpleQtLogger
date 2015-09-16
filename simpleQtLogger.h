@@ -3,17 +3,22 @@
 
   Mario Ban, 05.2015
 
+  Design goal (simple):
+   - single source-file
+   - no configuration-file
+
   Facts:
    - supported sinks:
       - rolling file appender
       - qDebug
-   - no configuration file
    - log-levels, function-log (stack-trace)
    - thread-safe use of log-macros
-   - single source-file
    - specify log-format
    - log-file encoding: utf-8
-   - restriction: log-file name has to end with: ".log"
+
+  Restrictions:
+   - log-file name has to end with: ".log"
+   - just one instance per supported sink
 
   Usage:
    - moc has to be applied

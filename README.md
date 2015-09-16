@@ -2,14 +2,16 @@
 
 Simple rolling file logger for Qt.
 
+Design goal (simple):
+ - single source-file
+ - no configuration-file
+
 Facts:
  - supported sinks:
     - rolling file appender
     - qDebug
- - no configuration file
  - log-levels, function-log (stack-trace)
  - thread-safe use of log-macros
- - single source-file
  - specify log-format
  - log-file encoding: utf-8
 
