@@ -175,8 +175,8 @@ class SinkFileLog : public QObject
   Q_OBJECT
 
 public:
-  SinkFileLog(QObject *parent);
-  ~SinkFileLog();
+  explicit SinkFileLog(QObject *parent);
+  virtual ~SinkFileLog();
 
   void setLogFormat(const QString& logFormat, const QString& logFormatInt);
   bool setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
@@ -212,7 +212,7 @@ class SimpleQtLogger : public QObject
 public:
   static SimpleQtLogger* createInstance(QObject *parent);
   static SimpleQtLogger* getInstance(); // may return NULL pointer!
-  ~SimpleQtLogger();
+  virtual ~SimpleQtLogger();
 
   void setLogFormat(const QString& logFormat = DEFAULT_LOG_FORMAT, const QString& logFormatInt = DEFAULT_LOG_FORMAT_INTERNAL);
   bool setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
@@ -234,7 +234,7 @@ private slots:
   void slotLog_qDebug(const QString& ts, const QString& tid, const QString& text, SQTL_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber);
 
 private:
-  SimpleQtLogger(QObject *parent);
+  explicit SimpleQtLogger(QObject *parent);
   static SimpleQtLogger* instance;
   // implicitly implemented, not to be used
   SimpleQtLogger(const SimpleQtLogger&);
@@ -257,7 +257,7 @@ class SimpleQtLoggerFunc
 {
 public:
   SimpleQtLoggerFunc(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber);
-  ~SimpleQtLoggerFunc();
+  virtual ~SimpleQtLoggerFunc();
 
 private:
   // implicitly implemented, not to be used
