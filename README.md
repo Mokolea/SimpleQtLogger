@@ -9,6 +9,7 @@ Design goal (simple):
 Facts:
  - supported sinks:
     - rolling file appender
+    - console, colored (ANSI escape codes)
     - qDebug
  - log-levels, function-log (stack-trace)
  - thread-safe use of log-macros

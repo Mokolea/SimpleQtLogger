@@ -10,6 +10,7 @@
   Facts:
    - supported sinks:
       - rolling file appender
+      - console, colored (ANSI escape codes)
       - qDebug
    - log-levels, function-log (stack-trace)
    - thread-safe use of log-macros
@@ -79,8 +80,9 @@
 #include <QMap>
 
 /* Log-sinks (hard; adjust at pre-processor, compile-time) */
-#define ENABLED_SQTL_LOG_SINK_FILE     1   /* 1: enable, 0: disable; log to file (rolling) */
-#define ENABLED_SQTL_LOG_SINK_QDEBUG   0   /* 1: enable, 0: disable; log using qDebug; messages are sent to the console, if it is a console application */
+#define ENABLED_SQTL_LOG_SINK_FILE      1   /* 1: enable, 0: disable; log to file (rolling) */
+#define ENABLED_SQTL_LOG_SINK_CONSOLE   1   /* 1: enable, 0: disable; log to console (colored log-levels) */
+#define ENABLED_SQTL_LOG_SINK_QDEBUG    0   /* 1: enable, 0: disable; log using qDebug; messages are sent to the console, if it is a console application */
 
 /* Log-level (hard; adjust at pre-processor, compile-time) */
 #define ENABLED_SQTL_LOG_FATAL      1   /* 1: enable, 0: disable */
@@ -110,8 +112,9 @@ SQTL_LOG_Level;
 static const char LOG_LEVEL_CHAR[6] = {'!', 'E', 'W', 'I', 'D', 'F'}; /* MUST correspond to enum SQTL_LOG_Level, unchecked array!!! */
 
 /* Log-sinks (adjust at run-time) */
-extern bool SQTL_LOG_ENABLE_SINK_FILE;     /* Log-sink: true: enable, false: disable, default: true */
-extern bool SQTL_LOG_ENABLE_SINK_QDEBUG;   /* Log-sink: true: enable, false: disable, default: false */
+extern bool SQTL_LOG_ENABLE_SINK_FILE;      /* Log-sink: true: enable, false: disable, default: true */
+extern bool SQTL_LOG_ENABLE_SINK_CONSOLE;   /* Log-sink: true: enable, false: disable, default: false */
+extern bool SQTL_LOG_ENABLE_SINK_QDEBUG;    /* Log-sink: true: enable, false: disable, default: false */
 
 /* Log-level (adjust at run-time) */
 extern bool SQTL_LOG_ENABLE_FATAL;      /* Log-level: true: enable, false: disable, default: true */
@@ -123,6 +126,9 @@ extern bool SQTL_LOG_ENABLE_FUNCTION;   /* Log-level: true: enable, false: disab
 
 /* Log-function stack-trace */
 extern bool SQTL_LOG_ENABLE_FUNCTION_STACK_TRACE;   /* Log-function stack-trace: true: enable, false: disable, default: true */
+
+/* Console color */
+extern bool SQTL_LOG_ENABLE_CONSOLE_COLOR;   /* Color for sink console: true: enable, false: disable, default: true */
 
 /* Microsoft Visual C++ compiler specific */
 #if defined(_MSC_VER)
@@ -236,6 +242,7 @@ signals:
   void signalLog(const QString& ts, const QString& tid, const QString& text, SQTL_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber);
 
 private slots:
+  void slotLog_console(const QString& ts, const QString& tid, const QString& text, SQTL_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber);
   void slotLog_qDebug(const QString& ts, const QString& tid, const QString& text, SQTL_LOG_Level level, const QString& functionName, const QString& fileName, unsigned int lineNumber);
 
 private:
