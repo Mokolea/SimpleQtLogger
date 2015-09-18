@@ -423,21 +423,21 @@ void SimpleQtLogger::slotLog_console(const QString& ts, const QString& tid, cons
   QTextStream out(stdout);
   // out.setCodec("UTF-8");
   if(SQTL_LOG_ENABLE_CONSOLE_COLOR) {
-    // change some foreground (background) colors, http://en.wikipedia.org/wiki/ANSI_escape_code
+    // change some foreground (background) colors
     if(level == SQTL_LOG_FATAL) {
-      out << "\033[40;1;33m"; /* foreground yellow */
+      out << CONSOLE_COLOR_ANSI_ESC_CODES_FATAL;
     }
     else if(level == SQTL_LOG_ERROR) {
-      out << "\033[40;1;31m"; /* foreground dark red */
+      out << CONSOLE_COLOR_ANSI_ESC_CODES_ERROR;
     }
     else if(level == SQTL_LOG_WARNING) {
-      out << "\033[40;1;36m"; /* foreground dark cyan */
+      out << CONSOLE_COLOR_ANSI_ESC_CODES_WARNING;
     }
     else if(level == SQTL_LOG_DEBUG) {
-      out << "\033[40;35m"; /* foreground magenta */
+      out << CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG;
     }
     else if(level == SQTL_LOG_FUNCTION) {
-      out << "\033[32m"; /* foreground green */
+      out << CONSOLE_COLOR_ANSI_ESC_CODES_FUNCTION;
     }
   }
   if(functionName.isEmpty()) {
@@ -447,7 +447,9 @@ void SimpleQtLogger::slotLog_console(const QString& ts, const QString& tid, cons
     out << QString(_logFormat).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[level])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
   }
   if(SQTL_LOG_ENABLE_CONSOLE_COLOR) {
-    out << "\033[0m"; /* normal */
+    if(level != SQTL_LOG_INFO) {
+      out << CONSOLE_COLOR_ANSI_ESC_CODES_RESET;
+    }
   }
   out << '\n';
 }
