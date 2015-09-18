@@ -99,12 +99,12 @@
 #define DEFAULT_LOG_FORMAT_INTERNAL   "<TS> [<TID>] [<LL>] <TEXT>"
 
 // ANSI escape codes to set foreground (background) colors, http://en.wikipedia.org/wiki/ANSI_escape_code
-#define CONSOLE_COLOR_ANSI_ESC_CODES_FATAL   "\033[40;1;33m"   /* foreground yellow */
-#define CONSOLE_COLOR_ANSI_ESC_CODES_ERROR   "\033[40;1;31m"   /* foreground dark red */
-#define CONSOLE_COLOR_ANSI_ESC_CODES_WARNING   "\033[40;1;36m"   /* foreground dark cyan */
-#define CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG   "\033[40;35m"   /* foreground magenta */
-#define CONSOLE_COLOR_ANSI_ESC_CODES_FUNCTION   "\033[32m"   /* foreground green */
-#define CONSOLE_COLOR_ANSI_ESC_CODES_RESET   "\033[0m"   /* normal */
+#define CONSOLE_COLOR_ANSI_ESC_CODES_FATAL      "\033[40;1;33m"   /* foreground yellow */
+#define CONSOLE_COLOR_ANSI_ESC_CODES_ERROR      "\033[40;1;31m"   /* foreground dark red */
+#define CONSOLE_COLOR_ANSI_ESC_CODES_WARNING    "\033[40;1;36m"   /* foreground dark cyan */
+#define CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG      "\033[40;35m"     /* foreground magenta */
+#define CONSOLE_COLOR_ANSI_ESC_CODES_FUNCTION   "\033[32m"        /* foreground green */
+#define CONSOLE_COLOR_ANSI_ESC_CODES_RESET      "\033[0m"         /* normal */
 
 /* Log-level */
 typedef enum {
@@ -213,8 +213,8 @@ private:
   void checkLogFileRolling();
 
   QString _logFileName;
-  unsigned int _logFileRotationSize; // initiate log-file rolling
-  unsigned int _logFileMaxNumber; // max number of rolling log-file history
+  unsigned int _logFileRotationSize; // [bytes] initiate log-file rolling
+  unsigned int _logFileMaxNumber; // max number of rolling log-file history, range 1..99
   QString _logFormat;
   QString _logFormatInt;
 
