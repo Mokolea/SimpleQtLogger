@@ -1,6 +1,6 @@
 # SimpleQtLogger
 
-Simple rolling file logger for Qt.
+Simple rolling file logger for C++ applications using the [Qt Framework](http://doc.qt.io).
 
 Design goal (simple):
  - single source-file
