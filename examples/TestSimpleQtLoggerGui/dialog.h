@@ -3,6 +3,8 @@
 
   Mario Ban, 06.2015
 
+  GNU Lesser General Public License v2.1
+  Copyright (C) 2015 Mario Ban
 */
 
 #ifndef _DIALOG_H

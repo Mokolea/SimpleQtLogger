@@ -9,6 +9,6 @@ Test logger with console-mode app
 Test logger with gui (dialog-widget) app
 ![screen-shot](https://raw.githubusercontent.com/Mokolea/SimpleQtLogger/master/examples/TestSimpleQtLoggerGui_ScreenShot.png)
 
-*GNU General Public License v2.0*
+*GNU Lesser General Public License v2.1*
 
 -- Mario

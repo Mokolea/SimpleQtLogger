@@ -3,7 +3,7 @@
 
   Mario Ban, 05.2015
 
-  GNU General Public License v2.0
+  GNU Lesser General Public License v2.1
   Copyright (C) 2015 Mario Ban
 */
 

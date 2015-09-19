@@ -94,6 +94,6 @@ Marios-iMac:Qt mario$ tail -Fn100 testSimpleQtLogger.log
 Marios-iMac:Qt mario$
 ```
 
-*GNU General Public License v2.0*
+*GNU Lesser General Public License v2.1*
 
 -- Mario
