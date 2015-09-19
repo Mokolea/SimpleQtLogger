@@ -42,6 +42,6 @@ void Dialog::on_pushButtonQuit_clicked()
 void Dialog::eventInfo(const QString& text)
 {
   // L_FUNC("");
-  ui->textBrowserLog->append(text);
+  ui->textBrowserLog->append(text.toHtmlEscaped());
   L_INFO(text);
 }
