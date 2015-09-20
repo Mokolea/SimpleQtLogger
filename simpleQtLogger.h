@@ -3,7 +3,8 @@
 
   Mario Ban, 05.2015
 
-  Design goal (simple):
+  Design goals - simple:
+   - straightforward usage
    - single source-file
    - no configuration-file
 
