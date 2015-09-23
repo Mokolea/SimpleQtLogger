@@ -54,6 +54,7 @@
    - trimming (removing of whitespace) selectable, at least for at the start of log-message
    - provide to add/remove user defined sinks
    - set (enable/disable) log-levels per sink
+   - optimize function-log macro to not create a stack-object according to SQTL_LOG_ENABLE_FUNCTION_STACK_TRACE
    - enable pedantic-errors, check for no compiler warnings, use e.g.: -Wall -Wextra -Werror -pedantic-errors -Wwrite-strings
    - maybe allow message-buffering, processing on idle-time
    - maybe flush periodically on idle-time
