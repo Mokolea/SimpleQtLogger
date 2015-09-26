@@ -64,6 +64,9 @@
   Done:
    - add different set of log macros to compose messages using stream operator
 
+  Test Travis CI:
+   - create a .travis.yml
+
   Tested using:
    - Qt 5.4.2 (Community Open Source), Clang 6.0 (Apple) 64 bit
    - Qt 4.8.6 Debian 8, gcc version 4.9.2 (Debian 4.9.2-10), 64 bit
