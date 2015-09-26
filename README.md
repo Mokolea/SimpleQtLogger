@@ -17,6 +17,9 @@ Facts:
  - specify log-format
  - log-file encoding: utf-8
 
+Test Travis CI:
+ - create a .travis.yml
+
 **TODO...**
 
 ## Log-format
