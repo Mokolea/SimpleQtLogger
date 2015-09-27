@@ -272,7 +272,7 @@ private:
   QString _logFormat;
   QString _logFormatInt;
 
-  //SinkFileLog* _sinkFileLog;
+  SinkFileLog* _sinkFileLog;
 
   QMutex _mutex;
   QMap<unsigned long int, unsigned int> _stackDepth; // current stack-depth per thread-id for function-log
