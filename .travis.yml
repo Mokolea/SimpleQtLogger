@@ -13,23 +13,36 @@ matrix:
     - os: linux
       compiler: clang
 
+# use container-based infrastructure
+# sudo: false
+
+# addons:
+#   apt:
+#     packages:
+#       # qt4
+#       - qt4-dev-tools
+#       - qt4-qmake
+#       - libqt4-dev
+
 before_install:
-  - echo $LANG
-  - echo $LC_ALL
-  - clang --version
-  - gcc --version
+  # qt5
   #- sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
   #- sudo apt-get update -qq
   #- sudo apt-get install -y qtdeclarative5-dev
+  # qt4
   - sudo apt-get update -qq
   - sudo apt-get install -y qt4-dev-tools qt4-qmake libqt4-dev
 
 script:
+  - echo $LANG
+  - echo $LC_ALL
+  - clang --version
+  - gcc --version
   #- scons
-  #- qmake -qt=qt5 -v
-  - qmake -v
   - cd examples/TestSimpleQtLogger
+  #- qmake -qt=qt5 -v
   #- qmake -qt=qt5
+  - qmake -v
   - qmake
   - make
   - ./TestSimpleQtLogger
