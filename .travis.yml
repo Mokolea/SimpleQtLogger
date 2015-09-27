@@ -27,6 +27,7 @@ script:
   #- qmake -qt=qt5
   - qmake
   - make
+  - ./TestSimpleQtLogger
 
 branches:
   only:
