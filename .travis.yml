@@ -8,6 +8,11 @@ compiler:
   - clang
   - gcc
 
+matrix:
+  exclude:
+    - os: linux
+      compiler: clang
+
 before_install:
   - echo $LANG
   - echo $LC_ALL
