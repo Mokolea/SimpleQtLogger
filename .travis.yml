@@ -1,0 +1,36 @@
+language: cpp
+
+os:
+  - linux
+  #- osx
+
+compiler:
+  #- clang
+  - gcc
+
+before_install:
+  - echo $LANG
+  - echo $LC_ALL
+  #- sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
+  #- sudo apt-get update -qq
+  #- sudo apt-get install -y qtdeclarative5-dev
+  - sudo apt-get update -qq
+  - sudo apt-get install -y qt4-dev-tools qt4-qmake libqt4-dev
+
+script:
+  #- scons
+  #- qmake -qt=qt5 -v
+  - qmake -v
+  - cd examples/TestSimpleQtLogger
+  #- qmake -qt=qt5
+  - qmake
+  - make
+
+branches:
+  only:
+    - master
+
+notifications:
+  email:
+    on_success: change
+    on_failure: always
