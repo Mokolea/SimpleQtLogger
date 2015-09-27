@@ -3,7 +3,6 @@
 Simple rolling file logger for C++ applications using the [Qt Framework](http://doc.qt.io).
 
 [![Build Status](https://travis-ci.org/Mokolea/SimpleQtLogger.svg)](https://travis-ci.org/Mokolea/SimpleQtLogger)
-(Qt 4.8.1 x86_64-linux-gnu, gcc Ubuntu/Linaro 4.6.3-1ubuntu5)
 
 Design goals - simple:
  - straightforward usage
