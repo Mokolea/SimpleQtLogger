@@ -2,7 +2,7 @@
 
 **TODO...**
 
-## TestSimpleQtLogger
+## TestSimpleQtLogger [![Build Status](https://travis-ci.org/Mokolea/SimpleQtLogger.svg)](https://travis-ci.org/Mokolea/SimpleQtLogger)
 Test logger with console-mode app
 
 ## TestSimpleQtLoggerGui
