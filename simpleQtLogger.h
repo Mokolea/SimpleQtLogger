@@ -51,6 +51,8 @@
    - <LINE> --> Line-number
 
   TODO:
+   - have multiple log-files (sink rolling file appender) with different log-levels, rotation-size, ...
+   - think about environment variable to specify log-file directory, os independent solution
    - trimming (removing of whitespace) selectable, at least for at the start of log-message
    - provide to add/remove user defined sinks
    - set (enable/disable) log-levels per sink
