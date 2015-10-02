@@ -46,6 +46,7 @@ script:
   - qmake
   - make
   - ./TestSimpleQtLogger
+  - ./TestSimpleQtLogger
 
 branches:
   only:
