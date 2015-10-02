@@ -146,6 +146,7 @@ struct SQTL_LOG_Level_enable {
   bool DEBUG;      /* Log-level: true: enable, false: disable, default: false; just for step-by-step testing */
   bool FUNCTION;   /* Log-level: true: enable, false: disable, default: false; stack-trace */
   SQTL_LOG_Level_enable();
+  bool enabled(SQTL_LOG_Level level) const;
 };
 extern SQTL_LOG_Level_enable SQTL_LOG_ENABLE;
 
@@ -215,6 +216,7 @@ public:
   virtual ~SinkFileLog();
 
   void setLogFormat(const QString& logFormat, const QString& logFormatInt);
+  void setLogLevel(const SQTL_LOG_Level_enable& logLevelEnable);
   bool setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
 
 private slots:
@@ -258,6 +260,11 @@ public:
   void setLogFormat_file(const QString& role, const QString& logFormat, const QString& logFormatInt);
   void setLogFormat_console(const QString& logFormat, const QString& logFormatInt);
   void setLogFormat_qDebug(const QString& logFormat, const QString& logFormatInt);
+
+  void setLogLevel_file(const SQTL_LOG_Level_enable& logLevelEnable); // main
+  void setLogLevel_file(const QString& role, const SQTL_LOG_Level_enable& logLevelEnable);
+  void setLogLevel_console(const SQTL_LOG_Level_enable& logLevelEnable);
+  void setLogLevel_qDebug(const SQTL_LOG_Level_enable& logLevelEnable);
 
   bool setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber); // main
   bool setLogFileName(const QString& role, const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);

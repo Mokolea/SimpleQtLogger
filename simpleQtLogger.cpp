@@ -32,6 +32,16 @@ SQTL_LOG_Level_enable::SQTL_LOG_Level_enable()
   DEBUG = false;
   FUNCTION = false;
 }
+bool SQTL_LOG_Level_enable::enabled(SQTL_LOG_Level level) const
+{
+  if(level == SQTL_LOG_FATAL) return FATAL;
+  if(level == SQTL_LOG_ERROR) return ERROR;
+  if(level == SQTL_LOG_WARNING) return WARNING;
+  if(level == SQTL_LOG_INFO) return INFO;
+  if(level == SQTL_LOG_DEBUG) return DEBUG;
+  if(level == SQTL_LOG_FUNCTION) return FUNCTION;
+  return false;
+}
 SQTL_LOG_Level_enable SQTL_LOG_ENABLE;
 
 /* Log-function stack-trace */
@@ -77,6 +87,13 @@ void SinkFileLog::setLogFormat(const QString& logFormat, const QString& logForma
   _logFormatInt = logFormatInt;
 }
 
+void SinkFileLog::setLogLevel(const SQTL_LOG_Level_enable& logLevelEnable)
+{
+  // qDebug("SinkFileLog::setLogLevel");
+
+  _logLevelEnable = logLevelEnable;
+}
+
 bool SinkFileLog::setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber)
 {
   // qDebug("SinkFileLog::setLogFileName");
@@ -110,6 +127,9 @@ void SinkFileLog::slotLog_File(const QString& ts, const QString& tid, const QStr
   // qDebug("SinkFileLog::slotLog_File");
 
   if(!SQTL_LOG_ENABLE_SINK_FILE) {
+    return;
+  }
+  if(!SQTL_LOG_ENABLE.enabled(level)) {
     return;
   }
 
@@ -347,6 +367,36 @@ void SimpleQtLogger::setLogFormat_qDebug(const QString& logFormat, const QString
   _logFormatInt_qDebug = logFormatInt;
 }
 
+void SimpleQtLogger::setLogLevel_file(const SQTL_LOG_Level_enable& logLevelEnable)
+{
+  // qDebug("SimpleQtLogger::setLogLevel_file");
+
+  setLogLevel_file("main", logLevelEnable);
+}
+
+void SimpleQtLogger::setLogLevel_file(const QString& role, const SQTL_LOG_Level_enable& logLevelEnable)
+{
+  // qDebug("SimpleQtLogger::setLogLevel_file");
+
+  if(_sinkFileLogMap.contains(role)) {
+    _sinkFileLogMap[role]->setLogLevel(logLevelEnable);
+  }
+}
+
+void SimpleQtLogger::setLogLevel_console(const SQTL_LOG_Level_enable& logLevelEnable)
+{
+  // qDebug("SimpleQtLogger::setLogLevel_console");
+
+  _logLevelEnable_console = logLevelEnable;
+}
+
+void SimpleQtLogger::setLogLevel_qDebug(const SQTL_LOG_Level_enable& logLevelEnable)
+{
+  // qDebug("SimpleQtLogger::setLogLevel_qDebug");
+
+  _logLevelEnable_qDebug = logLevelEnable;
+}
+
 bool SimpleQtLogger::setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber)
 {
   // qDebug("SimpleQtLogger::setLogFileName");
@@ -463,6 +513,9 @@ void SimpleQtLogger::slotLog_console(const QString& ts, const QString& tid, cons
   if(!SQTL_LOG_ENABLE_SINK_CONSOLE) {
     return;
   }
+  if(!SQTL_LOG_ENABLE.enabled(level)) {
+    return;
+  }
 
   QString textIsEmpty("?");
   if(level == SQTL_LOG_FUNCTION) {
@@ -508,6 +561,9 @@ void SimpleQtLogger::slotLog_qDebug(const QString& ts, const QString& tid, const
   // qDebug("SimpleQtLogger::slotLog_qDebug");
 
   if(!SQTL_LOG_ENABLE_SINK_QDEBUG) {
+    return;
+  }
+  if(!SQTL_LOG_ENABLE.enabled(level)) {
     return;
   }
 
