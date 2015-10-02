@@ -38,10 +38,13 @@ bool SQTL_LOG_ENABLE_CONSOLE_COLOR = true;
 
 // -------------------------------------------------------------------------------------------------
 
-SinkFileLog::SinkFileLog(QObject *parent)
+SinkFileLog::SinkFileLog(QObject *parent, const QString& role)
   : QObject(parent)
+  , _role(role)
   , _logFileRotationSize(0)
   , _logFileMaxNumber(0)
+  , _logFormat(DEFAULT_LOG_FORMAT)
+  , _logFormatInt(DEFAULT_LOG_FORMAT_INTERNAL)
   , _logFile(0)
   , _logFileActivity(false)
 {
@@ -76,7 +79,7 @@ bool SinkFileLog::setLogFileName(const QString& logFileName, unsigned int logFil
 
   // check valid log-file name ending
   if(logFileName.right(4) != ".log") {
-    qWarning() << "Name of log-file not ending with '.log'" << logFileName;
+    qWarning() << "Name of log-file not ending with '.log'" << logFileName << "role" << _role;
     return false;
   }
 
@@ -142,14 +145,14 @@ bool SinkFileLog::checkLogFileOpen()
   if(!_logFile->open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
     delete _logFile;
     _logFile = 0;
-    qWarning() << "Open log-file failed!" << _logFileName;
+    qWarning() << "Open log-file failed!" << _logFileName << "role" << _role;
   }
 
   if(!_logFile) {
     return false;
   }
 
-  qDebug() << "Current log-file:" << _logFileName;
+  qDebug() << "Current log-file:" << _logFileName << "role" << _role;
 
   QTimer::singleShot(CHECK_LOG_FILE_ACTIVITY_INTERVAL, this, SLOT(slotCheckLogFileActivity()));
 
@@ -172,7 +175,7 @@ void SinkFileLog::checkLogFileRolling()
     QTimer::singleShot(CHECK_LOG_FILE_ACTIVITY_INTERVAL, this, SLOT(slotCheckLogFileActivity()));
     return;
   }
-  slotLog_File(SimpleQtLogger::timeStamp(), SimpleQtLogger::threadId(), QString("Current log-file size=%1 (rotation-size=%2) --> rolling").arg(logFileSize).arg(_logFileRotationSize), SQTL_LOG_INFO, "", "", 0);
+  slotLog_File(SimpleQtLogger::timeStamp(), SimpleQtLogger::threadId(), QString("Current log-file '%1' size=%2 (rotation-size=%3) --> rolling").arg(_role).arg(logFileSize).arg(_logFileRotationSize), SQTL_LOG_INFO, "", "", 0);
 
   QTime timeRolling;
   timeRolling.start();
@@ -184,10 +187,10 @@ void SinkFileLog::checkLogFileRolling()
   logFileName.replace(".log", QString("_%1.log").arg(_logFileMaxNumber, 2, 10, QLatin1Char('0')));
   if(QFile::exists(logFileName)) {
     if(QFile::remove(logFileName)) {
-      qDebug() << "Removed" << logFileName;
+      qDebug() << "Removed" << logFileName << "role" << _role;
     }
     else {
-      qWarning() << "ERROR: Remove" << logFileName;
+      qWarning() << "ERROR: Remove" << logFileName << "role" << _role;
     }
   }
 
@@ -199,10 +202,10 @@ void SinkFileLog::checkLogFileRolling()
     logFileNameTo.replace(".log", QString("_%1.log").arg(i+1, 2, 10, QLatin1Char('0')));
     if(QFile::exists(logFileNameFrom)) {
       if(QFile::rename(logFileNameFrom, logFileNameTo)) {
-        qDebug() << "Moved" << logFileNameFrom << "to" << logFileNameTo;
+        qDebug() << "Moved" << logFileNameFrom << "to" << logFileNameTo << "role" << _role;
       }
       else {
-        qWarning() << "ERROR: Move" << logFileNameFrom << "to" << logFileNameTo;
+        qWarning() << "ERROR: Move" << logFileNameFrom << "to" << logFileNameTo << "role" << _role;
       }
     }
   }
@@ -214,16 +217,16 @@ void SinkFileLog::checkLogFileRolling()
   logFileNameTo.replace(".log", QString("_%1.log").arg(1, 2, 10, QLatin1Char('0')));
   if(QFile::exists(_logFileName)) {
     if(QFile::rename(_logFileName, logFileNameTo)) {
-      qDebug() << "Moved" << _logFileName << "to" << logFileNameTo;
+      qDebug() << "Moved" << _logFileName << "to" << logFileNameTo << "role" << _role;
     }
     else {
-      qWarning() << "ERROR: Move" << _logFileName << "to" << logFileNameTo;
+      qWarning() << "ERROR: Move" << _logFileName << "to" << logFileNameTo << "role" << _role;
     }
   }
 
   checkLogFileOpen();
 
-  slotLog_File(SimpleQtLogger::timeStamp(), SimpleQtLogger::threadId(), QString("Log-file rolling done (time elapsed: %1 ms)").arg(timeRolling.elapsed()), SQTL_LOG_INFO, "", "", 0);
+  slotLog_File(SimpleQtLogger::timeStamp(), SimpleQtLogger::threadId(), QString("Log-file '%1' rolling done (time elapsed: %2 ms)").arg(_role).arg(timeRolling.elapsed()), SQTL_LOG_INFO, "", "", 0);
 }
 
 void SinkFileLog::slotCheckLogFileActivity()
@@ -263,20 +266,18 @@ SimpleQtLogger* SimpleQtLogger::getInstance()
 
 SimpleQtLogger::SimpleQtLogger(QObject *parent)
   : QObject(parent)
+  , _logFormat_console(DEFAULT_LOG_FORMAT)
+  , _logFormat_qDebug(DEFAULT_LOG_FORMAT)
+  , _logFormatInt_console(DEFAULT_LOG_FORMAT_INTERNAL)
+  , _logFormatInt_qDebug(DEFAULT_LOG_FORMAT_INTERNAL)
 {
   qDebug("SimpleQtLogger::SimpleQtLogger"); // TODO comment this
 
   qRegisterMetaType<SQTL_LOG_Level>("SQTL_LOG_Level"); // to use type in Qt::QueuedConnection
 
-  _sinkFileLogMap["main"] = new SinkFileLog(this);
-
   // Qt::ConnectionType is Qt::AutoConnection (Default)
   // If the receiver lives in the thread that emits the signal, Qt::DirectConnection is used.
   // Otherwise, Qt::QueuedConnection is used. The connection type is determined when the signal is emitted.
-#if ENABLED_SQTL_LOG_SINK_FILE > 0
-  QObject::connect(this, SIGNAL(signalLog(const QString&, const QString&, const QString&, SQTL_LOG_Level, const QString&, const QString&, unsigned int)),
-    _sinkFileLogMap["main"], SLOT(slotLog_File(const QString&, const QString&, const QString&, SQTL_LOG_Level, const QString&, const QString&, unsigned int)));
-#endif
 #if ENABLED_SQTL_LOG_SINK_CONSOLE > 0
   QObject::connect(this, SIGNAL(signalLog(const QString&, const QString&, const QString&, SQTL_LOG_Level, const QString&, const QString&, unsigned int)),
     this, SLOT(slotLog_console(const QString&, const QString&, const QString&, SQTL_LOG_Level, const QString&, const QString&, unsigned int)));
@@ -286,7 +287,7 @@ SimpleQtLogger::SimpleQtLogger(QObject *parent)
     this, SLOT(slotLog_qDebug(const QString&, const QString&, const QString&, SQTL_LOG_Level, const QString&, const QString&, unsigned int)));
 #endif
 
-  setLogFormat(); // Default
+  addSinkFileLog("main");
 }
 
 SimpleQtLogger::~SimpleQtLogger()
@@ -294,26 +295,67 @@ SimpleQtLogger::~SimpleQtLogger()
   qDebug("SimpleQtLogger::~SimpleQtLogger"); // TODO comment this
 }
 
-void SimpleQtLogger::setLogFormat(const QString& logFormat, const QString& logFormatInt)
+void SimpleQtLogger::addSinkFileLog(const QString& role)
 {
-  // qDebug("SimpleQtLogger::setLogFormat");
+  // qDebug("SimpleQtLogger::addSinkFileLog");
+
+  if(_sinkFileLogMap.contains(role)) {
+    return;
+  }
+
+  _sinkFileLogMap[role] = new SinkFileLog(this, role);
+
+#if ENABLED_SQTL_LOG_SINK_FILE > 0
+  QObject::connect(this, SIGNAL(signalLog(const QString&, const QString&, const QString&, SQTL_LOG_Level, const QString&, const QString&, unsigned int)),
+    _sinkFileLogMap[role], SLOT(slotLog_File(const QString&, const QString&, const QString&, SQTL_LOG_Level, const QString&, const QString&, unsigned int)));
+#endif
+}
+
+void SimpleQtLogger::setLogFormat_file(const QString& logFormat, const QString& logFormatInt)
+{
+  // qDebug("SimpleQtLogger::setLogFormat_file");
+
+  setLogFormat_file("main", logFormat, logFormatInt);
+}
+
+void SimpleQtLogger::setLogFormat_file(const QString& role, const QString& logFormat, const QString& logFormatInt)
+{
+  // qDebug("SimpleQtLogger::setLogFormat_file");
+
+  if(_sinkFileLogMap.contains(role)) {
+    _sinkFileLogMap[role]->setLogFormat(logFormat, logFormatInt);
+  }
+}
+
+void SimpleQtLogger::setLogFormat_console(const QString& logFormat, const QString& logFormatInt)
+{
+  // qDebug("SimpleQtLogger::setLogFormat_console");
 
   _logFormat_console = logFormat;
-  _logFormat_qDebug = logFormat;
   _logFormatInt_console = logFormatInt;
-  _logFormatInt_qDebug = logFormatInt;
+}
 
-  if(_sinkFileLogMap.contains("main")) {
-    _sinkFileLogMap["main"]->setLogFormat(logFormat, logFormatInt);
-  }
+void SimpleQtLogger::setLogFormat_qDebug(const QString& logFormat, const QString& logFormatInt)
+{
+  // qDebug("SimpleQtLogger::setLogFormat_qDebug");
+
+  _logFormat_qDebug = logFormat;
+  _logFormatInt_qDebug = logFormatInt;
 }
 
 bool SimpleQtLogger::setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber)
 {
   // qDebug("SimpleQtLogger::setLogFileName");
 
-  if(_sinkFileLogMap.contains("main") && _sinkFileLogMap["main"]->setLogFileName(logFileName, logFileRotationSize, logFileMaxNumber)) {
-    log("Start file-log", SQTL_LOG_INFO, "", "", 0);
+  return setLogFileName("main", logFileName, logFileRotationSize, logFileMaxNumber);
+}
+
+bool SimpleQtLogger::setLogFileName(const QString& role, const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber)
+{
+  // qDebug("SimpleQtLogger::setLogFileName");
+
+  if(_sinkFileLogMap.contains(role) && _sinkFileLogMap[role]->setLogFileName(logFileName, logFileRotationSize, logFileMaxNumber)) {
+    log(QString("Start file-log '%1'").arg(role), SQTL_LOG_INFO, "", "", 0);
     return true;
   }
   return false;

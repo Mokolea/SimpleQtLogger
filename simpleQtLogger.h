@@ -27,7 +27,7 @@
    - create logger instance in main (set qApp as parent object) and initialize (example):
       simpleqtlogger::SimpleQtLogger::createInstance(qApp)->setLogFileName("testSimpleQtLogger.log", 10*1024*1024, 20);
      or:
-      simpleqtlogger::SimpleQtLogger::createInstance(qApp)->setLogFormat("<TS> [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)", "<TS> [<LL>] <TEXT>");
+      simpleqtlogger::SimpleQtLogger::createInstance(qApp)->setLogFormat_file("<TS> [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)", "<TS> [<LL>] <TEXT>");
       simpleqtlogger::SimpleQtLogger::getInstance()->setLogFileName(QDir::home().filePath("Documents/Qt/testSimpleQtLoggerGui.log"), 10*1024, 10);
      or with thread-id (default):
       simpleqtlogger::SimpleQtLogger::createInstance(qApp)->setLogFormat("<TS> [<TID>] [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)", "<TS> [<TID>] [<LL>] <TEXT>");
@@ -207,7 +207,7 @@ class SinkFileLog : public QObject
   Q_OBJECT
 
 public:
-  explicit SinkFileLog(QObject *parent);
+  explicit SinkFileLog(QObject *parent, const QString& role);
   virtual ~SinkFileLog();
 
   void setLogFormat(const QString& logFormat, const QString& logFormatInt);
@@ -225,6 +225,7 @@ private:
   bool checkLogFileOpen();
   void checkLogFileRolling();
 
+  const QString _role;
   QString _logFileName;
   unsigned int _logFileRotationSize; // [bytes] initiate log-file rolling
   unsigned int _logFileMaxNumber; // max number of rolling log-file history, range 1..99
@@ -246,8 +247,15 @@ public:
   static SimpleQtLogger* getInstance(); // may return NULL pointer!
   virtual ~SimpleQtLogger();
 
-  void setLogFormat(const QString& logFormat = DEFAULT_LOG_FORMAT, const QString& logFormatInt = DEFAULT_LOG_FORMAT_INTERNAL);
-  bool setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
+  void addSinkFileLog(const QString& role); // main is already added
+
+  void setLogFormat_file(const QString& logFormat, const QString& logFormatInt); // main
+  void setLogFormat_file(const QString& role, const QString& logFormat, const QString& logFormatInt);
+  void setLogFormat_console(const QString& logFormat, const QString& logFormatInt);
+  void setLogFormat_qDebug(const QString& logFormat, const QString& logFormatInt);
+
+  bool setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber); // main
+  bool setLogFileName(const QString& role, const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
 
   static QString timeStamp();
   static QString threadId();

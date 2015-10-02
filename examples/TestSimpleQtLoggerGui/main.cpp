@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
   QApplication a(argc, argv);
 
   // initialize SimpleQtLogger (step 1/2)
-  simpleqtlogger::SimpleQtLogger::createInstance(qApp)->setLogFormat("<TS> [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)", "<TS> [<LL>] <TEXT>");
+  simpleqtlogger::SimpleQtLogger::createInstance(qApp)->setLogFormat_file("<TS> [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)", "<TS> [<LL>] <TEXT>");
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogFileName(QDir::home().filePath("Documents/Qt/testSimpleQtLoggerGui.log"), 10*1024, 10);
   simpleqtlogger::SQTL_LOG_ENABLE_SINK_FILE = true;
   simpleqtlogger::SQTL_LOG_ENABLE_SINK_CONSOLE = false;
