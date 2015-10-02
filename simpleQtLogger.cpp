@@ -23,12 +23,7 @@ bool SQTL_LOG_ENABLE_SINK_CONSOLE = false;
 bool SQTL_LOG_ENABLE_SINK_QDEBUG = false;
 
 /* Log-level */
-bool SQTL_LOG_ENABLE_FATAL = true;
-bool SQTL_LOG_ENABLE_ERROR = true;
-bool SQTL_LOG_ENABLE_WARNING = true;
-bool SQTL_LOG_ENABLE_INFO = true;
-bool SQTL_LOG_ENABLE_DEBUG = false;
-bool SQTL_LOG_ENABLE_FUNCTION = false;
+SQTL_LOG_Level_enable SQTL_LOG_ENABLE = { true, true, true, true, false, false };
 
 /* Log-function stack-trace */
 bool SQTL_LOG_ENABLE_FUNCTION_STACK_TRACE = true;
@@ -531,13 +526,13 @@ SimpleQtLoggerFunc::SimpleQtLoggerFunc(const QString& text, const QString& funct
   , _lineNumber(lineNumber)
 {
   // qDebug("SimpleQtLoggerFunc::SimpleQtLoggerFunc");
-  if(ENABLED_SQTL_LOG_FUNCTION && SQTL_LOG_ENABLE_FUNCTION) SimpleQtLogger::getInstance()->logFuncBegin(_text, _functionName, _fileName, _lineNumber);
+  if(ENABLED_SQTL_LOG_FUNCTION && SQTL_LOG_ENABLE.FUNCTION) SimpleQtLogger::getInstance()->logFuncBegin(_text, _functionName, _fileName, _lineNumber);
 }
 
 SimpleQtLoggerFunc::~SimpleQtLoggerFunc()
 {
   // qDebug("SimpleQtLoggerFunc::~SimpleQtLoggerFunc");
-  if(ENABLED_SQTL_LOG_FUNCTION && SQTL_LOG_ENABLE_FUNCTION) SimpleQtLogger::getInstance()->logFuncEnd(_text, _functionName, _fileName, _lineNumber);
+  if(ENABLED_SQTL_LOG_FUNCTION && SQTL_LOG_ENABLE.FUNCTION) SimpleQtLogger::getInstance()->logFuncEnd(_text, _functionName, _fileName, _lineNumber);
 }
 
 #endif

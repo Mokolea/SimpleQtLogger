@@ -26,9 +26,9 @@ int main(int argc, char *argv[])
   simpleqtlogger::SQTL_LOG_ENABLE_SINK_FILE = true;
   simpleqtlogger::SQTL_LOG_ENABLE_SINK_CONSOLE = false;
   simpleqtlogger::SQTL_LOG_ENABLE_SINK_QDEBUG = false;
-  simpleqtlogger::SQTL_LOG_ENABLE_INFO = true;
-  simpleqtlogger::SQTL_LOG_ENABLE_DEBUG = false;
-  simpleqtlogger::SQTL_LOG_ENABLE_FUNCTION = true;
+  simpleqtlogger::SQTL_LOG_ENABLE.INFO = true;
+  simpleqtlogger::SQTL_LOG_ENABLE.DEBUG = false;
+  simpleqtlogger::SQTL_LOG_ENABLE.FUNCTION = true;
   simpleqtlogger::SQTL_LOG_ENABLE_FUNCTION_STACK_TRACE = true;
 
   // start and initialize the main task
