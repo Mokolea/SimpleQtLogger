@@ -27,6 +27,9 @@ int main(int argc, char *argv[])
   simpleqtlogger::SQTL_LOG_ENABLE.DEBUG = false;
   simpleqtlogger::SQTL_LOG_ENABLE.FUNCTION = true;
   simpleqtlogger::SQTL_LOG_ENABLE_FUNCTION_STACK_TRACE = true;
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevel_file(simpleqtlogger::SQTL_LOG_ENABLE);
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevel_console(simpleqtlogger::SQTL_LOG_ENABLE);
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevel_qDebug(simpleqtlogger::SQTL_LOG_ENABLE);
 
   // start and initialize the main widget
   Dialog w(0);

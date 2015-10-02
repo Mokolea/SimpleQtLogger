@@ -30,6 +30,15 @@ int main(int argc, char *argv[])
   simpleqtlogger::SQTL_LOG_ENABLE.DEBUG = false;
   simpleqtlogger::SQTL_LOG_ENABLE.FUNCTION = true;
   simpleqtlogger::SQTL_LOG_ENABLE_FUNCTION_STACK_TRACE = true;
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevel_file(simpleqtlogger::SQTL_LOG_ENABLE);
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevel_console(simpleqtlogger::SQTL_LOG_ENABLE);
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevel_qDebug(simpleqtlogger::SQTL_LOG_ENABLE);
+  // 2nd file-log (levels: warn..fatal)
+  simpleqtlogger::SimpleQtLogger::getInstance()->addSinkFileLog("warn");
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogFileName("warn", "testSimpleQtLoggerWarn.log", 10*1024, 10);
+  simpleqtlogger::SQTL_LOG_Level_enable warnLogLevel;
+  warnLogLevel.INFO = false;
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevel_file("warn", warnLogLevel);
 
   // start and initialize the main task
   Task *task = new Task(&a);

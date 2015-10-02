@@ -129,7 +129,7 @@ void SinkFileLog::slotLog_File(const QString& ts, const QString& tid, const QStr
   if(!SQTL_LOG_ENABLE_SINK_FILE) {
     return;
   }
-  if(!SQTL_LOG_ENABLE.enabled(level)) {
+  if(!_logLevelEnable.enabled(level)) {
     return;
   }
 
@@ -513,7 +513,7 @@ void SimpleQtLogger::slotLog_console(const QString& ts, const QString& tid, cons
   if(!SQTL_LOG_ENABLE_SINK_CONSOLE) {
     return;
   }
-  if(!SQTL_LOG_ENABLE.enabled(level)) {
+  if(!_logLevelEnable_console.enabled(level)) {
     return;
   }
 
@@ -563,7 +563,7 @@ void SimpleQtLogger::slotLog_qDebug(const QString& ts, const QString& tid, const
   if(!SQTL_LOG_ENABLE_SINK_QDEBUG) {
     return;
   }
-  if(!SQTL_LOG_ENABLE.enabled(level)) {
+  if(!_logLevelEnable_qDebug.enabled(level)) {
     return;
   }
 
