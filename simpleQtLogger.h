@@ -145,6 +145,7 @@ struct SQTL_LOG_Level_enable {
   bool INFO;       /* Log-level: true: enable, false: disable, default: true */
   bool DEBUG;      /* Log-level: true: enable, false: disable, default: false; just for step-by-step testing */
   bool FUNCTION;   /* Log-level: true: enable, false: disable, default: false; stack-trace */
+  SQTL_LOG_Level_enable();
 };
 extern SQTL_LOG_Level_enable SQTL_LOG_ENABLE;
 
@@ -234,6 +235,7 @@ private:
   unsigned int _logFileMaxNumber; // max number of rolling log-file history, range 1..99
   QString _logFormat;
   QString _logFormatInt;
+  SQTL_LOG_Level_enable _logLevelEnable;
 
   QFile* _logFile;
   bool _logFileActivity; // track log-file write (append) activity
@@ -288,6 +290,8 @@ private:
   QString _logFormat_qDebug;
   QString _logFormatInt_console;
   QString _logFormatInt_qDebug;
+  SQTL_LOG_Level_enable _logLevelEnable_console;
+  SQTL_LOG_Level_enable _logLevelEnable_qDebug;
 
   QMap<QString, SinkFileLog*> _sinkFileLogMap;
 

@@ -23,7 +23,16 @@ bool SQTL_LOG_ENABLE_SINK_CONSOLE = false;
 bool SQTL_LOG_ENABLE_SINK_QDEBUG = false;
 
 /* Log-level */
-SQTL_LOG_Level_enable SQTL_LOG_ENABLE = { true, true, true, true, false, false };
+SQTL_LOG_Level_enable::SQTL_LOG_Level_enable()
+{
+  FATAL = true;
+  ERROR = true;
+  WARNING = true;
+  INFO = true;
+  DEBUG = false;
+  FUNCTION = false;
+}
+SQTL_LOG_Level_enable SQTL_LOG_ENABLE;
 
 /* Log-function stack-trace */
 bool SQTL_LOG_ENABLE_FUNCTION_STACK_TRACE = true;
