@@ -57,11 +57,9 @@
    - <LINE> --> Line-number
 
   TODO:
-   - have multiple log-files (sink rolling file appender) with different log-levels, rotation-size, ...
    - think about environment variable to specify log-file directory, os independent solution
    - trimming (removing of whitespace) selectable, at least for at the start of log-message
    - provide to add/remove user defined sinks
-   - set (enable/disable) log-levels per sink
    - optimize function-log macro to not create a stack-object according to SQTL_LOG_ENABLE_FUNCTION_STACK_TRACE
    - enable pedantic-errors, check for no compiler warnings, use e.g.: -Wall -Wextra -Werror -pedantic-errors -Wwrite-strings
    - maybe allow message-buffering, processing on idle-time
@@ -70,6 +68,8 @@
    - maybe do all file-operations in worker-thread
 
   Done:
+   - have multiple log-files (sink rolling file appender) with different log-levels, rotation-size, ...
+   - set (enable/disable) log-levels per sink
    - add different set of log macros to compose messages using stream operator
 
   Test Travis CI:
