@@ -263,20 +263,19 @@ SimpleQtLogger* SimpleQtLogger::getInstance()
 
 SimpleQtLogger::SimpleQtLogger(QObject *parent)
   : QObject(parent)
-  , _sinkFileLog(0)
 {
   qDebug("SimpleQtLogger::SimpleQtLogger"); // TODO comment this
 
   qRegisterMetaType<SQTL_LOG_Level>("SQTL_LOG_Level"); // to use type in Qt::QueuedConnection
 
-  _sinkFileLog = new SinkFileLog(this);
+  _sinkFileLogMap["main"] = new SinkFileLog(this);
 
   // Qt::ConnectionType is Qt::AutoConnection (Default)
   // If the receiver lives in the thread that emits the signal, Qt::DirectConnection is used.
   // Otherwise, Qt::QueuedConnection is used. The connection type is determined when the signal is emitted.
 #if ENABLED_SQTL_LOG_SINK_FILE > 0
   QObject::connect(this, SIGNAL(signalLog(const QString&, const QString&, const QString&, SQTL_LOG_Level, const QString&, const QString&, unsigned int)),
-    _sinkFileLog, SLOT(slotLog_File(const QString&, const QString&, const QString&, SQTL_LOG_Level, const QString&, const QString&, unsigned int)));
+    _sinkFileLogMap["main"], SLOT(slotLog_File(const QString&, const QString&, const QString&, SQTL_LOG_Level, const QString&, const QString&, unsigned int)));
 #endif
 #if ENABLED_SQTL_LOG_SINK_CONSOLE > 0
   QObject::connect(this, SIGNAL(signalLog(const QString&, const QString&, const QString&, SQTL_LOG_Level, const QString&, const QString&, unsigned int)),
@@ -302,8 +301,8 @@ void SimpleQtLogger::setLogFormat(const QString& logFormat, const QString& logFo
   _logFormat = logFormat;
   _logFormatInt = logFormatInt;
 
-  if(_sinkFileLog) {
-    _sinkFileLog->setLogFormat(_logFormat, _logFormatInt);
+  if(_sinkFileLogMap.contains("main")) {
+    _sinkFileLogMap["main"]->setLogFormat(_logFormat, _logFormatInt);
   }
 }
 
@@ -311,7 +310,7 @@ bool SimpleQtLogger::setLogFileName(const QString& logFileName, unsigned int log
 {
   // qDebug("SimpleQtLogger::setLogFileName");
 
-  if(_sinkFileLog && _sinkFileLog->setLogFileName(logFileName, logFileRotationSize, logFileMaxNumber)) {
+  if(_sinkFileLogMap.contains("main") && _sinkFileLogMap["main"]->setLogFileName(logFileName, logFileRotationSize, logFileMaxNumber)) {
     log("Start file-log", SQTL_LOG_INFO, "", "", 0);
     return true;
   }
