@@ -22,14 +22,14 @@ int main(int argc, char *argv[])
   QCoreApplication a(argc, argv);
 
   // initialize SimpleQtLogger (step 1/2)
-  SimpleQtLogger::createInstance(qApp)->setLogFileName("testSimpleQtLogger.log", 10*1024, 10);
-  SQTL_LOG_ENABLE_SINK_FILE = true;
-  SQTL_LOG_ENABLE_SINK_CONSOLE = false;
-  SQTL_LOG_ENABLE_SINK_QDEBUG = false;
-  SQTL_LOG_ENABLE_INFO = true;
-  SQTL_LOG_ENABLE_DEBUG = false;
-  SQTL_LOG_ENABLE_FUNCTION = true;
-  SQTL_LOG_ENABLE_FUNCTION_STACK_TRACE = true;
+  simpleqtlogger::SimpleQtLogger::createInstance(qApp)->setLogFileName("testSimpleQtLogger.log", 10*1024, 10);
+  simpleqtlogger::SQTL_LOG_ENABLE_SINK_FILE = true;
+  simpleqtlogger::SQTL_LOG_ENABLE_SINK_CONSOLE = false;
+  simpleqtlogger::SQTL_LOG_ENABLE_SINK_QDEBUG = false;
+  simpleqtlogger::SQTL_LOG_ENABLE_INFO = true;
+  simpleqtlogger::SQTL_LOG_ENABLE_DEBUG = false;
+  simpleqtlogger::SQTL_LOG_ENABLE_FUNCTION = true;
+  simpleqtlogger::SQTL_LOG_ENABLE_FUNCTION_STACK_TRACE = true;
 
   // start and initialize the main task
   Task *task = new Task(&a);
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
   QTimer::singleShot(0, task, SLOT(init()));
 
   // initialize SimpleQtLogger (step 2/2)
-  SimpleQtLogger::getInstance()->setParent(task);
+  simpleqtlogger::SimpleQtLogger::getInstance()->setParent(task);
 
   return a.exec();
 }

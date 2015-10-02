@@ -25,19 +25,19 @@
   Usage:
    - moc has to be applied
    - create logger instance in main (set qApp as parent object) and initialize (example):
-      SimpleQtLogger::createInstance(qApp)->setLogFileName("testSimpleQtLogger.log", 10*1024*1024, 20);
+      simpleqtlogger::SimpleQtLogger::createInstance(qApp)->setLogFileName("testSimpleQtLogger.log", 10*1024*1024, 20);
      or:
-      SimpleQtLogger::createInstance(qApp)->setLogFormat("<TS> [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)", "<TS> [<LL>] <TEXT>");
-      SimpleQtLogger::getInstance()->setLogFileName(QDir::home().filePath("Documents/Qt/testSimpleQtLoggerGui.log"), 10*1024, 10);
+      simpleqtlogger::SimpleQtLogger::createInstance(qApp)->setLogFormat("<TS> [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)", "<TS> [<LL>] <TEXT>");
+      simpleqtlogger::SimpleQtLogger::getInstance()->setLogFileName(QDir::home().filePath("Documents/Qt/testSimpleQtLoggerGui.log"), 10*1024, 10);
      or with thread-id (default):
-      SimpleQtLogger::createInstance(qApp)->setLogFormat("<TS> [<TID>] [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)", "<TS> [<TID>] [<LL>] <TEXT>");
-      SimpleQtLogger::getInstance()->setLogFileName(QDir::home().filePath("Documents/Qt/testSimpleQtLoggerGui.log"), 10*1024, 10);
+      simpleqtlogger::SimpleQtLogger::createInstance(qApp)->setLogFormat("<TS> [<TID>] [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)", "<TS> [<TID>] [<LL>] <TEXT>");
+      simpleqtlogger::SimpleQtLogger::getInstance()->setLogFileName(QDir::home().filePath("Documents/Qt/testSimpleQtLoggerGui.log"), 10*1024, 10);
    - initialize log-levels (example):
-      SQTL_LOG_ENABLE_INFO = true;
-      SQTL_LOG_ENABLE_DEBUG = false;
-      SQTL_LOG_ENABLE_FUNCTION = true;
+      simpleqtlogger::SQTL_LOG_ENABLE_INFO = true;
+      simpleqtlogger::SQTL_LOG_ENABLE_DEBUG = false;
+      simpleqtlogger::SQTL_LOG_ENABLE_FUNCTION = true;
    - set main task (widget) as parent object for the logger instance (example):
-      SimpleQtLogger::getInstance()->setParent(task);
+      simpleqtlogger::SimpleQtLogger::getInstance()->setParent(task);
 
   Log-format:
   The following TAGs are available and expand to:
@@ -89,6 +89,8 @@
 #include <QMutex>
 #include <QMutexLocker>
 #include <QMap>
+
+namespace simpleqtlogger {
 
 /* Log-sinks (hard; adjust at pre-processor, compile-time) */
 #define ENABLED_SQTL_LOG_SINK_FILE      1   /* 1: enable, 0: disable; log to file (rolling) */
@@ -164,17 +166,17 @@ extern bool SQTL_LOG_ENABLE_CONSOLE_COLOR;   /* Color for sink console: true: en
 /* Macro body */
 #define SQTL_L_BODY(text,levelEnabledHard,levelEnabledSoft,level) \
   SQTL_MSVC_WARNING_SUPPRESS \
-  do { if(levelEnabledHard && levelEnabledSoft) SimpleQtLogger::getInstance()->log(text, level, __FUNCTION__, __FILE__, __LINE__); } while(0) \
+  do { if(levelEnabledHard && levelEnabledSoft) simpleqtlogger::SimpleQtLogger::getInstance()->log(text, level, __FUNCTION__, __FILE__, __LINE__); } while(0) \
   SQTL_MSVC_WARNING_RESTORE
 
 /* Use these macros (thread-safe) to have function-, filename and linenumber set correct */
-#define L_FATAL(text)   SQTL_L_BODY(text,ENABLED_SQTL_LOG_FATAL,SQTL_LOG_ENABLE_FATAL,SQTL_LOG_FATAL)
-#define L_ERROR(text)   SQTL_L_BODY(text,ENABLED_SQTL_LOG_ERROR,SQTL_LOG_ENABLE_ERROR,SQTL_LOG_ERROR)
-#define L_WARN(text)    SQTL_L_BODY(text,ENABLED_SQTL_LOG_WARNING,SQTL_LOG_ENABLE_WARNING,SQTL_LOG_WARNING)
-#define L_INFO(text)    SQTL_L_BODY(text,ENABLED_SQTL_LOG_INFO,SQTL_LOG_ENABLE_INFO,SQTL_LOG_INFO)
-#define L_DEBUG(text)   SQTL_L_BODY(text,ENABLED_SQTL_LOG_DEBUG,SQTL_LOG_ENABLE_DEBUG,SQTL_LOG_DEBUG)
+#define L_FATAL(text)   SQTL_L_BODY(text,ENABLED_SQTL_LOG_FATAL,simpleqtlogger::SQTL_LOG_ENABLE_FATAL,simpleqtlogger::SQTL_LOG_FATAL)
+#define L_ERROR(text)   SQTL_L_BODY(text,ENABLED_SQTL_LOG_ERROR,simpleqtlogger::SQTL_LOG_ENABLE_ERROR,simpleqtlogger::SQTL_LOG_ERROR)
+#define L_WARN(text)    SQTL_L_BODY(text,ENABLED_SQTL_LOG_WARNING,simpleqtlogger::SQTL_LOG_ENABLE_WARNING,simpleqtlogger::SQTL_LOG_WARNING)
+#define L_INFO(text)    SQTL_L_BODY(text,ENABLED_SQTL_LOG_INFO,simpleqtlogger::SQTL_LOG_ENABLE_INFO,simpleqtlogger::SQTL_LOG_INFO)
+#define L_DEBUG(text)   SQTL_L_BODY(text,ENABLED_SQTL_LOG_DEBUG,simpleqtlogger::SQTL_LOG_ENABLE_DEBUG,simpleqtlogger::SQTL_LOG_DEBUG)
 #if ENABLED_SQTL_LOG_FUNCTION > 0
-#define L_FUNC(text)    SimpleQtLoggerFunc _simpleQtLoggerFunc_(text, __FUNCTION__, __FILE__, __LINE__)
+#define L_FUNC(text)    simpleqtlogger::SimpleQtLoggerFunc _simpleQtLoggerFunc_(text, __FUNCTION__, __FILE__, __LINE__)
 #else
 #define L_FUNC(text)    /* nop */
 #endif
@@ -183,17 +185,17 @@ extern bool SQTL_LOG_ENABLE_CONSOLE_COLOR;   /* Color for sink console: true: en
 #define SQTL_LS_BODY(text,levelEnabledHard,levelEnabledSoft,level) \
   SQTL_MSVC_WARNING_SUPPRESS \
   do { if(levelEnabledHard && levelEnabledSoft) { QString s; QTextStream ts(&s); ts << text; \
-    SimpleQtLogger::getInstance()->log(s, level, __FUNCTION__, __FILE__, __LINE__); } } while(0) \
+    simpleqtlogger::SimpleQtLogger::getInstance()->log(s, level, __FUNCTION__, __FILE__, __LINE__); } } while(0) \
   SQTL_MSVC_WARNING_RESTORE
 
 /* Support use of streaming operators */
-#define LS_FATAL(text)   SQTL_LS_BODY(text,ENABLED_SQTL_LOG_FATAL,SQTL_LOG_ENABLE_FATAL,SQTL_LOG_FATAL)
-#define LS_ERROR(text)   SQTL_LS_BODY(text,ENABLED_SQTL_LOG_ERROR,SQTL_LOG_ENABLE_ERROR,SQTL_LOG_ERROR)
-#define LS_WARN(text)    SQTL_LS_BODY(text,ENABLED_SQTL_LOG_WARNING,SQTL_LOG_ENABLE_WARNING,SQTL_LOG_WARNING)
-#define LS_INFO(text)    SQTL_LS_BODY(text,ENABLED_SQTL_LOG_INFO,SQTL_LOG_ENABLE_INFO,SQTL_LOG_INFO)
-#define LS_DEBUG(text)   SQTL_LS_BODY(text,ENABLED_SQTL_LOG_DEBUG,SQTL_LOG_ENABLE_DEBUG,SQTL_LOG_DEBUG)
+#define LS_FATAL(text)   SQTL_LS_BODY(text,ENABLED_SQTL_LOG_FATAL,simpleqtlogger::SQTL_LOG_ENABLE_FATAL,simpleqtlogger::SQTL_LOG_FATAL)
+#define LS_ERROR(text)   SQTL_LS_BODY(text,ENABLED_SQTL_LOG_ERROR,simpleqtlogger::SQTL_LOG_ENABLE_ERROR,simpleqtlogger::SQTL_LOG_ERROR)
+#define LS_WARN(text)    SQTL_LS_BODY(text,ENABLED_SQTL_LOG_WARNING,simpleqtlogger::SQTL_LOG_ENABLE_WARNING,simpleqtlogger::SQTL_LOG_WARNING)
+#define LS_INFO(text)    SQTL_LS_BODY(text,ENABLED_SQTL_LOG_INFO,simpleqtlogger::SQTL_LOG_ENABLE_INFO,simpleqtlogger::SQTL_LOG_INFO)
+#define LS_DEBUG(text)   SQTL_LS_BODY(text,ENABLED_SQTL_LOG_DEBUG,simpleqtlogger::SQTL_LOG_ENABLE_DEBUG,simpleqtlogger::SQTL_LOG_DEBUG)
 #if ENABLED_SQTL_LOG_FUNCTION > 0
-#define LS_FUNC(text)    QString _s_; { QTextStream ts(&_s_); ts << text; } SimpleQtLoggerFunc _simpleQtLoggerFunc_(_s_, __FUNCTION__, __FILE__, __LINE__)
+#define LS_FUNC(text)    QString _s_; { QTextStream ts(&_s_); ts << text; } simpleqtlogger::SimpleQtLoggerFunc _simpleQtLoggerFunc_(_s_, __FUNCTION__, __FILE__, __LINE__)
 #else
 #define LS_FUNC(text)    /* nop */
 #endif
@@ -304,5 +306,7 @@ private:
 #endif
 
 // -------------------------------------------------------------------------------------------------
+
+} // namespace simpleqtlogger
 
 #endif // _SIMPLE_QT_LOGGER_H

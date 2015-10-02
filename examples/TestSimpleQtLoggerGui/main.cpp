@@ -18,22 +18,22 @@ int main(int argc, char *argv[])
   QApplication a(argc, argv);
 
   // initialize SimpleQtLogger (step 1/2)
-  SimpleQtLogger::createInstance(qApp)->setLogFormat("<TS> [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)", "<TS> [<LL>] <TEXT>");
-  SimpleQtLogger::getInstance()->setLogFileName(QDir::home().filePath("Documents/Qt/testSimpleQtLoggerGui.log"), 10*1024, 10);
-  SQTL_LOG_ENABLE_SINK_FILE = true;
-  SQTL_LOG_ENABLE_SINK_CONSOLE = false;
-  SQTL_LOG_ENABLE_SINK_QDEBUG = false;
-  SQTL_LOG_ENABLE_INFO = true;
-  SQTL_LOG_ENABLE_DEBUG = false;
-  SQTL_LOG_ENABLE_FUNCTION = true;
-  SQTL_LOG_ENABLE_FUNCTION_STACK_TRACE = true;
+  simpleqtlogger::SimpleQtLogger::createInstance(qApp)->setLogFormat("<TS> [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)", "<TS> [<LL>] <TEXT>");
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogFileName(QDir::home().filePath("Documents/Qt/testSimpleQtLoggerGui.log"), 10*1024, 10);
+  simpleqtlogger::SQTL_LOG_ENABLE_SINK_FILE = true;
+  simpleqtlogger::SQTL_LOG_ENABLE_SINK_CONSOLE = false;
+  simpleqtlogger::SQTL_LOG_ENABLE_SINK_QDEBUG = false;
+  simpleqtlogger::SQTL_LOG_ENABLE_INFO = true;
+  simpleqtlogger::SQTL_LOG_ENABLE_DEBUG = false;
+  simpleqtlogger::SQTL_LOG_ENABLE_FUNCTION = true;
+  simpleqtlogger::SQTL_LOG_ENABLE_FUNCTION_STACK_TRACE = true;
 
   // start and initialize the main widget
   Dialog w(0);
   w.show();
 
   // initialize SimpleQtLogger (step 2/2)
-  // SimpleQtLogger::getInstance()->setParent(&w);
+  // simpleqtlogger::SimpleQtLogger::getInstance()->setParent(&w);
 
   return a.exec();
 }

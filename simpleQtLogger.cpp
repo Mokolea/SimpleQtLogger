@@ -15,6 +15,8 @@
 #include <QFileInfo>
 #include <QtDebug>
 
+namespace simpleqtlogger {
+
 /* Log-sinks */
 bool SQTL_LOG_ENABLE_SINK_FILE = true;
 bool SQTL_LOG_ENABLE_SINK_CONSOLE = false;
@@ -496,3 +498,5 @@ SimpleQtLoggerFunc::~SimpleQtLoggerFunc()
 }
 
 #endif
+
+} // namespace simpleqtlogger
