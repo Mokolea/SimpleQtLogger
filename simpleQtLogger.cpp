@@ -298,11 +298,13 @@ void SimpleQtLogger::setLogFormat(const QString& logFormat, const QString& logFo
 {
   // qDebug("SimpleQtLogger::setLogFormat");
 
-  _logFormat = logFormat;
-  _logFormatInt = logFormatInt;
+  _logFormat_console = logFormat;
+  _logFormat_qDebug = logFormat;
+  _logFormatInt_console = logFormatInt;
+  _logFormatInt_qDebug = logFormatInt;
 
   if(_sinkFileLogMap.contains("main")) {
-    _sinkFileLogMap["main"]->setLogFormat(_logFormat, _logFormatInt);
+    _sinkFileLogMap["main"]->setLogFormat(logFormat, logFormatInt);
   }
 }
 
@@ -442,10 +444,10 @@ void SimpleQtLogger::slotLog_console(const QString& ts, const QString& tid, cons
     }
   }
   if(functionName.isEmpty()) {
-    out << QString(_logFormatInt).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[level])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
+    out << QString(_logFormatInt_console).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[level])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
   }
   else {
-    out << QString(_logFormat).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[level])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
+    out << QString(_logFormat_console).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[level])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
   }
   if(SQTL_LOG_ENABLE_CONSOLE_COLOR) {
     if(level != SQTL_LOG_INFO) {
@@ -469,10 +471,10 @@ void SimpleQtLogger::slotLog_qDebug(const QString& ts, const QString& tid, const
   }
 
   if(functionName.isEmpty()) {
-    qDebug("%s", QString(_logFormatInt).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[level])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()).toStdString().c_str());
+    qDebug("%s", QString(_logFormatInt_qDebug).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[level])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()).toStdString().c_str());
   }
   else {
-    qDebug("%s", QString(_logFormat).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[level])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()).toStdString().c_str());
+    qDebug("%s", QString(_logFormat_qDebug).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[level])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()).toStdString().c_str());
   }
 }
 

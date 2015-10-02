@@ -273,8 +273,10 @@ private:
   SimpleQtLogger(const SimpleQtLogger&);
   SimpleQtLogger& operator=(const SimpleQtLogger&);
 
-  QString _logFormat;
-  QString _logFormatInt;
+  QString _logFormat_console;
+  QString _logFormat_qDebug;
+  QString _logFormatInt_console;
+  QString _logFormatInt_qDebug;
 
   QMap<QString, SinkFileLog*> _sinkFileLogMap;
 
