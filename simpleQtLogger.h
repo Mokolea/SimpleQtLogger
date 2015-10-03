@@ -20,8 +20,8 @@
 
   Restrictions:
    - log-file name has to end with: ".log"
-   - just one instance per supported sink
-   - just one set of log-macros to be used, logging on all sinks
+   - just one instance per supported sink (except file-log)
+   - just one set of predefined log-macros to be used, logging on all sinks
 
   Usage:
    - moc has to be applied
