@@ -103,7 +103,8 @@ Marios-iMac:Qt mario$ tail -Fn100 testSimpleQtLoggerWarn.log
 2015-10-05 17:27:22.631 [00007fff7c63d000] [-] Start file-log 'warn'
 2015-10-05 17:27:22.631 [00007fff7c63d000] [!] L_FATAL (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:37)
 2015-10-05 17:27:22.631 [00007fff7c63d000] [E] L_ERROR (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:38)
-2015-10-05 17:27:22.632 [00007fff7c63d000] [W] L_WARN (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:39)Marios-iMac:Qt mario$
+2015-10-05 17:27:22.632 [00007fff7c63d000] [W] L_WARN (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:39)
+Marios-iMac:Qt mario$
 ```
 
 *GNU Lesser General Public License v2.1*
