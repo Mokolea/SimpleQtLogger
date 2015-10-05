@@ -31,6 +31,7 @@ EnableLogLevels::EnableLogLevels()
   INFO = true;
   DEBUG = false;
   FUNCTION = false;
+  INTERNAL = true;
 }
 bool EnableLogLevels::enabled(LogLevel logLevel) const
 {
@@ -40,6 +41,7 @@ bool EnableLogLevels::enabled(LogLevel logLevel) const
   if(logLevel == LogLevel_INFO) return INFO;
   if(logLevel == LogLevel_DEBUG) return DEBUG;
   if(logLevel == LogLevel_FUNCTION) return FUNCTION;
+  if(logLevel == LogLevel_INTERNAL) return INTERNAL;
   return false;
 }
 EnableLogLevels ENABLE_LOG_LEVELS;
@@ -55,12 +57,13 @@ bool ENABLE_CONSOLE_COLOR = true;
 SinkFileLog::SinkFileLog(QObject *parent, const QString& role)
   : QObject(parent)
   , _role(role)
-  , _logFileRotationSize(0)
-  , _logFileMaxNumber(0)
   , _logFormat(DEFAULT_LOG_FORMAT)
   , _logFormatInt(DEFAULT_LOG_FORMAT_INTERNAL)
+  , _logFileRotationSize(0)
+  , _logFileMaxNumber(0)
   , _logFile(0)
   , _logFileActivity(false)
+  , _startMessage(false)
 {
   // qDebug("SinkFileLog::SinkFileLog");
 }
@@ -180,6 +183,11 @@ bool SinkFileLog::checkLogFileOpen()
 
   QTimer::singleShot(CHECK_LOG_FILE_ACTIVITY_INTERVAL, this, SLOT(slotCheckLogFileActivity()));
 
+  if(!_startMessage) {
+    _startMessage = true;
+    slotLog_File(SimpleQtLogger::timeStamp(), SimpleQtLogger::threadId(), QString("Start file-log '%1'").arg(_role), LogLevel_INTERNAL, "", "", 0);
+  }
+
   return true;
 }
 
@@ -199,7 +207,7 @@ void SinkFileLog::checkLogFileRolling()
     QTimer::singleShot(CHECK_LOG_FILE_ACTIVITY_INTERVAL, this, SLOT(slotCheckLogFileActivity()));
     return;
   }
-  slotLog_File(SimpleQtLogger::timeStamp(), SimpleQtLogger::threadId(), QString("Current log-file '%1' size=%2 (rotation-size=%3) --> rolling").arg(_role).arg(logFileSize).arg(_logFileRotationSize), LogLevel_INFO, "", "", 0);
+  slotLog_File(SimpleQtLogger::timeStamp(), SimpleQtLogger::threadId(), QString("Current log-file '%1' size=%2 (rotation-size=%3) --> rolling").arg(_role).arg(logFileSize).arg(_logFileRotationSize), LogLevel_INTERNAL, "", "", 0);
 
   QTime timeRolling;
   timeRolling.start();
@@ -250,7 +258,7 @@ void SinkFileLog::checkLogFileRolling()
 
   checkLogFileOpen();
 
-  slotLog_File(SimpleQtLogger::timeStamp(), SimpleQtLogger::threadId(), QString("Log-file '%1' rolling done (time elapsed: %2 ms)").arg(_role).arg(timeRolling.elapsed()), LogLevel_INFO, "", "", 0);
+  slotLog_File(SimpleQtLogger::timeStamp(), SimpleQtLogger::threadId(), QString("Log-file '%1' rolling done (time elapsed: %2 ms)").arg(_role).arg(timeRolling.elapsed()), LogLevel_INTERNAL, "", "", 0);
 }
 
 void SinkFileLog::slotCheckLogFileActivity()
@@ -409,7 +417,7 @@ bool SimpleQtLogger::setLogFileName(const QString& role, const QString& logFileN
   // qDebug("SimpleQtLogger::setLogFileName");
 
   if(_sinkFileLogMap.contains(role) && _sinkFileLogMap[role]->setLogFileName(logFileName, logFileRotationSize, logFileMaxNumber)) {
-    log(QString("Start file-log '%1'").arg(role), LogLevel_INFO, "", "", 0);
+    // log(QString("Start file-log '%1'").arg(role), LogLevel_INTERNAL, "", "", 0);
     return true;
   }
   return false;
@@ -549,7 +557,7 @@ void SimpleQtLogger::slotLog_console(const QString& ts, const QString& tid, cons
     out << QString(_logFormat_console).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
   }
   if(ENABLE_CONSOLE_COLOR) {
-    if(logLevel != LogLevel_INFO) {
+    if(logLevel != LogLevel_INFO && logLevel != LogLevel_INTERNAL) {
       out << CONSOLE_COLOR_ANSI_ESC_CODES_RESET;
     }
   }

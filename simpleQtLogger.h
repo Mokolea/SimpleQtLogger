@@ -134,11 +134,12 @@ typedef enum {
   LogLevel_WARNING,   /* A warning, signalizing a deformity, without challenging the core operation */
   LogLevel_INFO,      /* Analysis information directed to supporters */
   LogLevel_DEBUG,     /* Analysis debug information directed to developers */
-  LogLevel_FUNCTION   /* A trace level for function stack-tracing */
+  LogLevel_FUNCTION,  /* A trace level for function stack-tracing */
+  LogLevel_INTERNAL   /* Internal messages (start, file rolling, ...) */
 }
 LogLevel;
 
-static const char LOG_LEVEL_CHAR[6] = {'!', 'E', 'W', 'I', 'D', 'F'}; /* MUST correspond to enum LogLevel, unchecked array!!! */
+static const char LOG_LEVEL_CHAR[7] = {'!', 'E', 'W', 'I', 'D', 'F', '-'}; /* MUST correspond to enum LogLevel, unchecked array!!! */
 
 /* Log-sinks (adjust at run-time) */
 extern bool ENABLE_LOG_SINK_FILE;      /* Log-sink: true: enable, false: disable, default: true */
@@ -153,6 +154,7 @@ struct EnableLogLevels {
   bool INFO;       /* Log-level: true: enable, false: disable, default: true */
   bool DEBUG;      /* Log-level: true: enable, false: disable, default: false; just for step-by-step testing */
   bool FUNCTION;   /* Log-level: true: enable, false: disable, default: false; stack-trace */
+  bool INTERNAL;   /* Log-level: true: enable, false: disable, default: true */
   EnableLogLevels();
   bool enabled(LogLevel logLevel) const;
 };
@@ -240,15 +242,16 @@ private:
   void checkLogFileRolling();
 
   const QString _role;
-  QString _logFileName;
-  unsigned int _logFileRotationSize; // [bytes] initiate log-file rolling
-  unsigned int _logFileMaxNumber; // max number of rolling log-file history, range 1..99
   QString _logFormat;
   QString _logFormatInt;
   EnableLogLevels _enableLogLevels;
+  QString _logFileName;
+  unsigned int _logFileRotationSize; // [bytes] initiate log-file rolling
+  unsigned int _logFileMaxNumber; // max number of rolling log-file history, range 1..99
 
   QFile* _logFile;
   bool _logFileActivity; // track log-file write (append) activity
+  bool _startMessage;
 };
 
 // -------------------------------------------------------------------------------------------------
