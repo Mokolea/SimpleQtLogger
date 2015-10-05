@@ -20,16 +20,16 @@ int main(int argc, char *argv[])
   // initialize SimpleQtLogger (step 1/2)
   simpleqtlogger::SimpleQtLogger::createInstance(qApp)->setLogFormat_file("<TS> [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)", "<TS> [<LL>] <TEXT>");
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogFileName(QDir::home().filePath("Documents/Qt/testSimpleQtLoggerGui.log"), 10*1024, 10);
-  simpleqtlogger::SQTL_LOG_ENABLE_SINK_FILE = true;
-  simpleqtlogger::SQTL_LOG_ENABLE_SINK_CONSOLE = false;
-  simpleqtlogger::SQTL_LOG_ENABLE_SINK_QDEBUG = false;
-  simpleqtlogger::SQTL_LOG_ENABLE.INFO = true;
-  simpleqtlogger::SQTL_LOG_ENABLE.DEBUG = false;
-  simpleqtlogger::SQTL_LOG_ENABLE.FUNCTION = true;
-  simpleqtlogger::SQTL_LOG_ENABLE_FUNCTION_STACK_TRACE = true;
-  simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevel_file(simpleqtlogger::SQTL_LOG_ENABLE);
-  simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevel_console(simpleqtlogger::SQTL_LOG_ENABLE);
-  simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevel_qDebug(simpleqtlogger::SQTL_LOG_ENABLE);
+  simpleqtlogger::ENABLE_LOG_SINK_FILE = true;
+  simpleqtlogger::ENABLE_LOG_SINK_CONSOLE = false;
+  simpleqtlogger::ENABLE_LOG_SINK_QDEBUG = false;
+  simpleqtlogger::ENABLE_LOG_LEVELS.INFO = true;
+  simpleqtlogger::ENABLE_LOG_LEVELS.DEBUG = false;
+  simpleqtlogger::ENABLE_LOG_LEVELS.FUNCTION = true;
+  simpleqtlogger::ENABLE_FUNCTION_STACK_TRACE = true;
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_file(simpleqtlogger::ENABLE_LOG_LEVELS);
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_console(simpleqtlogger::ENABLE_LOG_LEVELS);
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_qDebug(simpleqtlogger::ENABLE_LOG_LEVELS);
 
   // start and initialize the main widget
   Dialog w(0);
