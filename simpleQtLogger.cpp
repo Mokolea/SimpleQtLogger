@@ -145,7 +145,7 @@ void SinkFileLog::slotLog_File(const QString& ts, const QString& tid, const QStr
   if(_logFile && _logFile->isOpen()) {
     QTextStream out(_logFile);
     out.setCodec("UTF-8");
-    if(functionName.isEmpty()) {
+    if(logLevel == LogLevel_INTERNAL) {
       out << QString(_logFormatInt).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()) << '\n';
     }
     else {
@@ -550,7 +550,7 @@ void SimpleQtLogger::slotLog_console(const QString& ts, const QString& tid, cons
       out << CONSOLE_COLOR_ANSI_ESC_CODES_FUNCTION;
     }
   }
-  if(functionName.isEmpty()) {
+  if(logLevel == LogLevel_INTERNAL) {
     out << QString(_logFormatInt_console).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
   }
   else {
@@ -580,7 +580,7 @@ void SimpleQtLogger::slotLog_qDebug(const QString& ts, const QString& tid, const
     textIsEmpty = "-";
   }
 
-  if(functionName.isEmpty()) {
+  if(logLevel == LogLevel_INTERNAL) {
     qDebug("%s", QString(_logFormatInt_qDebug).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()).toStdString().c_str());
   }
   else {
