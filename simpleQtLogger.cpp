@@ -25,23 +25,23 @@ bool ENABLE_LOG_SINK_QDEBUG = false;
 /* Log-level */
 EnableLogLevels::EnableLogLevels()
 {
-  FATAL = true;
-  ERROR = true;
-  WARNING = true;
-  INFO = true;
-  DEBUG = false;
-  FUNCTION = false;
-  INTERNAL = true;
+  logLevel_FATAL = true;
+  logLevel_ERROR = true;
+  logLevel_WARNING = true;
+  logLevel_INFO = true;
+  logLevel_DEBUG = false;
+  logLevel_FUNCTION = false;
+  logLevel_INTERNAL = true;
 }
 bool EnableLogLevels::enabled(LogLevel logLevel) const
 {
-  if(logLevel == LogLevel_FATAL) return FATAL;
-  if(logLevel == LogLevel_ERROR) return ERROR;
-  if(logLevel == LogLevel_WARNING) return WARNING;
-  if(logLevel == LogLevel_INFO) return INFO;
-  if(logLevel == LogLevel_DEBUG) return DEBUG;
-  if(logLevel == LogLevel_FUNCTION) return FUNCTION;
-  if(logLevel == LogLevel_INTERNAL) return INTERNAL;
+  if(logLevel == LogLevel_FATAL) return logLevel_FATAL;
+  if(logLevel == LogLevel_ERROR) return logLevel_ERROR;
+  if(logLevel == LogLevel_WARNING) return logLevel_WARNING;
+  if(logLevel == LogLevel_INFO) return logLevel_INFO;
+  if(logLevel == LogLevel_DEBUG) return logLevel_DEBUG;
+  if(logLevel == LogLevel_FUNCTION) return logLevel_FUNCTION;
+  if(logLevel == LogLevel_INTERNAL) return logLevel_INTERNAL;
   return false;
 }
 EnableLogLevels ENABLE_LOG_LEVELS;
@@ -599,13 +599,13 @@ SimpleQtLoggerFunc::SimpleQtLoggerFunc(const QString& text, const QString& funct
   , _lineNumber(lineNumber)
 {
   // qDebug("SimpleQtLoggerFunc::SimpleQtLoggerFunc");
-  if(ENABLE_SQTL_LOG_LEVEL_FUNCTION && ENABLE_LOG_LEVELS.FUNCTION) SimpleQtLogger::getInstance()->logFuncBegin(_text, _functionName, _fileName, _lineNumber);
+  if(ENABLE_SQTL_LOG_LEVEL_FUNCTION && ENABLE_LOG_LEVELS.logLevel_FUNCTION) SimpleQtLogger::getInstance()->logFuncBegin(_text, _functionName, _fileName, _lineNumber);
 }
 
 SimpleQtLoggerFunc::~SimpleQtLoggerFunc()
 {
   // qDebug("SimpleQtLoggerFunc::~SimpleQtLoggerFunc");
-  if(ENABLE_SQTL_LOG_LEVEL_FUNCTION && ENABLE_LOG_LEVELS.FUNCTION) SimpleQtLogger::getInstance()->logFuncEnd(_text, _functionName, _fileName, _lineNumber);
+  if(ENABLE_SQTL_LOG_LEVEL_FUNCTION && ENABLE_LOG_LEVELS.logLevel_FUNCTION) SimpleQtLogger::getInstance()->logFuncEnd(_text, _functionName, _fileName, _lineNumber);
 }
 
 #endif

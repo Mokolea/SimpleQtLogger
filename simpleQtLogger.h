@@ -31,13 +31,18 @@
       simpleqtlogger::SimpleQtLogger::createInstance(qApp)->setLogFormat_file("<TS> [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)", "<TS> [<LL>] <TEXT>");
       simpleqtlogger::SimpleQtLogger::getInstance()->setLogFileName(QDir::home().filePath("Documents/Qt/testSimpleQtLoggerGui.log"), 10*1024, 10);
      or with thread-id (default):
-      simpleqtlogger::SimpleQtLogger::createInstance(qApp)->setLogFormat("<TS> [<TID>] [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)", "<TS> [<TID>] [<LL>] <TEXT>");
+      simpleqtlogger::SimpleQtLogger::createInstance(qApp)->setLogFormat_file("<TS> [<TID>] [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)", "<TS> [<TID>] [<LL>] <TEXT>");
       simpleqtlogger::SimpleQtLogger::getInstance()->setLogFileName(QDir::home().filePath("Documents/Qt/testSimpleQtLoggerGui.log"), 10*1024, 10);
+   - enable sinks:
+      simpleqtlogger::ENABLE_LOG_SINK_FILE = true;
+      simpleqtlogger::ENABLE_LOG_SINK_CONSOLE = false;
+      simpleqtlogger::ENABLE_LOG_SINK_QDEBUG = false;
    - initialize log-levels (example):
-      simpleqtlogger::ENABLE_LOG_LEVELS.INFO = true;
-      simpleqtlogger::ENABLE_LOG_LEVELS.DEBUG = false;
-      simpleqtlogger::ENABLE_LOG_LEVELS.FUNCTION = true;
+      simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_INFO = true;
+      simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_DEBUG = false;
+      simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_FUNCTION = true;
       simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_file(simpleqtlogger::ENABLE_LOG_LEVELS);
+      simpleqtlogger::ENABLE_FUNCTION_STACK_TRACE = true;
    - set main task (widget) as parent object for the logger instance (example):
       simpleqtlogger::SimpleQtLogger::getInstance()->setParent(task);
    - see also main.cpp in examples
@@ -148,13 +153,13 @@ extern bool ENABLE_LOG_SINK_QDEBUG;    /* Log-sink: true: enable, false: disable
 
 /* Log-level (adjust at run-time) */
 struct EnableLogLevels {
-  bool FATAL;      /* Log-level: true: enable, false: disable, default: true */
-  bool ERROR;      /* Log-level: true: enable, false: disable, default: true */
-  bool WARNING;    /* Log-level: true: enable, false: disable, default: true */
-  bool INFO;       /* Log-level: true: enable, false: disable, default: true */
-  bool DEBUG;      /* Log-level: true: enable, false: disable, default: false; just for step-by-step testing */
-  bool FUNCTION;   /* Log-level: true: enable, false: disable, default: false; stack-trace */
-  bool INTERNAL;   /* Log-level: true: enable, false: disable, default: true */
+  bool logLevel_FATAL;      /* Log-level: true: enable, false: disable, default: true */
+  bool logLevel_ERROR;      /* Log-level: true: enable, false: disable, default: true */
+  bool logLevel_WARNING;    /* Log-level: true: enable, false: disable, default: true */
+  bool logLevel_INFO;       /* Log-level: true: enable, false: disable, default: true */
+  bool logLevel_DEBUG;      /* Log-level: true: enable, false: disable, default: false; just for step-by-step testing */
+  bool logLevel_FUNCTION;   /* Log-level: true: enable, false: disable, default: false; stack-trace */
+  bool logLevel_INTERNAL;   /* Log-level: true: enable, false: disable, default: true */
   EnableLogLevels();
   bool enabled(LogLevel logLevel) const;
 };
@@ -185,11 +190,11 @@ extern bool ENABLE_CONSOLE_COLOR;   /* Color for sink console: true: enable, fal
   SQTL_MSVC_WARNING_RESTORE
 
 /* Use these macros (thread-safe) to have function-, filename and linenumber set correct */
-#define L_FATAL(text)   SQTL_L_BODY(text,ENABLE_SQTL_LOG_LEVEL_FATAL,simpleqtlogger::ENABLE_LOG_LEVELS.FATAL,simpleqtlogger::LogLevel_FATAL)
-#define L_ERROR(text)   SQTL_L_BODY(text,ENABLE_SQTL_LOG_LEVEL_ERROR,simpleqtlogger::ENABLE_LOG_LEVELS.ERROR,simpleqtlogger::LogLevel_ERROR)
-#define L_WARN(text)    SQTL_L_BODY(text,ENABLE_SQTL_LOG_LEVEL_WARNING,simpleqtlogger::ENABLE_LOG_LEVELS.WARNING,simpleqtlogger::LogLevel_WARNING)
-#define L_INFO(text)    SQTL_L_BODY(text,ENABLE_SQTL_LOG_LEVEL_INFO,simpleqtlogger::ENABLE_LOG_LEVELS.INFO,simpleqtlogger::LogLevel_INFO)
-#define L_DEBUG(text)   SQTL_L_BODY(text,ENABLE_SQTL_LOG_LEVEL_DEBUG,simpleqtlogger::ENABLE_LOG_LEVELS.DEBUG,simpleqtlogger::LogLevel_DEBUG)
+#define L_FATAL(text)   SQTL_L_BODY(text,ENABLE_SQTL_LOG_LEVEL_FATAL,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_FATAL,simpleqtlogger::LogLevel_FATAL)
+#define L_ERROR(text)   SQTL_L_BODY(text,ENABLE_SQTL_LOG_LEVEL_ERROR,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_ERROR,simpleqtlogger::LogLevel_ERROR)
+#define L_WARN(text)    SQTL_L_BODY(text,ENABLE_SQTL_LOG_LEVEL_WARNING,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_WARNING,simpleqtlogger::LogLevel_WARNING)
+#define L_INFO(text)    SQTL_L_BODY(text,ENABLE_SQTL_LOG_LEVEL_INFO,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_INFO,simpleqtlogger::LogLevel_INFO)
+#define L_DEBUG(text)   SQTL_L_BODY(text,ENABLE_SQTL_LOG_LEVEL_DEBUG,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_DEBUG,simpleqtlogger::LogLevel_DEBUG)
 #if ENABLE_SQTL_LOG_LEVEL_FUNCTION > 0
 #define L_FUNC(text)    simpleqtlogger::SimpleQtLoggerFunc _simpleQtLoggerFunc_(text, __FUNCTION__, __FILE__, __LINE__)
 #else
@@ -204,11 +209,11 @@ extern bool ENABLE_CONSOLE_COLOR;   /* Color for sink console: true: enable, fal
   SQTL_MSVC_WARNING_RESTORE
 
 /* Support use of streaming operators */
-#define LS_FATAL(text)   SQTL_LS_BODY(text,ENABLE_SQTL_LOG_LEVEL_FATAL,simpleqtlogger::ENABLE_LOG_LEVELS.FATAL,simpleqtlogger::LogLevel_FATAL)
-#define LS_ERROR(text)   SQTL_LS_BODY(text,ENABLE_SQTL_LOG_LEVEL_ERROR,simpleqtlogger::ENABLE_LOG_LEVELS.ERROR,simpleqtlogger::LogLevel_ERROR)
-#define LS_WARN(text)    SQTL_LS_BODY(text,ENABLE_SQTL_LOG_LEVEL_WARNING,simpleqtlogger::ENABLE_LOG_LEVELS.WARNING,simpleqtlogger::LogLevel_WARNING)
-#define LS_INFO(text)    SQTL_LS_BODY(text,ENABLE_SQTL_LOG_LEVEL_INFO,simpleqtlogger::ENABLE_LOG_LEVELS.INFO,simpleqtlogger::LogLevel_INFO)
-#define LS_DEBUG(text)   SQTL_LS_BODY(text,ENABLE_SQTL_LOG_LEVEL_DEBUG,simpleqtlogger::ENABLE_LOG_LEVELS.DEBUG,simpleqtlogger::LogLevel_DEBUG)
+#define LS_FATAL(text)   SQTL_LS_BODY(text,ENABLE_SQTL_LOG_LEVEL_FATAL,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_FATAL,simpleqtlogger::LogLevel_FATAL)
+#define LS_ERROR(text)   SQTL_LS_BODY(text,ENABLE_SQTL_LOG_LEVEL_ERROR,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_ERROR,simpleqtlogger::LogLevel_ERROR)
+#define LS_WARN(text)    SQTL_LS_BODY(text,ENABLE_SQTL_LOG_LEVEL_WARNING,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_WARNING,simpleqtlogger::LogLevel_WARNING)
+#define LS_INFO(text)    SQTL_LS_BODY(text,ENABLE_SQTL_LOG_LEVEL_INFO,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_INFO,simpleqtlogger::LogLevel_INFO)
+#define LS_DEBUG(text)   SQTL_LS_BODY(text,ENABLE_SQTL_LOG_LEVEL_DEBUG,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_DEBUG,simpleqtlogger::LogLevel_DEBUG)
 #if ENABLE_SQTL_LOG_LEVEL_FUNCTION > 0
 #define LS_FUNC(text)    QString _s_; { QTextStream ts(&_s_); ts << text; } simpleqtlogger::SimpleQtLoggerFunc _simpleQtLoggerFunc_(_s_, __FUNCTION__, __FILE__, __LINE__)
 #else

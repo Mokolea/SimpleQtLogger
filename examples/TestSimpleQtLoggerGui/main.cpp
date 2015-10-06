@@ -23,13 +23,13 @@ int main(int argc, char *argv[])
   simpleqtlogger::ENABLE_LOG_SINK_FILE = true;
   simpleqtlogger::ENABLE_LOG_SINK_CONSOLE = false;
   simpleqtlogger::ENABLE_LOG_SINK_QDEBUG = false;
-  simpleqtlogger::ENABLE_LOG_LEVELS.INFO = true;
-  simpleqtlogger::ENABLE_LOG_LEVELS.DEBUG = false;
-  simpleqtlogger::ENABLE_LOG_LEVELS.FUNCTION = true;
-  simpleqtlogger::ENABLE_FUNCTION_STACK_TRACE = true;
+  simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_INFO = true;
+  simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_DEBUG = false;
+  simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_FUNCTION = true;
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_file(simpleqtlogger::ENABLE_LOG_LEVELS);
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_console(simpleqtlogger::ENABLE_LOG_LEVELS);
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_qDebug(simpleqtlogger::ENABLE_LOG_LEVELS);
+  simpleqtlogger::ENABLE_FUNCTION_STACK_TRACE = true;
 
   // start and initialize the main widget
   Dialog w(0);
