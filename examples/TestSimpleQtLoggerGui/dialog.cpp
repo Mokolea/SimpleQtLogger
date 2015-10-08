@@ -42,6 +42,6 @@ void Dialog::on_pushButtonQuit_clicked()
 void Dialog::eventInfo(const QString& text)
 {
   // L_FUNC("");
-  ui->textBrowserLog->append(text.toHtmlEscaped());
+  ui->textBrowserLog->append(text); // .toHtmlEscaped(), Qt 5.0
   L_INFO(text);
 }
