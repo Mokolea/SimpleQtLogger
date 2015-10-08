@@ -36,8 +36,9 @@ int main(int argc, char *argv[])
   // 2nd file-log (levels: warn..fatal)
   simpleqtlogger::SimpleQtLogger::getInstance()->addSinkFileLog("warn");
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogFileName("warn", "testSimpleQtLoggerWarn.log", 10*1024, 10);
-  simpleqtlogger::EnableLogLevels enableLogLevelsWarn;
+  simpleqtlogger::EnableLogLevels enableLogLevelsWarn = simpleqtlogger::ENABLE_LOG_LEVELS;
   enableLogLevelsWarn.logLevel_INFO = false;
+  enableLogLevelsWarn.logLevel_FUNCTION = false;
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_file("warn", enableLogLevelsWarn);
 
   // start and initialize the main task

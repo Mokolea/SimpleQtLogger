@@ -45,7 +45,7 @@
       simpleqtlogger::ENABLE_FUNCTION_STACK_TRACE = true;
    - set main task (widget) as parent object for the logger instance (example):
       simpleqtlogger::SimpleQtLogger::getInstance()->setParent(task);
-   - see also main.cpp in examples
+   - see also main.cpp in examples, especially for how to use multiple log-files
 
   Info:
    - log-level (enble/disable) on 3 layer: compile-time (hard), run-time (soft, global log-macros), run-time per sink

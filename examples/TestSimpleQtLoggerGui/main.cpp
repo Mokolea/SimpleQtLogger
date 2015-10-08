@@ -30,6 +30,14 @@ int main(int argc, char *argv[])
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_console(simpleqtlogger::ENABLE_LOG_LEVELS);
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_qDebug(simpleqtlogger::ENABLE_LOG_LEVELS);
   simpleqtlogger::ENABLE_FUNCTION_STACK_TRACE = true;
+  // 2nd file-log (levels: warn..fatal)
+  simpleqtlogger::SimpleQtLogger::getInstance()->addSinkFileLog("warn");
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogFormat_file("warn", "<TS> [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)", "<TS> [<LL>] <TEXT>");
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogFileName("warn", QDir::home().filePath("Documents/Qt/testSimpleQtLoggerGuiWarn.log"), 10*1024, 10);
+  simpleqtlogger::EnableLogLevels enableLogLevelsWarn = simpleqtlogger::ENABLE_LOG_LEVELS;
+  enableLogLevelsWarn.logLevel_INFO = false;
+  enableLogLevelsWarn.logLevel_FUNCTION = false;
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_file("warn", enableLogLevelsWarn);
 
   // start and initialize the main widget
   Dialog w(0);
