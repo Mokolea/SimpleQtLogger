@@ -1,8 +1,8 @@
-# SimpleQtLogger examples
+# SimpleQtLogger examples [![Build Status](https://travis-ci.org/Mokolea/SimpleQtLogger.svg)](https://travis-ci.org/Mokolea/SimpleQtLogger)
 
 **TODO...**
 
-## TestSimpleQtLogger [![Build Status](https://travis-ci.org/Mokolea/SimpleQtLogger.svg)](https://travis-ci.org/Mokolea/SimpleQtLogger)
+## TestSimpleQtLogger
 Test logger with console-mode app
 
 ## TestSimpleQtLoggerGui
