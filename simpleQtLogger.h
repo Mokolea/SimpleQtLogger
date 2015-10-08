@@ -78,14 +78,13 @@
    - have multiple log-files (sink rolling file appender) with different log-levels, rotation-size, ...
    - set (enable/disable) log-levels per sink
    - add different set of log macros to compose messages using stream operator
-
-  Test Travis CI:
-   - create a .travis.yml
+   - continuous integration using Travis CI: created a .travis.yml
 
   Tested using:
    - Qt 5.4.2 (Community Open Source), Clang 6.0 (Apple) 64 bit
    - Qt 4.8.6 Debian 8, gcc version 4.9.2 (Debian 4.9.2-10), 64 bit
    - Travis CI: Qt 4.8.1 x86_64-linux-gnu, gcc Ubuntu/Linaro 4.6.3-1ubuntu5
+   - Qt 5.5.0, Visual Studio 2013, 32 bit
 
   GNU Lesser General Public License v2.1
   Copyright (C) 2015 Mario Ban
