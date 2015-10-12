@@ -105,73 +105,73 @@
 
 namespace simpleqtlogger {
 
-/* Log-sinks (hard; adjust at pre-processor, compile-time) */
-#define ENABLE_SQTL_LOG_SINK_FILE      1   /* 1: enable, 0: disable; log to file (rolling) */
-#define ENABLE_SQTL_LOG_SINK_CONSOLE   1   /* 1: enable, 0: disable; log to console (colored log-levels) */
-#define ENABLE_SQTL_LOG_SINK_QDEBUG    0   /* 1: enable, 0: disable; log using qDebug; messages are sent to the console, if it is a console application */
+// Log-sinks (hard; adjust at pre-processor, compile-time)
+#define ENABLE_SQTL_LOG_SINK_FILE      1   // 1: enable, 0: disable; log to file (rolling)
+#define ENABLE_SQTL_LOG_SINK_CONSOLE   1   // 1: enable, 0: disable; log to console (colored log-levels)
+#define ENABLE_SQTL_LOG_SINK_QDEBUG    0   // 1: enable, 0: disable; log using qDebug; messages are sent to the console, if it is a console application
 
-/* Log-level (hard; adjust at pre-processor, compile-time) */
-#define ENABLE_SQTL_LOG_LEVEL_FATAL      1   /* 1: enable, 0: disable */
-#define ENABLE_SQTL_LOG_LEVEL_ERROR      1   /* 1: enable, 0: disable */
-#define ENABLE_SQTL_LOG_LEVEL_WARNING    1   /* 1: enable, 0: disable */
-#define ENABLE_SQTL_LOG_LEVEL_INFO       1   /* 1: enable, 0: disable */
-#define ENABLE_SQTL_LOG_LEVEL_DEBUG      0   /* 1: enable, 0: disable; just for step-by-step testing */
-#define ENABLE_SQTL_LOG_LEVEL_FUNCTION   1   /* 1: enable, 0: disable; stack-trace */
+// Log-level (hard; adjust at pre-processor, compile-time)
+#define ENABLE_SQTL_LOG_LEVEL_FATAL      1   // 1: enable, 0: disable
+#define ENABLE_SQTL_LOG_LEVEL_ERROR      1   // 1: enable, 0: disable
+#define ENABLE_SQTL_LOG_LEVEL_WARNING    1   // 1: enable, 0: disable
+#define ENABLE_SQTL_LOG_LEVEL_INFO       1   // 1: enable, 0: disable
+#define ENABLE_SQTL_LOG_LEVEL_DEBUG      0   // 1: enable, 0: disable; just for step-by-step testing
+#define ENABLE_SQTL_LOG_LEVEL_FUNCTION   1   // 1: enable, 0: disable; stack-trace
 
-const char STACK_DEPTH_CHAR = '.';   /* use e.g. ' ' or '.' */
-const unsigned short CHECK_LOG_FILE_ACTIVITY_INTERVAL = 5000;   /* [ms] */
+const char STACK_DEPTH_CHAR = '.'; // use e.g. ' ' or '.'
+const unsigned short CHECK_LOG_FILE_ACTIVITY_INTERVAL = 5000; // [ms]
 
 const QString DEFAULT_LOG_FORMAT          = "<TS> [<TID>] [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)";
 const QString DEFAULT_LOG_FORMAT_INTERNAL = "<TS> [<TID>] [<LL>] <TEXT>";
 
 // ANSI escape codes to set foreground (background) colors, http://en.wikipedia.org/wiki/ANSI_escape_code
-const QString CONSOLE_COLOR_ANSI_ESC_CODES_FATAL    = "\033[40;1;33m";   /* foreground yellow */
-const QString CONSOLE_COLOR_ANSI_ESC_CODES_ERROR    = "\033[40;1;31m";   /* foreground dark red */
-const QString CONSOLE_COLOR_ANSI_ESC_CODES_WARNING  = "\033[40;1;36m";   /* foreground dark cyan */
-const QString CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG    = "\033[40;35m";     /* foreground magenta */
-const QString CONSOLE_COLOR_ANSI_ESC_CODES_FUNCTION = "\033[32m";        /* foreground green */
-const QString CONSOLE_COLOR_ANSI_ESC_CODES_RESET    = "\033[0m";         /* normal */
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_FATAL    = "\033[40;1;33m"; // foreground yellow
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_ERROR    = "\033[40;1;31m"; // foreground dark red
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_WARNING  = "\033[40;1;36m"; // foreground dark cyan
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG    = "\033[40;35m";   // foreground magenta
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_FUNCTION = "\033[32m";      // foreground green
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_RESET    = "\033[0m";       // normal
 
-/* Log-level */
+// Log-level
 typedef enum {
-  LogLevel_FATAL = 0, /* Fatal error, the program execution has to be aborted */
-  LogLevel_ERROR,     /* An error, that challenges the core operation */
-  LogLevel_WARNING,   /* A warning, signalizing a deformity, without challenging the core operation */
-  LogLevel_INFO,      /* Analysis information directed to supporters */
-  LogLevel_DEBUG,     /* Analysis debug information directed to developers */
-  LogLevel_FUNCTION,  /* A trace level for function stack-tracing */
-  LogLevel_INTERNAL   /* Internal messages (start, file rolling, ...) */
+  LogLevel_FATAL = 0, // Fatal error, the program execution has to be aborted
+  LogLevel_ERROR,     // An error, that challenges the core operation
+  LogLevel_WARNING,   // A warning, signalizing a deformity, without challenging the core operation
+  LogLevel_INFO,      // Analysis information directed to supporters
+  LogLevel_DEBUG,     // Analysis debug information directed to developers
+  LogLevel_FUNCTION,  // A trace level for function stack-tracing
+  LogLevel_INTERNAL   // Internal messages (start, file rolling, ...)
 }
 LogLevel;
 
-static const char LOG_LEVEL_CHAR[7] = {'!', 'E', 'W', 'I', 'D', 'F', '-'}; /* MUST correspond to enum LogLevel, unchecked array!!! */
+static const char LOG_LEVEL_CHAR[7] = {'!', 'E', 'W', 'I', 'D', 'F', '-'}; // MUST correspond to enum LogLevel, unchecked array!!!
 
-/* Log-sinks (adjust at run-time) */
-extern bool ENABLE_LOG_SINK_FILE;      /* Log-sink: true: enable, false: disable, default: true */
-extern bool ENABLE_LOG_SINK_CONSOLE;   /* Log-sink: true: enable, false: disable, default: false */
-extern bool ENABLE_LOG_SINK_QDEBUG;    /* Log-sink: true: enable, false: disable, default: false */
+// Log-sinks (adjust at run-time)
+extern bool ENABLE_LOG_SINK_FILE;    // Log-sink: true: enable, false: disable, default: true
+extern bool ENABLE_LOG_SINK_CONSOLE; // Log-sink: true: enable, false: disable, default: false
+extern bool ENABLE_LOG_SINK_QDEBUG;  // Log-sink: true: enable, false: disable, default: false
 
-/* Log-level (adjust at run-time) */
+// Log-level (adjust at run-time)
 struct EnableLogLevels {
-  bool logLevel_FATAL;      /* Log-level: true: enable, false: disable, default: true */
-  bool logLevel_ERROR;      /* Log-level: true: enable, false: disable, default: true */
-  bool logLevel_WARNING;    /* Log-level: true: enable, false: disable, default: true */
-  bool logLevel_INFO;       /* Log-level: true: enable, false: disable, default: true */
-  bool logLevel_DEBUG;      /* Log-level: true: enable, false: disable, default: false; just for step-by-step testing */
-  bool logLevel_FUNCTION;   /* Log-level: true: enable, false: disable, default: false; stack-trace */
-  bool logLevel_INTERNAL;   /* Log-level: true: enable, false: disable, default: true */
+  bool logLevel_FATAL;    // Log-level: true: enable, false: disable, default: true
+  bool logLevel_ERROR;    // Log-level: true: enable, false: disable, default: true
+  bool logLevel_WARNING;  // Log-level: true: enable, false: disable, default: true
+  bool logLevel_INFO;     // Log-level: true: enable, false: disable, default: true
+  bool logLevel_DEBUG;    // Log-level: true: enable, false: disable, default: false; just for step-by-step testing
+  bool logLevel_FUNCTION; // Log-level: true: enable, false: disable, default: false; stack-trace
+  bool logLevel_INTERNAL; // Log-level: true: enable, false: disable, default: true
   EnableLogLevels();
   bool enabled(LogLevel logLevel) const;
 };
 extern EnableLogLevels ENABLE_LOG_LEVELS;
 
-/* Log-function stack-trace */
-extern bool ENABLE_FUNCTION_STACK_TRACE;   /* Log-function stack-trace: true: enable, false: disable, default: true */
+// Log-function stack-trace
+extern bool ENABLE_FUNCTION_STACK_TRACE; // Log-function stack-trace: true: enable, false: disable, default: true
 
-/* Console color */
-extern bool ENABLE_CONSOLE_COLOR;   /* Color for sink console: true: enable, false: disable, default: true */
+// Console color
+extern bool ENABLE_CONSOLE_COLOR; // Color for sink console: true: enable, false: disable, default: true
 
-/* Microsoft Visual C++ compiler specific */
+// Microsoft Visual C++ compiler specific
 #if defined(_MSC_VER)
 #define SQTL_MSVC_WARNING_SUPPRESS \
   __pragma(warning(push)) \
@@ -183,13 +183,13 @@ extern bool ENABLE_CONSOLE_COLOR;   /* Color for sink console: true: enable, fal
 #define SQTL_MSVC_WARNING_RESTORE    /* nop */
 #endif
 
-/* Macro body */
+// Macro body
 #define SQTL_L_BODY(text,levelEnabledHard,levelEnabledSoft,level) \
   SQTL_MSVC_WARNING_SUPPRESS \
   do { if(levelEnabledHard && levelEnabledSoft) simpleqtlogger::SimpleQtLogger::getInstance()->log(text, level, __FUNCTION__, __FILE__, __LINE__); } while(0) \
   SQTL_MSVC_WARNING_RESTORE
 
-/* Use these macros (thread-safe) to have function-, filename and linenumber set correct */
+// Use these macros (thread-safe) to have function-, filename and linenumber set correct
 #define L_FATAL(text)   SQTL_L_BODY(text,ENABLE_SQTL_LOG_LEVEL_FATAL,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_FATAL,simpleqtlogger::LogLevel_FATAL)
 #define L_ERROR(text)   SQTL_L_BODY(text,ENABLE_SQTL_LOG_LEVEL_ERROR,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_ERROR,simpleqtlogger::LogLevel_ERROR)
 #define L_WARN(text)    SQTL_L_BODY(text,ENABLE_SQTL_LOG_LEVEL_WARNING,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_WARNING,simpleqtlogger::LogLevel_WARNING)
@@ -201,14 +201,14 @@ extern bool ENABLE_CONSOLE_COLOR;   /* Color for sink console: true: enable, fal
 #define L_FUNC(text)    /* nop */
 #endif
 
-/* Macro body */
+// Macro body
 #define SQTL_LS_BODY(text,levelEnabledHard,levelEnabledSoft,level) \
   SQTL_MSVC_WARNING_SUPPRESS \
   do { if(levelEnabledHard && levelEnabledSoft) { QString s; QTextStream ts(&s); ts << text; \
     simpleqtlogger::SimpleQtLogger::getInstance()->log(s, level, __FUNCTION__, __FILE__, __LINE__); } } while(0) \
   SQTL_MSVC_WARNING_RESTORE
 
-/* Support use of streaming operators */
+// Support use of streaming operators
 #define LS_FATAL(text)   SQTL_LS_BODY(text,ENABLE_SQTL_LOG_LEVEL_FATAL,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_FATAL,simpleqtlogger::LogLevel_FATAL)
 #define LS_ERROR(text)   SQTL_LS_BODY(text,ENABLE_SQTL_LOG_LEVEL_ERROR,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_ERROR,simpleqtlogger::LogLevel_ERROR)
 #define LS_WARN(text)    SQTL_LS_BODY(text,ENABLE_SQTL_LOG_LEVEL_WARNING,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_WARNING,simpleqtlogger::LogLevel_WARNING)
