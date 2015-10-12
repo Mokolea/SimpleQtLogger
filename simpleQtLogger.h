@@ -64,6 +64,7 @@
 
   TODO:
    - trimming (removing of whitespace) selectable, at least for at the start of log-message
+   - idea: have messages optional prefixed with current stack-depth "...|" if ENABLE_FUNCTION_STACK_TRACE enabled --> maybe not
    - provide to add/remove user defined sinks
    - optimize function-log macro to not create a stack-object according to ENABLE_FUNCTION_STACK_TRACE
    - enable pedantic-errors, check for no compiler warnings, use e.g.: -Wall -Wextra -Werror -pedantic-errors -Wwrite-strings
