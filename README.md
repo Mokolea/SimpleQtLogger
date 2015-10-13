@@ -4,12 +4,12 @@ Simple rolling file logger for C++ applications using the [Qt Framework](http://
 
 [![Build Status](https://travis-ci.org/Mokolea/SimpleQtLogger.svg)](https://travis-ci.org/Mokolea/SimpleQtLogger)
 
-Design goals - simple:
+## Design goals - simple
  - straightforward usage
  - single source-file
  - no configuration-file
 
-Facts:
+## Facts
  - supported sinks:
     - rolling file appender
     - console, colored (ANSI escape codes)
@@ -19,7 +19,9 @@ Facts:
  - specify log-format
  - log-file encoding: utf-8
 
+## Usage
 **TODO...**
+For now, just see the comments in [simpleQtLogger.h](https://github.com/Mokolea/SimpleQtLogger/blob/master/simpleQtLogger.h)
 
 ## Log-format
 The following TAGs are available and expand to:
