@@ -2,6 +2,7 @@
   Test Simple Logger for Qt
 
   Mario Ban, 05.2015
+  https://github.com/Mokolea/SimpleQtLogger
 
   Tested using:
    - Qt 5.4.2 (Community Open Source), Clang 6.0 (Apple) 64 bit

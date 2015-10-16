@@ -4,6 +4,8 @@
 #
 #-------------------------------------------------
 
+# https://github.com/Mokolea/SimpleQtLogger
+
 # Xcode 7.0 (Qt 5.5.0, Creator 3.5.0), OS X 10.10.5
 QMAKE_MAC_SDK = macosx10.11
 

@@ -2,6 +2,7 @@
   Simple Logger for Qt
 
   Mario Ban, 05.2015
+  https://github.com/Mokolea/SimpleQtLogger
 
   Design goals - simple:
    - straightforward usage
