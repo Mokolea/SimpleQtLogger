@@ -38,12 +38,13 @@
       simpleqtlogger::ENABLE_LOG_SINK_FILE = true;
       simpleqtlogger::ENABLE_LOG_SINK_CONSOLE = false;
       simpleqtlogger::ENABLE_LOG_SINK_QDEBUG = false;
-   - initialize log-levels (example):
+   - set log-features:
+      simpleqtlogger::ENABLE_FUNCTION_STACK_TRACE = true;
+   - set log-levels (example):
       simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_INFO = true;
       simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_DEBUG = false;
       simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_FUNCTION = true;
       simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_file(simpleqtlogger::ENABLE_LOG_LEVELS);
-      simpleqtlogger::ENABLE_FUNCTION_STACK_TRACE = true;
    - set main task (widget) as parent object for the logger instance (example):
       simpleqtlogger::SimpleQtLogger::getInstance()->setParent(task);
    - see also main.cpp in examples, especially for how to use multiple log-files
