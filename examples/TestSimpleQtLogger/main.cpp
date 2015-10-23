@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
   QCoreApplication a(argc, argv);
 
   // initialize SimpleQtLogger (step 1/2)
-  simpleqtlogger::SimpleQtLogger::createInstance(qApp)->setLogFileName("testSimpleQtLogger.log", 10*1024, 10);
+  simpleqtlogger::SimpleQtLogger::createInstance(qApp)->setLogFileName("testSimpleQtLogger.log", 10*1000, 10);
   simpleqtlogger::ENABLE_LOG_SINK_FILE = true;
   simpleqtlogger::ENABLE_LOG_SINK_CONSOLE = false;
   simpleqtlogger::ENABLE_LOG_SINK_QDEBUG = false;
@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
   simpleqtlogger::ENABLE_FUNCTION_STACK_TRACE = true;
   // 2nd file-log (levels: warn..fatal)
   simpleqtlogger::SimpleQtLogger::getInstance()->addSinkFileLog("warn");
-  simpleqtlogger::SimpleQtLogger::getInstance()->setLogFileName("warn", "testSimpleQtLoggerWarn.log", 10*1024, 10);
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogFileName("warn", "testSimpleQtLoggerWarn.log", 10*1000, 10);
   simpleqtlogger::EnableLogLevels enableLogLevelsWarn = simpleqtlogger::ENABLE_LOG_LEVELS;
   enableLogLevelsWarn.logLevel_INFO = false;
   enableLogLevelsWarn.logLevel_FUNCTION = false;

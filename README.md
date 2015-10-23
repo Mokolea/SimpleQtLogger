@@ -90,7 +90,7 @@ Marios-iMac:Qt mario$ tail -Fn100 testSimpleQtLogger.log
 2015-10-05 17:27:26.530 [000070000019a000] [F] / _id='03' (run@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:114)
 2015-10-05 17:27:26.530 [00007fff7c63d000] [F] \ _id='03' (~WorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:108)
 2015-10-05 17:27:26.530 [00007fff7c63d000] [F] / _id='03' (~WorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:108)
-2015-10-05 17:27:27.883 [00007fff7c63d000] [-] Current log-file 'main' size=11964 (rotation-size=10240) --> rolling
+2015-10-05 17:27:27.883 [00007fff7c63d000] [-] Current log-file 'main' size=11964 (rotation-size=10000) --> rolling
 2015-10-05 17:27:27.898 [00007fff7c63d000] [-] Log-file 'main' rolling done (time elapsed: 15 ms)
 2015-10-05 17:27:28.935 [00007fff7c63d000] [F] \ (theEnd@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:67)
 2015-10-05 17:27:28.935 [00007fff7c63d000] [I] Bye bye (theEnd@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:68)

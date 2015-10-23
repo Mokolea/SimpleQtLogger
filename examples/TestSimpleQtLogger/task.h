@@ -68,12 +68,10 @@ private:
 #endif // _TASK_H
 
 /*
-Marios-iMac:Qt mario$ ./build-TestSimpleQtLogger-Desktop_Qt_5_4_2_clang_64bit-Debug/TestSimpleQtLogger
+Marios-iMac:Qt mario$ ./build-TestSimpleQtLogger-Desktop_Qt_5_5_0_clang_64bit-Debug/TestSimpleQtLogger
 SimpleQtLogger::SimpleQtLogger
-SinkFileLog::SinkFileLog
-SimpleQtLogger::setLogFileName
-SinkFileLog::setLogFileName
-Current log-file: "testSimpleQtLogger.log"
+Current log-file: "testSimpleQtLogger.log" role "main"
+Current log-file: "testSimpleQtLoggerWarn.log" role "warn"
 Task::Task
 WorkerThread::WorkerThread
 WorkerThread::run
@@ -84,125 +82,132 @@ WorkerThread::~WorkerThread
 WorkerThread::WorkerThread
 WorkerThread::run
 WorkerThread::~WorkerThread
-Removed "testSimpleQtLogger_10.log"
-Moved "testSimpleQtLogger_09.log" to "testSimpleQtLogger_10.log"
-Moved "testSimpleQtLogger_08.log" to "testSimpleQtLogger_09.log"
-Moved "testSimpleQtLogger_07.log" to "testSimpleQtLogger_08.log"
-Moved "testSimpleQtLogger_06.log" to "testSimpleQtLogger_07.log"
-Moved "testSimpleQtLogger_05.log" to "testSimpleQtLogger_06.log"
-Moved "testSimpleQtLogger_04.log" to "testSimpleQtLogger_05.log"
-Moved "testSimpleQtLogger_03.log" to "testSimpleQtLogger_04.log"
-Moved "testSimpleQtLogger_02.log" to "testSimpleQtLogger_03.log"
-Moved "testSimpleQtLogger_01.log" to "testSimpleQtLogger_02.log"
-Moved "testSimpleQtLogger.log" to "testSimpleQtLogger_01.log"
-Current log-file: "testSimpleQtLogger.log"
+Removed "testSimpleQtLogger_10.log" role "main"
+Moved "testSimpleQtLogger_09.log" to "testSimpleQtLogger_10.log" role "main"
+Moved "testSimpleQtLogger_08.log" to "testSimpleQtLogger_09.log" role "main"
+Moved "testSimpleQtLogger_07.log" to "testSimpleQtLogger_08.log" role "main"
+Moved "testSimpleQtLogger_06.log" to "testSimpleQtLogger_07.log" role "main"
+Moved "testSimpleQtLogger_05.log" to "testSimpleQtLogger_06.log" role "main"
+Moved "testSimpleQtLogger_04.log" to "testSimpleQtLogger_05.log" role "main"
+Moved "testSimpleQtLogger_03.log" to "testSimpleQtLogger_04.log" role "main"
+Moved "testSimpleQtLogger_02.log" to "testSimpleQtLogger_03.log" role "main"
+Moved "testSimpleQtLogger_01.log" to "testSimpleQtLogger_02.log" role "main"
+Moved "testSimpleQtLogger.log" to "testSimpleQtLogger_01.log" role "main"
+Current log-file: "testSimpleQtLogger.log" role "main"
 Task::~Task
 SimpleQtLogger::~SimpleQtLogger
-SinkFileLog::~SinkFileLog
 Marios-iMac:Qt mario$
 
 Marios-iMac:Qt mario$ tail -Fn100 testSimpleQtLogger.log
-2015-06-20 19:05:59.614 [00007fff7d752300] [I] Start file-log
-2015-06-20 19:05:59.616 [00007fff7d752300] [F] \ (Task@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:20)
-2015-06-20 19:05:59.617 [00007fff7d752300] [F] / (Task@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:20)
-2015-06-20 19:05:59.617 [00007fff7d752300] [F] \ (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:32)
-2015-06-20 19:05:59.617 [00007fff7d752300] [I] +++ test Logger (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:34)
-2015-06-20 19:05:59.617 [00007fff7d752300] [!] L_FATAL (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:35)
-2015-06-20 19:05:59.617 [00007fff7d752300] [E] L_ERROR (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:36)
-2015-06-20 19:05:59.617 [00007fff7d752300] [W] L_WARN (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:37)
-2015-06-20 19:05:59.617 [00007fff7d752300] [I] L_INFO (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:38)
-2015-06-20 19:05:59.617 [00007fff7d752300] [I] --- test Logger (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:40)
-2015-06-20 19:05:59.617 [00007fff7d752300] [I] ? (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:42)
-2015-06-20 19:05:59.617 [00007fff7d752300] [I] Trimmed (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:43)
-2015-06-20 19:05:59.617 [00007fff7d752300] [I] JSON output 1:
+2015-10-23 18:39:41.036 [00007fff7c63d000] [-] Start file-log 'main'
+2015-10-23 18:39:41.060 [00007fff7c63d000] [F] \ (Task@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:23)
+2015-10-23 18:39:41.061 [00007fff7c63d000] [F] / (Task@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:23)
+2015-10-23 18:39:41.061 [00007fff7c63d000] [F] \ (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:35)
+2015-10-23 18:39:41.061 [00007fff7c63d000] [I] +++ test Logger (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:37)
+2015-10-23 18:39:41.061 [00007fff7c63d000] [!] L_FATAL (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:38)
+2015-10-23 18:39:41.061 [00007fff7c63d000] [E] L_ERROR (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:39)
+2015-10-23 18:39:41.061 [00007fff7c63d000] [W] L_WARN (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:40)
+2015-10-23 18:39:41.061 [00007fff7c63d000] [I] L_INFO (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:41)
+2015-10-23 18:39:41.061 [00007fff7c63d000] [I] --- test Logger (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:43)
+2015-10-23 18:39:41.061 [00007fff7c63d000] [I] ? (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:45)
+2015-10-23 18:39:41.061 [00007fff7c63d000] [I] Trimmed (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:46)
+2015-10-23 18:39:41.061 [00007fff7c63d000] [I] UTF-8 Unicode text: äöü àéè (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:47)
+2015-10-23 18:39:41.061 [00007fff7c63d000] [I] JSON output 1:
 {
   "firstName": "Mario",
   "age": 44
-} (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:51)
-2015-06-20 19:05:59.617 [00007fff7d752300] [I] JSON output 2:
+} (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:55)
+2015-10-23 18:39:41.061 [00007fff7c63d000] [I] JSON output 2:
 {
   "firstName": "Mario",
   "age": 44
-} (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:54)
-2015-06-20 19:05:59.617 [00007fff7d752300] [F] / (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:32)
-2015-06-20 19:06:00.622 [00007fff7d752300] [F] \ (slotRun@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:71)
-2015-06-20 19:06:00.622 [00007fff7d752300] [F] .\ id='01' (startWorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:85)
-2015-06-20 19:06:00.622 [00007fff7d752300] [F] ..\ _id='01' (WorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:99)
-2015-06-20 19:06:00.622 [00007fff7d752300] [F] ../ _id='01' (WorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:99)
-2015-06-20 19:06:00.622 [00007fff7d752300] [F] ./ id='01' (startWorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:85)
-2015-06-20 19:06:00.622 [00007fff7d752300] [F] / (slotRun@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:71)
-2015-06-20 19:06:00.622 [00007fff7d752300] [F] \ (slotRun@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:71)
-2015-06-20 19:06:00.622 [00007fff7d752300] [F] .\ id='02' (startWorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:85)
-2015-06-20 19:06:00.622 [00007fff7d752300] [F] ..\ _id='02' (WorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:99)
-2015-06-20 19:06:00.622 [00007fff7d752300] [F] ../ _id='02' (WorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:99)
-2015-06-20 19:06:00.622 [00007fff7d752300] [F] ./ id='02' (startWorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:85)
-2015-06-20 19:06:00.622 [00007fff7d752300] [F] / (slotRun@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:71)
-2015-06-20 19:06:00.622 [0000000108bdc000] [F] \ _id='01' (run@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:111)
-2015-06-20 19:06:00.622 [0000000108c5f000] [F] \ _id='02' (run@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:111)
-2015-06-20 19:06:01.124 [0000000108bdc000] [F] .\ n=6 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:124)
-2015-06-20 19:06:01.125 [0000000108c5f000] [F] .\ n=6 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:124)
-2015-06-20 19:06:01.125 [0000000108bdc000] [F] ..\ n=5 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:124)
-2015-06-20 19:06:01.125 [0000000108c5f000] [F] ..\ n=5 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:124)
-2015-06-20 19:06:01.125 [0000000108bdc000] [F] ...\ n=4 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:124)
-2015-06-20 19:06:01.125 [0000000108c5f000] [F] ...\ n=4 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:124)
-2015-06-20 19:06:01.125 [0000000108c5f000] [F] ....\ n=3 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:124)
-2015-06-20 19:06:01.125 [0000000108bdc000] [F] ....\ n=3 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:124)
-2015-06-20 19:06:01.125 [0000000108c5f000] [F] .....\ n=2 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:124)
-2015-06-20 19:06:01.125 [0000000108bdc000] [F] .....\ n=2 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:124)
-2015-06-20 19:06:01.125 [0000000108c5f000] [F] ...../ n=2 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:124)
-2015-06-20 19:06:01.125 [0000000108bdc000] [F] ...../ n=2 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:124)
-2015-06-20 19:06:01.125 [0000000108c5f000] [F] ..../ n=3 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:124)
-2015-06-20 19:06:01.125 [0000000108bdc000] [F] ..../ n=3 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:124)
-2015-06-20 19:06:01.125 [0000000108c5f000] [F] .../ n=4 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:124)
-2015-06-20 19:06:01.125 [0000000108bdc000] [F] .../ n=4 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:124)
-2015-06-20 19:06:01.125 [0000000108bdc000] [F] ../ n=5 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:124)
-2015-06-20 19:06:01.125 [0000000108c5f000] [F] ../ n=5 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:124)
-2015-06-20 19:06:01.125 [0000000108bdc000] [F] ./ n=6 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:124)
-2015-06-20 19:06:01.125 [0000000108bdc000] [I] 01: Calculate: 6! = 720 (run@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:116)
-2015-06-20 19:06:01.125 [0000000108c5f000] [F] ./ n=6 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:124)
-2015-06-20 19:06:01.125 [0000000108c5f000] [I] 02: Calculate: 6! = 720 (run@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:116)
-2015-06-20 19:06:01.626 [00007fff7d752300] [F] \ (slotResultReady@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:79)
-2015-06-20 19:06:01.626 [00007fff7d752300] [I] WorkerThread: 01: Calculate: 6! = 720 (slotResultReady@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:80)
-2015-06-20 19:06:01.626 [00007fff7d752300] [F] / (slotResultReady@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:79)
-2015-06-20 19:06:01.625 [0000000108bdc000] [F] / _id='01' (run@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:111)
-2015-06-20 19:06:01.626 [00007fff7d752300] [F] \ (slotResultReady@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:79)
-2015-06-20 19:06:01.626 [00007fff7d752300] [I] WorkerThread: 02: Calculate: 6! = 720 (slotResultReady@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:80)
-2015-06-20 19:06:01.626 [00007fff7d752300] [F] / (slotResultReady@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:79)
-2015-06-20 19:06:01.626 [0000000108c5f000] [F] / _id='02' (run@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:111)
-2015-06-20 19:06:01.626 [00007fff7d752300] [F] \ _id='01' (~WorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:105)
-2015-06-20 19:06:01.626 [00007fff7d752300] [F] / _id='01' (~WorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:105)
-2015-06-20 19:06:01.626 [00007fff7d752300] [F] \ _id='02' (~WorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:105)
-2015-06-20 19:06:01.626 [00007fff7d752300] [F] / _id='02' (~WorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:105)
-2015-06-20 19:06:02.767 [00007fff7d752300] [F] \ (slotRun@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:71)
-2015-06-20 19:06:02.767 [00007fff7d752300] [F] .\ id='03' (startWorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:85)
-2015-06-20 19:06:02.768 [00007fff7d752300] [F] ..\ _id='03' (WorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:99)
-2015-06-20 19:06:02.768 [00007fff7d752300] [F] ../ _id='03' (WorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:99)
-2015-06-20 19:06:02.768 [00007fff7d752300] [F] ./ id='03' (startWorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:85)
-2015-06-20 19:06:02.768 [00007fff7d752300] [F] / (slotRun@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:71)
-2015-06-20 19:06:02.768 [0000000108bdc000] [F] \ _id='03' (run@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:111)
-2015-06-20 19:06:03.269 [0000000108bdc000] [F] .\ n=6 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:124)
-2015-06-20 19:06:03.269 [0000000108bdc000] [F] ..\ n=5 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:124)
-2015-06-20 19:06:03.269 [0000000108bdc000] [F] ...\ n=4 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:124)
-2015-06-20 19:06:03.269 [0000000108bdc000] [F] ....\ n=3 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:124)
-2015-06-20 19:06:03.269 [0000000108bdc000] [F] .....\ n=2 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:124)
-2015-06-20 19:06:03.269 [0000000108bdc000] [F] ...../ n=2 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:124)
-2015-06-20 19:06:03.269 [0000000108bdc000] [F] ..../ n=3 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:124)
-2015-06-20 19:06:03.269 [0000000108bdc000] [F] .../ n=4 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:124)
-2015-06-20 19:06:03.269 [0000000108bdc000] [F] ../ n=5 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:124)
-2015-06-20 19:06:03.269 [0000000108bdc000] [F] ./ n=6 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:124)
-2015-06-20 19:06:03.269 [0000000108bdc000] [I] 03: Calculate: 6! = 720 (run@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:116)
-2015-06-20 19:06:03.774 [00007fff7d752300] [F] \ (slotResultReady@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:79)
-2015-06-20 19:06:03.774 [00007fff7d752300] [I] WorkerThread: 03: Calculate: 6! = 720 (slotResultReady@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:80)
-2015-06-20 19:06:03.774 [00007fff7d752300] [F] / (slotResultReady@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:79)
-2015-06-20 19:06:03.774 [0000000108bdc000] [F] / _id='03' (run@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:111)
-2015-06-20 19:06:03.774 [00007fff7d752300] [F] \ _id='03' (~WorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:105)
-2015-06-20 19:06:03.774 [00007fff7d752300] [F] / _id='03' (~WorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:105)
-2015-06-20 19:06:04.775 [00007fff7d752300] [I] Current log-file size=11797 (rotation-size=10240) --> rolling
-2015-06-20 19:06:04.776 [00007fff7d752300] [I] Log-file rolling done (time elapsed: 2 ms)
-2015-06-20 19:06:04.777 [00007fff7d752300] [F] \ (theEnd@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:64)
-2015-06-20 19:06:04.777 [00007fff7d752300] [I] Bye bye (theEnd@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:65)
-2015-06-20 19:06:04.777 [00007fff7d752300] [F] / (theEnd@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:64)
-2015-06-20 19:06:04.777 [00007fff7d752300] [F] \ (~Task@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:26)
-2015-06-20 19:06:04.777 [00007fff7d752300] [F] / (~Task@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:26)
+} (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:58)
+2015-10-23 18:39:41.061 [00007fff7c63d000] [F] / (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:35)
+2015-10-23 18:39:42.064 [00007fff7c63d000] [F] \ (slotRun@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:75)
+2015-10-23 18:39:42.064 [00007fff7c63d000] [F] .\ id='01' (startWorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:89)
+2015-10-23 18:39:42.064 [00007fff7c63d000] [F] ..\ _id='01' (WorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:103)
+2015-10-23 18:39:42.064 [00007fff7c63d000] [F] ../ _id='01' (WorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:103)
+2015-10-23 18:39:42.064 [00007fff7c63d000] [F] ./ id='01' (startWorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:89)
+2015-10-23 18:39:42.064 [00007fff7c63d000] [F] / (slotRun@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:75)
+2015-10-23 18:39:42.064 [00007fff7c63d000] [F] \ (slotRun@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:75)
+2015-10-23 18:39:42.064 [00007fff7c63d000] [F] .\ id='02' (startWorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:89)
+2015-10-23 18:39:42.064 [00007fff7c63d000] [F] ..\ _id='02' (WorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:103)
+2015-10-23 18:39:42.064 [00007fff7c63d000] [F] ../ _id='02' (WorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:103)
+2015-10-23 18:39:42.065 [00007fff7c63d000] [F] ./ id='02' (startWorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:89)
+2015-10-23 18:39:42.065 [00007fff7c63d000] [F] / (slotRun@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:75)
+2015-10-23 18:39:42.064 [000070000019a000] [F] \ _id='01' (run@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:115)
+2015-10-23 18:39:42.065 [000070000021d000] [F] \ _id='02' (run@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:115)
+2015-10-23 18:39:42.565 [000070000019a000] [F] .\ n=6 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:132)
+2015-10-23 18:39:42.565 [000070000019a000] [F] ..\ n=5 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:132)
+2015-10-23 18:39:42.565 [000070000019a000] [F] ...\ n=4 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:132)
+2015-10-23 18:39:42.565 [000070000019a000] [F] ....\ n=3 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:132)
+2015-10-23 18:39:42.565 [000070000019a000] [F] .....\ n=2 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:132)
+2015-10-23 18:39:42.565 [000070000019a000] [F] ...../ n=2 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:132)
+2015-10-23 18:39:42.565 [000070000019a000] [F] ..../ n=3 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:132)
+2015-10-23 18:39:42.565 [000070000019a000] [F] .../ n=4 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:132)
+2015-10-23 18:39:42.565 [000070000021d000] [F] .\ n=6 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:132)
+2015-10-23 18:39:42.565 [000070000021d000] [F] ..\ n=5 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:132)
+2015-10-23 18:39:42.565 [000070000019a000] [F] ../ n=5 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:132)
+2015-10-23 18:39:42.565 [000070000019a000] [F] ./ n=6 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:132)
+2015-10-23 18:39:42.565 [000070000021d000] [F] ...\ n=4 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:132)
+2015-10-23 18:39:42.565 [000070000019a000] [I] 01: Calculate: 6! = 720 (run@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:120)
+2015-10-23 18:39:42.565 [000070000021d000] [F] ....\ n=3 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:132)
+2015-10-23 18:39:42.565 [000070000021d000] [F] .....\ n=2 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:132)
+2015-10-23 18:39:42.565 [000070000021d000] [F] ...../ n=2 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:132)
+2015-10-23 18:39:42.565 [000070000021d000] [F] ..../ n=3 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:132)
+2015-10-23 18:39:42.565 [000070000021d000] [F] .../ n=4 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:132)
+2015-10-23 18:39:42.565 [000070000021d000] [F] ../ n=5 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:132)
+2015-10-23 18:39:42.565 [000070000021d000] [F] ./ n=6 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:132)
+2015-10-23 18:39:42.565 [000070000021d000] [I] 02: Calculate: 6! = 720 (run@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:120)
+2015-10-23 18:39:43.069 [00007fff7c63d000] [F] \ (slotResultReady@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:83)
+2015-10-23 18:39:43.069 [00007fff7c63d000] [I] WorkerThread: 01: Calculate: 6! = 720 (slotResultReady@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:84)
+2015-10-23 18:39:43.069 [00007fff7c63d000] [F] / (slotResultReady@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:83)
+2015-10-23 18:39:43.069 [00007fff7c63d000] [F] \ (slotResultReady@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:83)
+2015-10-23 18:39:43.069 [00007fff7c63d000] [I] WorkerThread: 02: Calculate: 6! = 720 (slotResultReady@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:84)
+2015-10-23 18:39:43.069 [00007fff7c63d000] [F] / (slotResultReady@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:83)
+2015-10-23 18:39:43.069 [000070000021d000] [F] / _id='02' (run@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:115)
+2015-10-23 18:39:43.069 [000070000019a000] [F] / _id='01' (run@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:115)
+2015-10-23 18:39:43.069 [00007fff7c63d000] [F] \ _id='02' (~WorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:109)
+2015-10-23 18:39:43.069 [00007fff7c63d000] [F] / _id='02' (~WorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:109)
+2015-10-23 18:39:43.069 [00007fff7c63d000] [F] \ _id='01' (~WorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:109)
+2015-10-23 18:39:43.069 [00007fff7c63d000] [F] / _id='01' (~WorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:109)
+2015-10-23 18:39:43.914 [00007fff7c63d000] [F] \ (slotRun@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:75)
+2015-10-23 18:39:43.914 [00007fff7c63d000] [F] .\ id='03' (startWorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:89)
+2015-10-23 18:39:43.914 [00007fff7c63d000] [F] ..\ _id='03' (WorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:103)
+2015-10-23 18:39:43.914 [00007fff7c63d000] [F] ../ _id='03' (WorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:103)
+2015-10-23 18:39:43.914 [00007fff7c63d000] [F] ./ id='03' (startWorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:89)
+2015-10-23 18:39:43.914 [00007fff7c63d000] [F] / (slotRun@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:75)
+2015-10-23 18:39:43.914 [000070000019a000] [F] \ _id='03' (run@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:115)
+2015-10-23 18:39:44.418 [000070000019a000] [F] .\ n=6 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:132)
+2015-10-23 18:39:44.418 [000070000019a000] [F] ..\ n=5 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:132)
+2015-10-23 18:39:44.418 [000070000019a000] [F] ...\ n=4 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:132)
+2015-10-23 18:39:44.418 [000070000019a000] [F] ....\ n=3 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:132)
+2015-10-23 18:39:44.418 [000070000019a000] [F] .....\ n=2 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:132)
+2015-10-23 18:39:44.418 [000070000019a000] [F] ...../ n=2 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:132)
+2015-10-23 18:39:44.418 [000070000019a000] [F] ..../ n=3 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:132)
+2015-10-23 18:39:44.418 [000070000019a000] [F] .../ n=4 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:132)
+2015-10-23 18:39:44.418 [000070000019a000] [F] ../ n=5 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:132)
+2015-10-23 18:39:44.418 [000070000019a000] [F] ./ n=6 (factorial@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:132)
+2015-10-23 18:39:44.418 [000070000019a000] [I] 03: Calculate: 6! = 720 (run@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:120)
+2015-10-23 18:39:44.925 [00007fff7c63d000] [F] \ (slotResultReady@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:83)
+2015-10-23 18:39:44.925 [00007fff7c63d000] [I] WorkerThread: 03: Calculate: 6! = 720 (slotResultReady@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:84)
+2015-10-23 18:39:44.925 [00007fff7c63d000] [F] / (slotResultReady@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:83)
+2015-10-23 18:39:44.925 [000070000019a000] [F] / _id='03' (run@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:115)
+2015-10-23 18:39:44.925 [00007fff7c63d000] [F] \ _id='03' (~WorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:109)
+2015-10-23 18:39:44.925 [00007fff7c63d000] [F] / _id='03' (~WorkerThread@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:109)
+2015-10-23 18:39:45.846 [00007fff7c63d000] [-] Current log-file 'main' size=11963 (rotation-size=10000) --> rolling
+2015-10-23 18:39:45.982 [00007fff7c63d000] [-] Log-file 'main' rolling done (time elapsed: 136 ms)
+2015-10-23 18:39:46.846 [00007fff7c63d000] [F] \ (theEnd@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:68)
+2015-10-23 18:39:46.847 [00007fff7c63d000] [I] Bye bye (theEnd@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:69)
+2015-10-23 18:39:46.847 [00007fff7c63d000] [F] / (theEnd@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:68)
+2015-10-23 18:39:46.847 [00007fff7c63d000] [F] \ (~Task@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:29)
+2015-10-23 18:39:46.847 [00007fff7c63d000] [F] / (~Task@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:29)
+Marios-iMac:Qt mario$
+
+Marios-iMac:Qt mario$ tail -Fn100 testSimpleQtLoggerWarn.log
+2015-10-23 18:39:41.039 [00007fff7c63d000] [-] Start file-log 'warn'
+2015-10-23 18:39:41.061 [00007fff7c63d000] [!] L_FATAL (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:38)
+2015-10-23 18:39:41.061 [00007fff7c63d000] [E] L_ERROR (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:39)
+2015-10-23 18:39:41.061 [00007fff7c63d000] [W] L_WARN (init@../SimpleQtLogger/examples/TestSimpleQtLogger/task.cpp:40)
 Marios-iMac:Qt mario$
 */
