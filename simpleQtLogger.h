@@ -104,6 +104,7 @@
 #include <QMutex>
 #include <QMutexLocker>
 #include <QMap>
+#include <QRegularExpression>
 
 namespace simpleqtlogger {
 
@@ -234,6 +235,7 @@ public:
 
   void setLogFormat(const QString& logFormat, const QString& logFormatInt);
   void setLogLevels(const EnableLogLevels& enableLogLevels);
+  bool addLogFilter(const QRegularExpression& re);
   bool setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
 
 private slots:
@@ -252,6 +254,7 @@ private:
   QString _logFormat;
   QString _logFormatInt;
   EnableLogLevels _enableLogLevels;
+  QList<QRegularExpression> _reList;
   QString _logFileName;
   unsigned int _logFileRotationSize; // [bytes] initiate log-file rolling
   unsigned int _logFileMaxNumber; // max number of rolling log-file history, range 1..99
@@ -283,6 +286,11 @@ public:
   void setLogLevels_file(const QString& role, const EnableLogLevels& enableLogLevels);
   void setLogLevels_console(const EnableLogLevels& enableLogLevels);
   void setLogLevels_qDebug(const EnableLogLevels& enableLogLevels);
+
+  bool addLogFilter_file(const QRegularExpression& re); // main
+  bool addLogFilter_file(const QString& role, const QRegularExpression& re);
+  bool addLogFilter_console(const QRegularExpression& re);
+  bool addLogFilter_qDebug(const QRegularExpression& re);
 
   bool setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber); // main
   bool setLogFileName(const QString& role, const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
@@ -317,6 +325,8 @@ private:
   QString _logFormatInt_qDebug;
   EnableLogLevels _enableLogLevels_console;
   EnableLogLevels _enableLogLevels_qDebug;
+  QList<QRegularExpression> _reList_console;
+  QList<QRegularExpression> _reList_qDebug;
 
   QMap<QString, SinkFileLog*> _sinkFileLogMap;
 

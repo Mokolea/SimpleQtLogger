@@ -86,7 +86,6 @@ SinkFileLog::~SinkFileLog()
 void SinkFileLog::setLogFormat(const QString& logFormat, const QString& logFormatInt)
 {
   // qDebug("SinkFileLog::setLogFormat");
-
   _logFormat = logFormat;
   _logFormatInt = logFormatInt;
 }
@@ -94,8 +93,17 @@ void SinkFileLog::setLogFormat(const QString& logFormat, const QString& logForma
 void SinkFileLog::setLogLevels(const EnableLogLevels& enableLogLevels)
 {
   // qDebug("SinkFileLog::setLogLevel");
-
   _enableLogLevels = enableLogLevels;
+}
+
+bool SinkFileLog::addLogFilter(const QRegularExpression& re)
+{
+  // qDebug("SinkFileLog::addLogFilter");
+  if(!re.isValid()) {
+    return false;
+  }
+  _reList.append(re);
+  return true;
 }
 
 bool SinkFileLog::setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber)
@@ -347,14 +355,12 @@ void SimpleQtLogger::addSinkFileLog(const QString& role)
 void SimpleQtLogger::setLogFormat_file(const QString& logFormat, const QString& logFormatInt)
 {
   // qDebug("SimpleQtLogger::setLogFormat_file");
-
   setLogFormat_file("main", logFormat, logFormatInt);
 }
 
 void SimpleQtLogger::setLogFormat_file(const QString& role, const QString& logFormat, const QString& logFormatInt)
 {
   // qDebug("SimpleQtLogger::setLogFormat_file");
-
   if(_sinkFileLogMap.contains(role)) {
     _sinkFileLogMap[role]->setLogFormat(logFormat, logFormatInt);
   }
@@ -363,7 +369,6 @@ void SimpleQtLogger::setLogFormat_file(const QString& role, const QString& logFo
 void SimpleQtLogger::setLogFormat_console(const QString& logFormat, const QString& logFormatInt)
 {
   // qDebug("SimpleQtLogger::setLogFormat_console");
-
   _logFormat_console = logFormat;
   _logFormatInt_console = logFormatInt;
 }
@@ -371,7 +376,6 @@ void SimpleQtLogger::setLogFormat_console(const QString& logFormat, const QStrin
 void SimpleQtLogger::setLogFormat_qDebug(const QString& logFormat, const QString& logFormatInt)
 {
   // qDebug("SimpleQtLogger::setLogFormat_qDebug");
-
   _logFormat_qDebug = logFormat;
   _logFormatInt_qDebug = logFormatInt;
 }
@@ -379,14 +383,12 @@ void SimpleQtLogger::setLogFormat_qDebug(const QString& logFormat, const QString
 void SimpleQtLogger::setLogLevels_file(const EnableLogLevels& enableLogLevels)
 {
   // qDebug("SimpleQtLogger::setLogLevel_file");
-
   setLogLevels_file("main", enableLogLevels);
 }
 
 void SimpleQtLogger::setLogLevels_file(const QString& role, const EnableLogLevels& enableLogLevels)
 {
   // qDebug("SimpleQtLogger::setLogLevel_file");
-
   if(_sinkFileLogMap.contains(role)) {
     _sinkFileLogMap[role]->setLogLevels(enableLogLevels);
   }
@@ -395,28 +397,62 @@ void SimpleQtLogger::setLogLevels_file(const QString& role, const EnableLogLevel
 void SimpleQtLogger::setLogLevels_console(const EnableLogLevels& enableLogLevels)
 {
   // qDebug("SimpleQtLogger::setLogLevel_console");
-
   _enableLogLevels_console = enableLogLevels;
 }
 
 void SimpleQtLogger::setLogLevels_qDebug(const EnableLogLevels& enableLogLevels)
 {
   // qDebug("SimpleQtLogger::setLogLevel_qDebug");
-
   _enableLogLevels_qDebug = enableLogLevels;
+}
+
+bool SimpleQtLogger::addLogFilter_file(const QRegularExpression& re)
+{
+  // qDebug("SimpleQtLogger::addLogFilter_file");
+  return addLogFilter_file("main", re);
+}
+
+bool SimpleQtLogger::addLogFilter_file(const QString& role, const QRegularExpression& re)
+{
+  // qDebug("SimpleQtLogger::addLogFilter_file");
+  if(!re.isValid()) {
+    return false;
+  }
+  if(_sinkFileLogMap.contains(role)) {
+    return _sinkFileLogMap[role]->addLogFilter(re);
+  }
+  return false;
+}
+
+bool SimpleQtLogger::addLogFilter_console(const QRegularExpression& re)
+{
+  // qDebug("SimpleQtLogger::addLogFilter_console");
+  if(!re.isValid()) {
+    return false;
+  }
+  _reList_console.append(re);
+  return true;
+}
+
+bool SimpleQtLogger::addLogFilter_qDebug(const QRegularExpression& re)
+{
+  // qDebug("SimpleQtLogger::addLogFilter_qDebug");
+  if(!re.isValid()) {
+    return false;
+  }
+  _reList_qDebug.append(re);
+  return true;
 }
 
 bool SimpleQtLogger::setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber)
 {
   // qDebug("SimpleQtLogger::setLogFileName");
-
   return setLogFileName("main", logFileName, logFileRotationSize, logFileMaxNumber);
 }
 
 bool SimpleQtLogger::setLogFileName(const QString& role, const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber)
 {
   // qDebug("SimpleQtLogger::setLogFileName");
-
   if(_sinkFileLogMap.contains(role) && _sinkFileLogMap[role]->setLogFileName(logFileName, logFileRotationSize, logFileMaxNumber)) {
     // log(QString("Start file-log '%1'").arg(role), LogLevel_INTERNAL, "", "", 0);
     return true;
