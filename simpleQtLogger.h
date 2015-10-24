@@ -250,6 +250,8 @@ private:
   bool checkLogFileOpen();
   void checkLogFileRolling();
 
+  bool checkFilter(const QString& text);
+
   const QString _role;
   QString _logFormat;
   QString _logFormatInt;

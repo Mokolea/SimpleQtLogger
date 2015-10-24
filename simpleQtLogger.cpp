@@ -134,6 +134,23 @@ bool SinkFileLog::setLogFileName(const QString& logFileName, unsigned int logFil
   return checkLogFileOpen();
 }
 
+bool SinkFileLog::checkFilter(const QString& text)
+{
+  // qDebug("SinkFileLog::checkFilter");
+  if(_reList.isEmpty()) {
+    return true;
+  }
+
+  // C++11: for(const QRegularExpression& re : _reList) {...}
+  for (int i = 0; i < _reList.size(); ++i) {
+    QRegularExpressionMatch match = _reList[i].match(text, 0);
+    if(match.hasMatch()) {
+      return true;
+    }
+  }
+  return false;
+}
+
 void SinkFileLog::slotLog_File(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber)
 {
   // qDebug("SinkFileLog::slotLog_File");
@@ -142,6 +159,10 @@ void SinkFileLog::slotLog_File(const QString& ts, const QString& tid, const QStr
     return;
   }
   if(!_enableLogLevels.enabled(logLevel)) {
+    return;
+  }
+
+  if(!checkFilter(text)) {
     return;
   }
 
