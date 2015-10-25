@@ -81,6 +81,7 @@ void Sink::setLogLevels(const EnableLogLevels& enableLogLevels)
   _enableLogLevels = enableLogLevels;
 }
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
 bool Sink::addLogFilter(const QRegularExpression& re)
 {
   // qDebug("Sink::addLogFilter");
@@ -90,6 +91,7 @@ bool Sink::addLogFilter(const QRegularExpression& re)
   _reList.append(re);
   return true;
 }
+#endif
 
 QString Sink::getLogFormat() const
 {
@@ -112,6 +114,7 @@ bool Sink::checkLogLevelsEnabled(LogLevel logLevel) const
 bool Sink::checkFilter(const QString& text) const
 {
   // qDebug("Sink::checkFilter");
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
   if(_reList.isEmpty()) {
     return true;
   }
@@ -124,6 +127,10 @@ bool Sink::checkFilter(const QString& text) const
     }
   }
   return false;
+#else
+  Q_UNUSED(text);
+  return true;
+#endif
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -560,6 +567,7 @@ void SimpleQtLogger::setLogLevels_qDebug(const EnableLogLevels& enableLogLevels)
   _sinkQDebugLog->setLogLevels(enableLogLevels);
 }
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
 bool SimpleQtLogger::addLogFilter_file(const QRegularExpression& re)
 {
   // qDebug("SimpleQtLogger::addLogFilter_file");
@@ -595,6 +603,7 @@ bool SimpleQtLogger::addLogFilter_qDebug(const QRegularExpression& re)
   }
   return _sinkQDebugLog->addLogFilter(re);
 }
+#endif
 
 bool SimpleQtLogger::setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber)
 {
@@ -639,7 +648,6 @@ void SimpleQtLogger::log(const QString& text, LogLevel logLevel, const QString& 
 }
 
 #if ENABLE_SQTL_LOG_LEVEL_FUNCTION > 0
-
 void SimpleQtLogger::logFuncBegin(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber)
 {
   // qDebug("SimpleQtLogger::logFuncBegin");
@@ -700,13 +708,11 @@ void SimpleQtLogger::logFuncEnd(const QString& text, const QString& functionName
     log(QString("%1/ %2").arg(stackDepth).arg(text), LogLevel_FUNCTION, functionName, fileName.toStdString().c_str(), lineNumber);
   }
 }
-
 #endif
 
 // -------------------------------------------------------------------------------------------------
 
 #if ENABLE_SQTL_LOG_LEVEL_FUNCTION > 0
-
 SimpleQtLoggerFunc::SimpleQtLoggerFunc(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber)
   : _text(text)
   , _functionName(functionName)
@@ -722,7 +728,6 @@ SimpleQtLoggerFunc::~SimpleQtLoggerFunc()
   // qDebug("SimpleQtLoggerFunc::~SimpleQtLoggerFunc");
   if(ENABLE_SQTL_LOG_LEVEL_FUNCTION && ENABLE_LOG_LEVELS.logLevel_FUNCTION) SimpleQtLogger::getInstance()->logFuncEnd(_text, _functionName, _fileName, _lineNumber);
 }
-
 #endif
 
 } // namespace simpleqtlogger

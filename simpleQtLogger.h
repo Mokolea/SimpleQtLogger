@@ -45,6 +45,8 @@
       simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_DEBUG = false;
       simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_FUNCTION = true;
       simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_file(simpleqtlogger::ENABLE_LOG_LEVELS);
+   - set log-filters using regular expressions:
+      simpleqtlogger::SimpleQtLogger::getInstance()->addLogFilter_file(QRegularExpression("..."));
    - set main task (widget) as parent object for the logger instance (example):
       simpleqtlogger::SimpleQtLogger::getInstance()->setParent(task);
    - see also main.cpp in examples, especially for how to use multiple log-files
@@ -104,7 +106,9 @@
 #include <QMutex>
 #include <QMutexLocker>
 #include <QMap>
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
 #include <QRegularExpression>
+#endif
 
 namespace simpleqtlogger {
 
@@ -235,7 +239,9 @@ public:
 
   void setLogFormat(const QString& logFormat, const QString& logFormatInt);
   void setLogLevels(const EnableLogLevels& enableLogLevels);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
   bool addLogFilter(const QRegularExpression& re);
+#endif
 
 protected:
   QString getLogFormat() const;
@@ -251,7 +257,43 @@ private:
   QString _logFormat;
   QString _logFormatInt;
   EnableLogLevels _enableLogLevels;
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
   QList<QRegularExpression> _reList;
+#endif
+};
+
+// -------------------------------------------------------------------------------------------------
+
+class SinkFileLog : public Sink
+{
+  Q_OBJECT
+
+public:
+  explicit SinkFileLog(QObject *parent, const QString& role);
+  virtual ~SinkFileLog();
+
+  bool setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
+
+private slots:
+  void slotLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber);
+  void slotCheckLogFileActivity();
+
+private:
+  // implicitly implemented, not to be used
+  SinkFileLog(const SinkFileLog&);
+  SinkFileLog& operator=(const SinkFileLog&);
+
+  bool checkLogFileOpen();
+  void checkLogFileRolling();
+
+  const QString _role;
+  QString _logFileName;
+  unsigned int _logFileRotationSize; // [bytes] initiate log-file rolling
+  unsigned int _logFileMaxNumber; // max number of rolling log-file history, range 1..99
+
+  QFile* _logFile;
+  bool _logFileActivity; // track log-file write (append) activity
+  bool _startMessage;
 };
 
 // -------------------------------------------------------------------------------------------------
@@ -294,40 +336,6 @@ private:
 
 // -------------------------------------------------------------------------------------------------
 
-class SinkFileLog : public Sink
-{
-  Q_OBJECT
-
-public:
-  explicit SinkFileLog(QObject *parent, const QString& role);
-  virtual ~SinkFileLog();
-
-  bool setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
-
-private slots:
-  void slotLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber);
-  void slotCheckLogFileActivity();
-
-private:
-  // implicitly implemented, not to be used
-  SinkFileLog(const SinkFileLog&);
-  SinkFileLog& operator=(const SinkFileLog&);
-
-  bool checkLogFileOpen();
-  void checkLogFileRolling();
-
-  const QString _role;
-  QString _logFileName;
-  unsigned int _logFileRotationSize; // [bytes] initiate log-file rolling
-  unsigned int _logFileMaxNumber; // max number of rolling log-file history, range 1..99
-
-  QFile* _logFile;
-  bool _logFileActivity; // track log-file write (append) activity
-  bool _startMessage;
-};
-
-// -------------------------------------------------------------------------------------------------
-
 class SimpleQtLogger : public QObject
 {
   Q_OBJECT
@@ -349,10 +357,12 @@ public:
   void setLogLevels_console(const EnableLogLevels& enableLogLevels);
   void setLogLevels_qDebug(const EnableLogLevels& enableLogLevels);
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
   bool addLogFilter_file(const QRegularExpression& re); // main
   bool addLogFilter_file(const QString& role, const QRegularExpression& re);
   bool addLogFilter_console(const QRegularExpression& re);
   bool addLogFilter_qDebug(const QRegularExpression& re);
+#endif
 
   bool setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber); // main
   bool setLogFileName(const QString& role, const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
