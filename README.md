@@ -15,7 +15,7 @@ Simple rolling file logger for C++ applications using the [Qt Framework](http://
     - console, colored (ANSI escape codes)
     - qDebug
  - log-levels, function-log (stack-trace)
- - log-filters using regular expressions (since Qt 5.0)
+ - log-filters using regular expressions (needs Qt 5.0)
  - thread-safe use of log-macros
  - specify log-format
  - log-file encoding: utf-8
