@@ -15,6 +15,7 @@
       - console, colored (ANSI escape codes)
       - qDebug
    - log-levels, function-log (stack-trace)
+   - log-filters using regular expressions (since Qt 5.0)
    - thread-safe use of log-macros
    - specify log-format
    - log-file encoding: utf-8
@@ -45,7 +46,7 @@
       simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_DEBUG = false;
       simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_FUNCTION = true;
       simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_file(simpleqtlogger::ENABLE_LOG_LEVELS);
-   - set log-filters using regular expressions:
+   - set log-filters using regular expressions (since Qt 5.0):
       simpleqtlogger::SimpleQtLogger::getInstance()->addLogFilter_file(QRegularExpression("..."));
    - set main task (widget) as parent object for the logger instance (example):
       simpleqtlogger::SimpleQtLogger::getInstance()->setParent(task);

@@ -15,10 +15,11 @@ Simple rolling file logger for C++ applications using the [Qt Framework](http://
     - console, colored (ANSI escape codes)
     - qDebug
  - log-levels, function-log (stack-trace)
+ - log-filters using regular expressions (since Qt 5.0)
  - thread-safe use of log-macros
  - specify log-format
  - log-file encoding: utf-8
-
+ 
 ## Usage
 **TODO...**
 For now, just see the comments in [simpleQtLogger.h](https://github.com/Mokolea/SimpleQtLogger/blob/master/simpleQtLogger.h) and the [examples](https://github.com/Mokolea/SimpleQtLogger/tree/master/examples)
