@@ -267,7 +267,7 @@ public:
   bool setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
 
 private slots:
-  void slotLog_File(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber);
+  void slotLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber);
   void slotCheckLogFileActivity();
 
 private:

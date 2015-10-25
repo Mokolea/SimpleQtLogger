@@ -182,7 +182,7 @@ bool SinkFileLog::setLogFileName(const QString& logFileName, unsigned int logFil
   return checkLogFileOpen();
 }
 
-void SinkFileLog::slotLog_File(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber)
+void SinkFileLog::slotLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber)
 {
   // qDebug("SinkFileLog::slotLog_File");
 
@@ -245,7 +245,7 @@ bool SinkFileLog::checkLogFileOpen()
 
   if(!_startMessage) {
     _startMessage = true;
-    slotLog_File(SimpleQtLogger::timeStamp(), SimpleQtLogger::threadId(), QString("Start file-log '%1'").arg(_role), LogLevel_INTERNAL, "", "", 0);
+    slotLog(SimpleQtLogger::timeStamp(), SimpleQtLogger::threadId(), QString("Start file-log '%1'").arg(_role), LogLevel_INTERNAL, "", "", 0);
   }
 
   return true;
@@ -267,7 +267,7 @@ void SinkFileLog::checkLogFileRolling()
     QTimer::singleShot(CHECK_LOG_FILE_ACTIVITY_INTERVAL, this, SLOT(slotCheckLogFileActivity()));
     return;
   }
-  slotLog_File(SimpleQtLogger::timeStamp(), SimpleQtLogger::threadId(), QString("Current log-file '%1' size=%2 (rotation-size=%3) --> rolling").arg(_role).arg(logFileSize).arg(_logFileRotationSize), LogLevel_INTERNAL, "", "", 0);
+  slotLog(SimpleQtLogger::timeStamp(), SimpleQtLogger::threadId(), QString("Current log-file '%1' size=%2 (rotation-size=%3) --> rolling").arg(_role).arg(logFileSize).arg(_logFileRotationSize), LogLevel_INTERNAL, "", "", 0);
 
   QTime timeRolling;
   timeRolling.start();
@@ -318,7 +318,7 @@ void SinkFileLog::checkLogFileRolling()
 
   checkLogFileOpen();
 
-  slotLog_File(SimpleQtLogger::timeStamp(), SimpleQtLogger::threadId(), QString("Log-file '%1' rolling done (time elapsed: %2 ms)").arg(_role).arg(timeRolling.elapsed()), LogLevel_INTERNAL, "", "", 0);
+  slotLog(SimpleQtLogger::timeStamp(), SimpleQtLogger::threadId(), QString("Log-file '%1' rolling done (time elapsed: %2 ms)").arg(_role).arg(timeRolling.elapsed()), LogLevel_INTERNAL, "", "", 0);
 }
 
 void SinkFileLog::slotCheckLogFileActivity()
