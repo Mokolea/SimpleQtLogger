@@ -270,6 +270,20 @@ private slots:
 
 // -------------------------------------------------------------------------------------------------
 
+class SinkQDebugLog : public Sink
+{
+  Q_OBJECT
+
+public:
+  explicit SinkQDebugLog(QObject *parent);
+  virtual ~SinkQDebugLog();
+
+private slots:
+  void slotLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber);
+};
+
+// -------------------------------------------------------------------------------------------------
+
 class SinkFileLog : public Sink
 {
   Q_OBJECT
@@ -346,9 +360,6 @@ public:
 signals:
   void signalLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber);
 
-private slots:
-  void slotLog_qDebug(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber);
-
 private:
   explicit SimpleQtLogger(QObject *parent);
   static SimpleQtLogger* instance;
@@ -356,12 +367,8 @@ private:
   SimpleQtLogger(const SimpleQtLogger&);
   SimpleQtLogger& operator=(const SimpleQtLogger&);
 
-  QString _logFormat_qDebug;
-  QString _logFormatInt_qDebug;
-  EnableLogLevels _enableLogLevels_qDebug;
-  QList<QRegularExpression> _reList_qDebug;
-
   SinkConsoleLog* _sinkConsoleLog;
+  SinkQDebugLog* _sinkQDebugLog;
   QMap<QString, SinkFileLog*> _sinkFileLogMap;
 
   QMutex _mutex;

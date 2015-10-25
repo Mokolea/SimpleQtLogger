@@ -141,7 +141,7 @@ SinkConsoleLog::~SinkConsoleLog()
 
 void SinkConsoleLog::slotLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber)
 {
-  // qDebug("SinkConsoleLog::slotLog_console");
+  // qDebug("SinkConsoleLog::slotLog");
 
   if(!ENABLE_LOG_SINK_CONSOLE) {
     return;
@@ -190,6 +190,46 @@ void SinkConsoleLog::slotLog(const QString& ts, const QString& tid, const QStrin
     }
   }
   out << '\n';
+}
+
+// -------------------------------------------------------------------------------------------------
+
+SinkQDebugLog::SinkQDebugLog(QObject *parent)
+  : Sink(parent)
+{
+  // qDebug("SinkQDebugLog::SinkQDebugLog");
+}
+
+SinkQDebugLog::~SinkQDebugLog()
+{
+  // qDebug("SinkQDebugLog::~SinkQDebugLog");
+}
+
+void SinkQDebugLog::slotLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber)
+{
+  // qDebug("SinkQDebugLog::slotLog");
+
+  if(!ENABLE_LOG_SINK_QDEBUG) {
+    return;
+  }
+  if(!checkLogLevelsEnabled(logLevel)) {
+    return;
+  }
+  if(!checkFilter(text)) {
+    return;
+  }
+
+  QString textIsEmpty("?");
+  if(logLevel == LogLevel_FUNCTION) {
+    textIsEmpty = "-";
+  }
+
+  if(logLevel == LogLevel_INTERNAL) {
+    qDebug("%s", getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()).toStdString().c_str());
+  }
+  else {
+    qDebug("%s", getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()).toStdString().c_str());
+  }
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -250,7 +290,7 @@ bool SinkFileLog::setLogFileName(const QString& logFileName, unsigned int logFil
 
 void SinkFileLog::slotLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber)
 {
-  // qDebug("SinkFileLog::slotLog_File");
+  // qDebug("SinkFileLog::slotLog");
 
   if(!ENABLE_LOG_SINK_FILE) {
     return;
@@ -424,14 +464,13 @@ SimpleQtLogger* SimpleQtLogger::getInstance()
 
 SimpleQtLogger::SimpleQtLogger(QObject *parent)
   : QObject(parent)
-  , _logFormat_qDebug(DEFAULT_LOG_FORMAT)
-  , _logFormatInt_qDebug(DEFAULT_LOG_FORMAT_INTERNAL)
 {
   qDebug("SimpleQtLogger::SimpleQtLogger"); // TODO comment this
 
   qRegisterMetaType<LogLevel>("LogLevel"); // to use type in Qt::QueuedConnection
 
   _sinkConsoleLog = new SinkConsoleLog(this);
+  _sinkQDebugLog = new SinkQDebugLog(this);
 
   // Qt::ConnectionType is Qt::AutoConnection (Default)
   // If the receiver lives in the thread that emits the signal, Qt::DirectConnection is used.
@@ -442,7 +481,7 @@ SimpleQtLogger::SimpleQtLogger(QObject *parent)
 #endif
 #if ENABLE_SQTL_LOG_SINK_QDEBUG > 0
   QObject::connect(this, SIGNAL(signalLog(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)),
-    this, SLOT(slotLog_qDebug(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)));
+    _sinkQDebugLog, SLOT(slotLog(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)));
 #endif
 
   addSinkFileLog("main");
@@ -492,8 +531,7 @@ void SimpleQtLogger::setLogFormat_console(const QString& logFormat, const QStrin
 void SimpleQtLogger::setLogFormat_qDebug(const QString& logFormat, const QString& logFormatInt)
 {
   // qDebug("SimpleQtLogger::setLogFormat_qDebug");
-  _logFormat_qDebug = logFormat;
-  _logFormatInt_qDebug = logFormatInt;
+  _sinkQDebugLog->setLogFormat(logFormat, logFormatInt);
 }
 
 void SimpleQtLogger::setLogLevels_file(const EnableLogLevels& enableLogLevels)
@@ -519,7 +557,7 @@ void SimpleQtLogger::setLogLevels_console(const EnableLogLevels& enableLogLevels
 void SimpleQtLogger::setLogLevels_qDebug(const EnableLogLevels& enableLogLevels)
 {
   // qDebug("SimpleQtLogger::setLogLevel_qDebug");
-  _enableLogLevels_qDebug = enableLogLevels;
+  _sinkQDebugLog->setLogLevels(enableLogLevels);
 }
 
 bool SimpleQtLogger::addLogFilter_file(const QRegularExpression& re)
@@ -555,8 +593,7 @@ bool SimpleQtLogger::addLogFilter_qDebug(const QRegularExpression& re)
   if(!re.isValid()) {
     return false;
   }
-  _reList_qDebug.append(re);
-  return true;
+  return _sinkQDebugLog->addLogFilter(re);
 }
 
 bool SimpleQtLogger::setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber)
@@ -665,30 +702,6 @@ void SimpleQtLogger::logFuncEnd(const QString& text, const QString& functionName
 }
 
 #endif
-
-void SimpleQtLogger::slotLog_qDebug(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber)
-{
-  // qDebug("SimpleQtLogger::slotLog_qDebug");
-
-  if(!ENABLE_LOG_SINK_QDEBUG) {
-    return;
-  }
-  if(!_enableLogLevels_qDebug.enabled(logLevel)) {
-    return;
-  }
-
-  QString textIsEmpty("?");
-  if(logLevel == LogLevel_FUNCTION) {
-    textIsEmpty = "-";
-  }
-
-  if(logLevel == LogLevel_INTERNAL) {
-    qDebug("%s", QString(_logFormatInt_qDebug).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()).toStdString().c_str());
-  }
-  else {
-    qDebug("%s", QString(_logFormat_qDebug).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()).toStdString().c_str());
-  }
-}
 
 // -------------------------------------------------------------------------------------------------
 
