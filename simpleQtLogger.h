@@ -225,7 +225,38 @@ extern bool ENABLE_CONSOLE_COLOR; // Color for sink console: true: enable, false
 
 // -------------------------------------------------------------------------------------------------
 
-class SinkFileLog : public QObject
+class Sink : public QObject
+{
+  Q_OBJECT
+
+public:
+  explicit Sink(QObject *parent);
+  virtual ~Sink();
+
+  void setLogFormat(const QString& logFormat, const QString& logFormatInt);
+  void setLogLevels(const EnableLogLevels& enableLogLevels);
+  bool addLogFilter(const QRegularExpression& re);
+
+protected:
+  QString getLogFormat() const;
+  QString getLogFormatInt() const;
+  bool checkLogLevelsEnabled(LogLevel logLevel) const;
+  bool checkFilter(const QString& text) const;
+
+private:
+  // implicitly implemented, not to be used
+  Sink(const Sink&);
+  Sink& operator=(const Sink&);
+
+  QString _logFormat;
+  QString _logFormatInt;
+  EnableLogLevels _enableLogLevels;
+  QList<QRegularExpression> _reList;
+};
+
+// -------------------------------------------------------------------------------------------------
+
+class SinkFileLog : public Sink
 {
   Q_OBJECT
 
@@ -233,9 +264,6 @@ public:
   explicit SinkFileLog(QObject *parent, const QString& role);
   virtual ~SinkFileLog();
 
-  void setLogFormat(const QString& logFormat, const QString& logFormatInt);
-  void setLogLevels(const EnableLogLevels& enableLogLevels);
-  bool addLogFilter(const QRegularExpression& re);
   bool setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
 
 private slots:
@@ -250,13 +278,7 @@ private:
   bool checkLogFileOpen();
   void checkLogFileRolling();
 
-  bool checkFilter(const QString& text);
-
   const QString _role;
-  QString _logFormat;
-  QString _logFormatInt;
-  EnableLogLevels _enableLogLevels;
-  QList<QRegularExpression> _reList;
   QString _logFileName;
   unsigned int _logFileRotationSize; // [bytes] initiate log-file rolling
   unsigned int _logFileMaxNumber; // max number of rolling log-file history, range 1..99

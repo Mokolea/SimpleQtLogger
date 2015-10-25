@@ -55,11 +55,82 @@ bool ENABLE_CONSOLE_COLOR = true;
 
 // -------------------------------------------------------------------------------------------------
 
-SinkFileLog::SinkFileLog(QObject *parent, const QString& role)
+Sink::Sink(QObject *parent)
   : QObject(parent)
-  , _role(role)
   , _logFormat(DEFAULT_LOG_FORMAT)
   , _logFormatInt(DEFAULT_LOG_FORMAT_INTERNAL)
+{
+  // qDebug("Sink::Sink");
+}
+
+Sink::~Sink()
+{
+  // qDebug("Sink::~Sink");
+}
+
+void Sink::setLogFormat(const QString& logFormat, const QString& logFormatInt)
+{
+  // qDebug("Sink::setLogFormat");
+  _logFormat = logFormat;
+  _logFormatInt = logFormatInt;
+}
+
+void Sink::setLogLevels(const EnableLogLevels& enableLogLevels)
+{
+  // qDebug("Sink::setLogLevel");
+  _enableLogLevels = enableLogLevels;
+}
+
+bool Sink::addLogFilter(const QRegularExpression& re)
+{
+  // qDebug("Sink::addLogFilter");
+  if(!re.isValid()) {
+    return false;
+  }
+  _reList.append(re);
+  return true;
+}
+
+QString Sink::getLogFormat() const
+{
+  // qDebug("Sink::getLogFormat");
+  return _logFormat;
+}
+
+QString Sink::getLogFormatInt() const
+{
+  // qDebug("Sink::getLogFormatInt");
+  return _logFormatInt;
+}
+
+bool Sink::checkLogLevelsEnabled(LogLevel logLevel) const
+{
+  // qDebug("Sink::checkLogLevelsEnabled");
+  return _enableLogLevels.enabled(logLevel);
+}
+
+bool Sink::checkFilter(const QString& text) const
+{
+  // qDebug("Sink::checkFilter");
+  if(_reList.isEmpty()) {
+    return true;
+  }
+
+  // C++11: for(const QRegularExpression& re : _reList) {...}
+  for (int i = 0; i < _reList.size(); ++i) {
+    QRegularExpressionMatch match = _reList[i].match(text, 0);
+    if(match.hasMatch()) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+SinkFileLog::SinkFileLog(QObject *parent, const QString& role)
+  : Sink(parent)
+  , _role(role)
   , _logFileRotationSize(0)
   , _logFileMaxNumber(0)
   , _logFile(0)
@@ -81,29 +152,6 @@ SinkFileLog::~SinkFileLog()
     delete _logFile;
     _logFile = 0;
   }
-}
-
-void SinkFileLog::setLogFormat(const QString& logFormat, const QString& logFormatInt)
-{
-  // qDebug("SinkFileLog::setLogFormat");
-  _logFormat = logFormat;
-  _logFormatInt = logFormatInt;
-}
-
-void SinkFileLog::setLogLevels(const EnableLogLevels& enableLogLevels)
-{
-  // qDebug("SinkFileLog::setLogLevel");
-  _enableLogLevels = enableLogLevels;
-}
-
-bool SinkFileLog::addLogFilter(const QRegularExpression& re)
-{
-  // qDebug("SinkFileLog::addLogFilter");
-  if(!re.isValid()) {
-    return false;
-  }
-  _reList.append(re);
-  return true;
 }
 
 bool SinkFileLog::setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber)
@@ -134,23 +182,6 @@ bool SinkFileLog::setLogFileName(const QString& logFileName, unsigned int logFil
   return checkLogFileOpen();
 }
 
-bool SinkFileLog::checkFilter(const QString& text)
-{
-  // qDebug("SinkFileLog::checkFilter");
-  if(_reList.isEmpty()) {
-    return true;
-  }
-
-  // C++11: for(const QRegularExpression& re : _reList) {...}
-  for (int i = 0; i < _reList.size(); ++i) {
-    QRegularExpressionMatch match = _reList[i].match(text, 0);
-    if(match.hasMatch()) {
-      return true;
-    }
-  }
-  return false;
-}
-
 void SinkFileLog::slotLog_File(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber)
 {
   // qDebug("SinkFileLog::slotLog_File");
@@ -158,10 +189,9 @@ void SinkFileLog::slotLog_File(const QString& ts, const QString& tid, const QStr
   if(!ENABLE_LOG_SINK_FILE) {
     return;
   }
-  if(!_enableLogLevels.enabled(logLevel)) {
+  if(!checkLogLevelsEnabled(logLevel)) {
     return;
   }
-
   if(!checkFilter(text)) {
     return;
   }
@@ -176,10 +206,10 @@ void SinkFileLog::slotLog_File(const QString& ts, const QString& tid, const QStr
     QTextStream out(_logFile);
     out.setCodec("UTF-8");
     if(logLevel == LogLevel_INTERNAL) {
-      out << QString(_logFormatInt).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()) << '\n';
+      out << getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()) << '\n';
     }
     else {
-      out << QString(_logFormat).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()) << '\n';
+      out << getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()) << '\n';
     }
     _logFileActivity = true;
   }
