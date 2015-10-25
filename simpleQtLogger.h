@@ -256,6 +256,20 @@ private:
 
 // -------------------------------------------------------------------------------------------------
 
+class SinkConsoleLog : public Sink
+{
+  Q_OBJECT
+
+public:
+  explicit SinkConsoleLog(QObject *parent);
+  virtual ~SinkConsoleLog();
+
+private slots:
+  void slotLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber);
+};
+
+// -------------------------------------------------------------------------------------------------
+
 class SinkFileLog : public Sink
 {
   Q_OBJECT
@@ -333,7 +347,6 @@ signals:
   void signalLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber);
 
 private slots:
-  void slotLog_console(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber);
   void slotLog_qDebug(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber);
 
 private:
@@ -343,15 +356,12 @@ private:
   SimpleQtLogger(const SimpleQtLogger&);
   SimpleQtLogger& operator=(const SimpleQtLogger&);
 
-  QString _logFormat_console;
   QString _logFormat_qDebug;
-  QString _logFormatInt_console;
   QString _logFormatInt_qDebug;
-  EnableLogLevels _enableLogLevels_console;
   EnableLogLevels _enableLogLevels_qDebug;
-  QList<QRegularExpression> _reList_console;
   QList<QRegularExpression> _reList_qDebug;
 
+  SinkConsoleLog* _sinkConsoleLog;
   QMap<QString, SinkFileLog*> _sinkFileLogMap;
 
   QMutex _mutex;

@@ -128,6 +128,72 @@ bool Sink::checkFilter(const QString& text) const
 
 // -------------------------------------------------------------------------------------------------
 
+SinkConsoleLog::SinkConsoleLog(QObject *parent)
+  : Sink(parent)
+{
+  // qDebug("SinkConsoleLog::SinkConsoleLog");
+}
+
+SinkConsoleLog::~SinkConsoleLog()
+{
+  // qDebug("SinkConsoleLog::~SinkConsoleLog");
+}
+
+void SinkConsoleLog::slotLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber)
+{
+  // qDebug("SinkConsoleLog::slotLog_console");
+
+  if(!ENABLE_LOG_SINK_CONSOLE) {
+    return;
+  }
+  if(!checkLogLevelsEnabled(logLevel)) {
+    return;
+  }
+  if(!checkFilter(text)) {
+    return;
+  }
+
+  QString textIsEmpty("?");
+  if(logLevel == LogLevel_FUNCTION) {
+    textIsEmpty = "-";
+  }
+
+  QTextStream out(stdout);
+  // out.setCodec("UTF-8");
+  if(ENABLE_CONSOLE_COLOR) {
+    // change some foreground (background) colors
+    if(logLevel == LogLevel_FATAL) {
+      out << CONSOLE_COLOR_ANSI_ESC_CODES_FATAL;
+    }
+    else if(logLevel == LogLevel_ERROR) {
+      out << CONSOLE_COLOR_ANSI_ESC_CODES_ERROR;
+    }
+    else if(logLevel == LogLevel_WARNING) {
+      out << CONSOLE_COLOR_ANSI_ESC_CODES_WARNING;
+    }
+    else if(logLevel == LogLevel_DEBUG) {
+      out << CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG;
+    }
+    else if(logLevel == LogLevel_FUNCTION) {
+      out << CONSOLE_COLOR_ANSI_ESC_CODES_FUNCTION;
+    }
+  }
+  if(logLevel == LogLevel_INTERNAL) {
+    out << getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
+  }
+  else {
+    out << getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
+  }
+  if(ENABLE_CONSOLE_COLOR) {
+    if(logLevel != LogLevel_INFO && logLevel != LogLevel_INTERNAL) {
+      out << CONSOLE_COLOR_ANSI_ESC_CODES_RESET;
+    }
+  }
+  out << '\n';
+}
+
+// -------------------------------------------------------------------------------------------------
+
 SinkFileLog::SinkFileLog(QObject *parent, const QString& role)
   : Sink(parent)
   , _role(role)
@@ -358,21 +424,21 @@ SimpleQtLogger* SimpleQtLogger::getInstance()
 
 SimpleQtLogger::SimpleQtLogger(QObject *parent)
   : QObject(parent)
-  , _logFormat_console(DEFAULT_LOG_FORMAT)
   , _logFormat_qDebug(DEFAULT_LOG_FORMAT)
-  , _logFormatInt_console(DEFAULT_LOG_FORMAT_INTERNAL)
   , _logFormatInt_qDebug(DEFAULT_LOG_FORMAT_INTERNAL)
 {
   qDebug("SimpleQtLogger::SimpleQtLogger"); // TODO comment this
 
   qRegisterMetaType<LogLevel>("LogLevel"); // to use type in Qt::QueuedConnection
 
+  _sinkConsoleLog = new SinkConsoleLog(this);
+
   // Qt::ConnectionType is Qt::AutoConnection (Default)
   // If the receiver lives in the thread that emits the signal, Qt::DirectConnection is used.
   // Otherwise, Qt::QueuedConnection is used. The connection type is determined when the signal is emitted.
 #if ENABLE_SQTL_LOG_SINK_CONSOLE > 0
   QObject::connect(this, SIGNAL(signalLog(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)),
-    this, SLOT(slotLog_console(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)));
+    _sinkConsoleLog, SLOT(slotLog(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)));
 #endif
 #if ENABLE_SQTL_LOG_SINK_QDEBUG > 0
   QObject::connect(this, SIGNAL(signalLog(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)),
@@ -399,7 +465,7 @@ void SimpleQtLogger::addSinkFileLog(const QString& role)
 
 #if ENABLE_SQTL_LOG_SINK_FILE > 0
   QObject::connect(this, SIGNAL(signalLog(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)),
-    _sinkFileLogMap[role], SLOT(slotLog_File(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)));
+    _sinkFileLogMap[role], SLOT(slotLog(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)));
 #endif
 }
 
@@ -420,8 +486,7 @@ void SimpleQtLogger::setLogFormat_file(const QString& role, const QString& logFo
 void SimpleQtLogger::setLogFormat_console(const QString& logFormat, const QString& logFormatInt)
 {
   // qDebug("SimpleQtLogger::setLogFormat_console");
-  _logFormat_console = logFormat;
-  _logFormatInt_console = logFormatInt;
+  _sinkConsoleLog->setLogFormat(logFormat, logFormatInt);
 }
 
 void SimpleQtLogger::setLogFormat_qDebug(const QString& logFormat, const QString& logFormatInt)
@@ -448,7 +513,7 @@ void SimpleQtLogger::setLogLevels_file(const QString& role, const EnableLogLevel
 void SimpleQtLogger::setLogLevels_console(const EnableLogLevels& enableLogLevels)
 {
   // qDebug("SimpleQtLogger::setLogLevel_console");
-  _enableLogLevels_console = enableLogLevels;
+  _sinkConsoleLog->setLogLevels(enableLogLevels);
 }
 
 void SimpleQtLogger::setLogLevels_qDebug(const EnableLogLevels& enableLogLevels)
@@ -481,8 +546,7 @@ bool SimpleQtLogger::addLogFilter_console(const QRegularExpression& re)
   if(!re.isValid()) {
     return false;
   }
-  _reList_console.append(re);
-  return true;
+  return _sinkConsoleLog->addLogFilter(re);
 }
 
 bool SimpleQtLogger::addLogFilter_qDebug(const QRegularExpression& re)
@@ -601,56 +665,6 @@ void SimpleQtLogger::logFuncEnd(const QString& text, const QString& functionName
 }
 
 #endif
-
-void SimpleQtLogger::slotLog_console(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber)
-{
-  // qDebug("SimpleQtLogger::slotLog_console");
-
-  if(!ENABLE_LOG_SINK_CONSOLE) {
-    return;
-  }
-  if(!_enableLogLevels_console.enabled(logLevel)) {
-    return;
-  }
-
-  QString textIsEmpty("?");
-  if(logLevel == LogLevel_FUNCTION) {
-    textIsEmpty = "-";
-  }
-
-  QTextStream out(stdout);
-  // out.setCodec("UTF-8");
-  if(ENABLE_CONSOLE_COLOR) {
-    // change some foreground (background) colors
-    if(logLevel == LogLevel_FATAL) {
-      out << CONSOLE_COLOR_ANSI_ESC_CODES_FATAL;
-    }
-    else if(logLevel == LogLevel_ERROR) {
-      out << CONSOLE_COLOR_ANSI_ESC_CODES_ERROR;
-    }
-    else if(logLevel == LogLevel_WARNING) {
-      out << CONSOLE_COLOR_ANSI_ESC_CODES_WARNING;
-    }
-    else if(logLevel == LogLevel_DEBUG) {
-      out << CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG;
-    }
-    else if(logLevel == LogLevel_FUNCTION) {
-      out << CONSOLE_COLOR_ANSI_ESC_CODES_FUNCTION;
-    }
-  }
-  if(logLevel == LogLevel_INTERNAL) {
-    out << QString(_logFormatInt_console).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
-  }
-  else {
-    out << QString(_logFormat_console).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
-  }
-  if(ENABLE_CONSOLE_COLOR) {
-    if(logLevel != LogLevel_INFO && logLevel != LogLevel_INTERNAL) {
-      out << CONSOLE_COLOR_ANSI_ESC_CODES_RESET;
-    }
-  }
-  out << '\n';
-}
 
 void SimpleQtLogger::slotLog_qDebug(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber)
 {
