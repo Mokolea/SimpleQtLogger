@@ -266,6 +266,11 @@ public:
 
 private slots:
   void slotLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber);
+
+private:
+  // implicitly implemented, not to be used
+  SinkConsoleLog(const SinkConsoleLog&);
+  SinkConsoleLog& operator=(const SinkConsoleLog&);
 };
 
 // -------------------------------------------------------------------------------------------------
@@ -280,6 +285,11 @@ public:
 
 private slots:
   void slotLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber);
+
+private:
+  // implicitly implemented, not to be used
+  SinkQDebugLog(const SinkQDebugLog&);
+  SinkQDebugLog& operator=(const SinkQDebugLog&);
 };
 
 // -------------------------------------------------------------------------------------------------
