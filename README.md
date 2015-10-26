@@ -24,7 +24,7 @@ Simple rolling file logger for C++ applications using the [Qt Framework](http://
 **TODO...**
 For now, just see the comments in [simpleQtLogger.h](https://github.com/Mokolea/SimpleQtLogger/blob/master/simpleQtLogger.h) and the [examples](https://github.com/Mokolea/SimpleQtLogger/tree/master/examples)
 
-[![Release](https://img.shields.io/badge/SimpleQtLogger-v1.1.0--rc2-orange.svg)](https://github.com/Mokolea/SimpleQtLogger/releases)
+[![Release](https://img.shields.io/github/release/Mokolea/SimpleQtLogger.svg)](https://github.com/Mokolea/SimpleQtLogger/releases)
 
 ## Log-format
 The following TAGs are available and expand to:
