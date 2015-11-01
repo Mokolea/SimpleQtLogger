@@ -22,6 +22,8 @@ int main(int argc, char *argv[])
 {
   QCoreApplication a(argc, argv);
 
+  Q_ASSERT_X(SQTL_VERSION >= SQTL_VERSION_CHECK(1, 1, 0), "main", "SimpleQtLogger version");
+
   // set log-features
   simpleqtlogger::ENABLE_LOG_SINK_FILE = true;
   simpleqtlogger::ENABLE_LOG_SINK_CONSOLE = false;

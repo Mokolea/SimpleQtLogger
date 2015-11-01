@@ -111,7 +111,10 @@
 #include <QRegularExpression>
 #endif
 
-namespace simpleqtlogger {
+#define SQTL_VERSION_STR   "1.1.0"
+#define SQTL_VERSION       0x010100   // Version is: (major << 16) + (minor << 8) + patch
+// SQTL_VERSION_CHECK can be used like: #if (SQTL_VERSION >= SQTL_VERSION_CHECK(1, 1, 0))
+#define SQTL_VERSION_CHECK(major,minor,patch)   ((major<<16)|(minor<<8)|(patch))
 
 // Log-sinks (hard; adjust at pre-processor, compile-time)
 #define ENABLE_SQTL_LOG_SINK_FILE      1   // 1: enable, 0: disable; log to file (rolling)
@@ -125,6 +128,8 @@ namespace simpleqtlogger {
 #define ENABLE_SQTL_LOG_LEVEL_INFO       1   // 1: enable, 0: disable
 #define ENABLE_SQTL_LOG_LEVEL_DEBUG      0   // 1: enable, 0: disable; just for step-by-step testing
 #define ENABLE_SQTL_LOG_LEVEL_FUNCTION   1   // 1: enable, 0: disable; stack-trace
+
+namespace simpleqtlogger {
 
 const char STACK_DEPTH_CHAR = '.'; // use e.g. ' ' or '.'
 const unsigned short CHECK_LOG_FILE_ACTIVITY_INTERVAL = 5000; // [ms]
