@@ -9,6 +9,7 @@ Test logger with console-mode app
 Test logger with gui (dialog-widget) app
 ![screen-shot](https://raw.githubusercontent.com/Mokolea/SimpleQtLogger/master/examples/TestSimpleQtLoggerGui_ScreenShot.png)
 
+Example log-file content:
 ```
 Marios-iMac:Qt mario$ tail -Fn100 testSimpleQtLoggerGui.log
 2015-10-23 18:45:09.995 [-] Start file-log 'main'
