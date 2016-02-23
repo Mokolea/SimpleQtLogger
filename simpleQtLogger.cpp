@@ -472,7 +472,7 @@ SimpleQtLogger* SimpleQtLogger::getInstance()
 SimpleQtLogger::SimpleQtLogger(QObject *parent)
   : QObject(parent)
 {
-  qDebug("SimpleQtLogger::SimpleQtLogger"); // TODO comment this
+  // qDebug("SimpleQtLogger::SimpleQtLogger");
 
   qRegisterMetaType<LogLevel>("LogLevel"); // to use type in Qt::QueuedConnection
 
@@ -496,7 +496,7 @@ SimpleQtLogger::SimpleQtLogger(QObject *parent)
 
 SimpleQtLogger::~SimpleQtLogger()
 {
-  qDebug("SimpleQtLogger::~SimpleQtLogger"); // TODO comment this
+  // qDebug("SimpleQtLogger::~SimpleQtLogger");
 }
 
 void SimpleQtLogger::addSinkFileLog(const QString& role)
