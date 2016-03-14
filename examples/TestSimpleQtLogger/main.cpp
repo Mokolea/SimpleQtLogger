@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
   QTimer::singleShot(0, task, SLOT(init()));
 
   // test log forwarding (ENABLE_LOG_SINK_SIGNAL)
-  simpleqtlogger::SimpleQtLogger::getInstance()->connectSinkSignalLog(task, SLOT(slotLogForwarding(const QString&)));
+  //simpleqtlogger::SimpleQtLogger::getInstance()->connectSinkSignalLog(task, SLOT(slotLogForwarding(const QString&)));
 
   // initialize SimpleQtLogger (step 2/2)
   simpleqtlogger::SimpleQtLogger::getInstance()->setParent(task);
