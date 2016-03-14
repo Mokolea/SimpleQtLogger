@@ -33,13 +33,14 @@ private slots:
 
 public slots:
   void slotRun();
-  void slotResultReady(const QString &result);
+  void slotResultReady(const QString& result);
+  void slotLogForwarding(const QString& logMessage);
 
 signals:
   void finished();
 
 private:
-  void startWorkerThread(const QString &id);
+  void startWorkerThread(const QString& id);
 };
 
 // -------------------------------------------------------------------------------------------------
@@ -49,14 +50,14 @@ class WorkerThread : public QThread
   Q_OBJECT
 
 public:
-  WorkerThread(const QString &id, QObject * parent);
+  WorkerThread(const QString& id, QObject * parent);
   ~WorkerThread();
 
 protected:
   void run();
 
 signals:
-  void resultReady(const QString &result);
+  void resultReady(const QString& result);
 
 private:
   static unsigned int factorial(unsigned int n);

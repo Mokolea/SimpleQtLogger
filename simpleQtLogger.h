@@ -80,6 +80,7 @@
    - maybe do all file-operations in worker-thread
 
   Done:
+   - log forwarding by emitting a Qt signal
    - think about environment variable to specify log-file directory, os independent solution
       --> do it outside of SimpleQtLogger by using the QProcessEnvironment class
    - have multiple log-files (sink rolling file appender) with different log-levels, rotation-size, ...
