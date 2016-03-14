@@ -22,6 +22,7 @@ namespace simpleqtlogger {
 bool ENABLE_LOG_SINK_FILE = true;
 bool ENABLE_LOG_SINK_CONSOLE = false;
 bool ENABLE_LOG_SINK_QDEBUG = false;
+bool ENABLE_LOG_SINK_SIGNAL = false;
 
 /* Log-level */
 EnableLogLevels::EnableLogLevels()
@@ -236,6 +237,46 @@ void SinkQDebugLog::slotLog(const QString& ts, const QString& tid, const QString
   }
   else {
     qDebug("%s", getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()).toStdString().c_str());
+  }
+}
+
+// -------------------------------------------------------------------------------------------------
+
+SinkSignalLog::SinkSignalLog(QObject *parent)
+  : Sink(parent)
+{
+  // qDebug("SinkSignalLog::SinkSignalLog");
+}
+
+SinkSignalLog::~SinkSignalLog()
+{
+  // qDebug("SinkSignalLog::~SinkSignalLog");
+}
+
+void SinkSignalLog::slotLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber)
+{
+  // qDebug("SinkSignalLog::slotLog");
+
+  if(!ENABLE_LOG_SINK_SIGNAL) {
+    return;
+  }
+  if(!checkLogLevelsEnabled(logLevel)) {
+    return;
+  }
+  if(!checkFilter(text)) {
+    return;
+  }
+
+  QString textIsEmpty("?");
+  if(logLevel == LogLevel_FUNCTION) {
+    textIsEmpty = "-";
+  }
+
+  if(logLevel == LogLevel_INTERNAL) {
+    emit signalLog(getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()));
+  }
+  else {
+    emit signalLog(getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()));
   }
 }
 
@@ -478,6 +519,7 @@ SimpleQtLogger::SimpleQtLogger(QObject *parent)
 
   _sinkConsoleLog = new SinkConsoleLog(this);
   _sinkQDebugLog = new SinkQDebugLog(this);
+  _sinkSignalLog = new SinkSignalLog(this);
 
   // Qt::ConnectionType is Qt::AutoConnection (Default)
   // If the receiver lives in the thread that emits the signal, Qt::DirectConnection is used.
@@ -489,6 +531,10 @@ SimpleQtLogger::SimpleQtLogger(QObject *parent)
 #if ENABLE_SQTL_LOG_SINK_QDEBUG > 0
   QObject::connect(this, SIGNAL(signalLog(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)),
     _sinkQDebugLog, SLOT(slotLog(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)));
+#endif
+#if ENABLE_SQTL_LOG_SINK_SIGNAL > 0
+  QObject::connect(this, SIGNAL(signalLog(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)),
+    _sinkSignalLog, SLOT(slotLog(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)));
 #endif
 
   addSinkFileLog("main");
@@ -541,6 +587,12 @@ void SimpleQtLogger::setLogFormat_qDebug(const QString& logFormat, const QString
   _sinkQDebugLog->setLogFormat(logFormat, logFormatInt);
 }
 
+void SimpleQtLogger::setLogFormat_signal(const QString& logFormat, const QString& logFormatInt)
+{
+  // qDebug("SimpleQtLogger::setLogFormat_signal");
+  _sinkSignalLog->setLogFormat(logFormat, logFormatInt);
+}
+
 void SimpleQtLogger::setLogLevels_file(const EnableLogLevels& enableLogLevels)
 {
   // qDebug("SimpleQtLogger::setLogLevel_file");
@@ -565,6 +617,12 @@ void SimpleQtLogger::setLogLevels_qDebug(const EnableLogLevels& enableLogLevels)
 {
   // qDebug("SimpleQtLogger::setLogLevel_qDebug");
   _sinkQDebugLog->setLogLevels(enableLogLevels);
+}
+
+void SimpleQtLogger::setLogLevels_signal(const EnableLogLevels& enableLogLevels)
+{
+  // qDebug("SimpleQtLogger::setLogLevel_signal");
+  _sinkSignalLog->setLogLevels(enableLogLevels);
 }
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
@@ -603,6 +661,15 @@ bool SimpleQtLogger::addLogFilter_qDebug(const QRegularExpression& re)
   }
   return _sinkQDebugLog->addLogFilter(re);
 }
+
+bool SimpleQtLogger::addLogFilter_signal(const QRegularExpression& re)
+{
+  // qDebug("SimpleQtLogger::addLogFilter_signal");
+  if(!re.isValid()) {
+    return false;
+  }
+  return _sinkSignalLog->addLogFilter(re);
+}
 #endif
 
 bool SimpleQtLogger::setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber)
@@ -619,6 +686,12 @@ bool SimpleQtLogger::setLogFileName(const QString& role, const QString& logFileN
     return true;
   }
   return false;
+}
+
+bool SimpleQtLogger::connectSinkSignalLog(const QObject* receiver, const char* method)
+{
+  // qDebug("SimpleQtLogger::connectSinkSignalLog");
+  return QObject::connect(_sinkSignalLog, SIGNAL(signalLog(const QString&)), receiver, method);
 }
 
 QString SimpleQtLogger::timeStamp()

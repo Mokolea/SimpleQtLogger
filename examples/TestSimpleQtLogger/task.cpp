@@ -78,13 +78,19 @@ void Task::slotRun()
   startWorkerThread(QString("%1").arg(++id, 2, 10, QLatin1Char('0')));
 }
 
-void Task::slotResultReady(const QString &result)
+void Task::slotResultReady(const QString& result)
 {
   LS_FUNC("");
   LS_INFO("WorkerThread: " << result);
 }
 
-void Task::startWorkerThread(const QString &id)
+void Task::slotLogForwarding(const QString& logMessage)
+{
+  QTextStream out(stdout);
+  out << "Log forwarding: " << logMessage << '\n';
+}
+
+void Task::startWorkerThread(const QString& id)
 {
   L_FUNC(QString("id='%1'").arg(id));
 
@@ -96,7 +102,7 @@ void Task::startWorkerThread(const QString &id)
 
 // -------------------------------------------------------------------------------------------------
 
-WorkerThread::WorkerThread(const QString &id, QObject *parent)
+WorkerThread::WorkerThread(const QString& id, QObject *parent)
   : QThread(parent)
   , _id(id)
 {

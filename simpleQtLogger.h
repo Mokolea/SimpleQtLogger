@@ -39,6 +39,7 @@
       simpleqtlogger::ENABLE_LOG_SINK_FILE = true;
       simpleqtlogger::ENABLE_LOG_SINK_CONSOLE = false;
       simpleqtlogger::ENABLE_LOG_SINK_QDEBUG = false;
+      simpleqtlogger::ENABLE_LOG_SINK_SIGNAL = false;
    - set log-features:
       simpleqtlogger::ENABLE_FUNCTION_STACK_TRACE = true;
    - set log-levels (example):
@@ -79,6 +80,7 @@
    - maybe do all file-operations in worker-thread
 
   Done:
+   - log forwarding by emitting a Qt signal
    - think about environment variable to specify log-file directory, os independent solution
       --> do it outside of SimpleQtLogger by using the QProcessEnvironment class
    - have multiple log-files (sink rolling file appender) with different log-levels, rotation-size, ...
@@ -120,6 +122,7 @@
 #define ENABLE_SQTL_LOG_SINK_FILE      1   // 1: enable, 0: disable; log to file (rolling)
 #define ENABLE_SQTL_LOG_SINK_CONSOLE   1   // 1: enable, 0: disable; log to console (colored log-levels)
 #define ENABLE_SQTL_LOG_SINK_QDEBUG    0   // 1: enable, 0: disable; log using qDebug; messages are sent to the console, if it is a console application
+#define ENABLE_SQTL_LOG_SINK_SIGNAL    1   // 1: enable, 0: disable; log forwarding by emitting a Qt signal
 
 // Log-level (hard; adjust at pre-processor, compile-time)
 #define ENABLE_SQTL_LOG_LEVEL_FATAL      1   // 1: enable, 0: disable
@@ -163,6 +166,7 @@ static const char LOG_LEVEL_CHAR[7] = {'!', 'E', 'W', 'I', 'D', 'F', '-'}; // MU
 extern bool ENABLE_LOG_SINK_FILE;    // Log-sink: true: enable, false: disable, default: true
 extern bool ENABLE_LOG_SINK_CONSOLE; // Log-sink: true: enable, false: disable, default: false
 extern bool ENABLE_LOG_SINK_QDEBUG;  // Log-sink: true: enable, false: disable, default: false
+extern bool ENABLE_LOG_SINK_SIGNAL;  // Log-sink: true: enable, false: disable, default: false
 
 // Log-level (adjust at run-time)
 struct EnableLogLevels {
@@ -342,6 +346,28 @@ private:
 
 // -------------------------------------------------------------------------------------------------
 
+class SinkSignalLog : public Sink
+{
+  Q_OBJECT
+
+public:
+  explicit SinkSignalLog(QObject *parent);
+  virtual ~SinkSignalLog();
+
+private slots:
+  void slotLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber);
+
+signals:
+  void signalLog(const QString& logMessage);
+
+private:
+  // implicitly implemented, not to be used
+  SinkSignalLog(const SinkSignalLog&);
+  SinkSignalLog& operator=(const SinkSignalLog&);
+};
+
+// -------------------------------------------------------------------------------------------------
+
 class SimpleQtLogger : public QObject
 {
   Q_OBJECT
@@ -357,21 +383,26 @@ public:
   void setLogFormat_file(const QString& role, const QString& logFormat, const QString& logFormatInt);
   void setLogFormat_console(const QString& logFormat, const QString& logFormatInt);
   void setLogFormat_qDebug(const QString& logFormat, const QString& logFormatInt);
+  void setLogFormat_signal(const QString& logFormat, const QString& logFormatInt);
 
   void setLogLevels_file(const EnableLogLevels& enableLogLevels); // main
   void setLogLevels_file(const QString& role, const EnableLogLevels& enableLogLevels);
   void setLogLevels_console(const EnableLogLevels& enableLogLevels);
   void setLogLevels_qDebug(const EnableLogLevels& enableLogLevels);
+  void setLogLevels_signal(const EnableLogLevels& enableLogLevels);
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
   bool addLogFilter_file(const QRegularExpression& re); // main
   bool addLogFilter_file(const QString& role, const QRegularExpression& re);
   bool addLogFilter_console(const QRegularExpression& re);
   bool addLogFilter_qDebug(const QRegularExpression& re);
+  bool addLogFilter_signal(const QRegularExpression& re);
 #endif
 
   bool setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber); // main
   bool setLogFileName(const QString& role, const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
+
+  bool connectSinkSignalLog(const QObject* receiver, const char* method); // You must use the SLOT() macro when specifying the method
 
   static QString timeStamp();
   static QString threadId();
@@ -384,6 +415,7 @@ public:
 #endif
 
 signals:
+  // internal
   void signalLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber);
 
 private:
@@ -395,6 +427,7 @@ private:
 
   SinkConsoleLog* _sinkConsoleLog;
   SinkQDebugLog* _sinkQDebugLog;
+  SinkSignalLog* _sinkSignalLog;
   QMap<QString, SinkFileLog*> _sinkFileLogMap;
 
   QMutex _mutex;

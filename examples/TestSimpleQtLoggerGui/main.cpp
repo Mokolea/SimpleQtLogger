@@ -24,6 +24,7 @@ int main(int argc, char *argv[])
   simpleqtlogger::ENABLE_LOG_SINK_FILE = true;
   simpleqtlogger::ENABLE_LOG_SINK_CONSOLE = false;
   simpleqtlogger::ENABLE_LOG_SINK_QDEBUG = false;
+  simpleqtlogger::ENABLE_LOG_SINK_SIGNAL = false;
   simpleqtlogger::ENABLE_FUNCTION_STACK_TRACE = true;
   // set log-levels
   simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_INFO = true;
@@ -39,6 +40,7 @@ int main(int argc, char *argv[])
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_file(simpleqtlogger::ENABLE_LOG_LEVELS);
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_console(simpleqtlogger::ENABLE_LOG_LEVELS);
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_qDebug(simpleqtlogger::ENABLE_LOG_LEVELS);
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_signal(simpleqtlogger::ENABLE_LOG_LEVELS);
   // 2nd file-log (levels: warn..fatal)
   simpleqtlogger::SimpleQtLogger::getInstance()->addSinkFileLog("warn");
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogFormat_file("warn", "<TS> [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)", "<TS> [<LL>] <TEXT>");
