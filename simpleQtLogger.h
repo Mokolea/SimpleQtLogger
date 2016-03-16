@@ -70,6 +70,7 @@
    - <LINE> --> Line-number
 
   TODO:
+   - enhance log-format (TAG <TEXT>) by adding a flexible layout configurable with pattern string
    - trimming (removing of whitespace) selectable, at least for at the start of log-message
    - idea: have messages optional prefixed with current stack-depth "...|" if ENABLE_FUNCTION_STACK_TRACE enabled --> maybe not
    - provide to add/remove user defined sinks
