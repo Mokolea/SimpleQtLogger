@@ -29,6 +29,13 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
+      <widget class="QPushButton" name="pushButtonAboutQt">
+       <property name="text">
+        <string>About Qt</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -46,6 +53,9 @@
        <property name="text">
         <string>Quit</string>
        </property>
+       <property name="default">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
     </layout>
@@ -53,6 +63,11 @@
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>textBrowserLog</tabstop>
+  <tabstop>pushButtonAboutQt</tabstop>
+  <tabstop>pushButtonQuit</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

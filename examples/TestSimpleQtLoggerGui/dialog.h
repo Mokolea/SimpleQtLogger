@@ -26,6 +26,7 @@ public:
   ~Dialog();
 
 private slots:
+  void on_pushButtonAboutQt_clicked();
   void on_pushButtonQuit_clicked();
   void eventInfo(const QString& text);
 

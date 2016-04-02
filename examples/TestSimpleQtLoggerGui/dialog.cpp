@@ -13,6 +13,8 @@
 #include "simpleQtLogger.h"
 #include "eventLog.h"
 
+#include <QMessageBox>
+
 Dialog::Dialog(QWidget *parent)
   : QDialog(parent)
   , ui(new Ui::Dialog)
@@ -31,6 +33,12 @@ Dialog::~Dialog()
   L_FUNC("");
   qDebug("Dialog::~Dialog"); // TODO comment this
   delete ui;
+}
+
+void Dialog::on_pushButtonAboutQt_clicked()
+{
+  L_FUNC("");
+  QMessageBox::aboutQt(this);
 }
 
 void Dialog::on_pushButtonQuit_clicked()
