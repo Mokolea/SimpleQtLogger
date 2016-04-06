@@ -404,7 +404,7 @@ public:
   bool setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber); // main
   bool setLogFileName(const QString& role, const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
 
-  bool connectSinkSignalLog(const QObject* receiver, const char* method); // You must use the SLOT() macro when specifying the method
+  bool connectSinkSignalLog(const QObject* receiver, const char* method); // You must use the SLOT() macro when specifying the method, e.g. SLOT(mySlotLog(const QString&))
 
   static QString timeStamp();
   static QString threadId();
