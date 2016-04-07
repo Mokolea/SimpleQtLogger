@@ -360,7 +360,7 @@ private slots:
   void slotLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber);
 
 signals:
-  void signalLog(const QString& logMessage);
+  void signalLogMessage(const QString& logMessage);
 
 private:
   // implicitly implemented, not to be used
