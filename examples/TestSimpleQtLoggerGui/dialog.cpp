@@ -26,6 +26,7 @@ Dialog::Dialog(QWidget *parent)
   EventLog *eventLog = new EventLog(this);
   QObject::connect(eventLog, SIGNAL(eventInfo(const QString&)), this, SLOT(eventInfo(const QString&)), Qt::QueuedConnection); // Qt::QueuedConnection: Qt 5.4.x Debian
   installEventFilter(eventLog);
+  L_NOTE("Start");
 }
 
 Dialog::~Dialog()
@@ -44,7 +45,7 @@ void Dialog::on_pushButtonAboutQt_clicked()
 void Dialog::on_pushButtonQuit_clicked()
 {
   L_FUNC("");
-  L_INFO("Bye bye");
+  L_NOTE("Bye bye");
   close();
 }
 
