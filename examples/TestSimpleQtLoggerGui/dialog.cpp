@@ -20,7 +20,7 @@ Dialog::Dialog(QWidget *parent)
   , ui(new Ui::Dialog)
 {
   L_FUNC("");
-  qDebug("Dialog::Dialog"); // TODO comment this
+  // qDebug("Dialog::Dialog");
   ui->setupUi(this);
 
   EventLog *eventLog = new EventLog(this);
@@ -31,7 +31,7 @@ Dialog::Dialog(QWidget *parent)
 Dialog::~Dialog()
 {
   L_FUNC("");
-  qDebug("Dialog::~Dialog"); // TODO comment this
+  // qDebug("Dialog::~Dialog");
   delete ui;
 }
 

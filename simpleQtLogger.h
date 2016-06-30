@@ -63,7 +63,7 @@
    - <TS> --> Time-stamp, "YYYY-MM-DD HH:MM:SS.SSS"
    - <TID> --> Thread-Id, 64bit value in hexadecimal
    - <TID32> --> Thread-Id, 32bit value in hexadecimal
-   - <LL> --> Log-level, one character: '!', 'E', 'W', 'I', 'D' or 'F'
+   - <LL> --> Log-level, one character: '!', 'E', 'W', 'N', 'I', 'D' or 'F'
    - <TEXT> --> The log-message
    - <FUNC> --> Function-name
    - <FILE> --> File-name
@@ -130,6 +130,7 @@
 #define ENABLE_SQTL_LOG_LEVEL_FATAL      1   // 1: enable, 0: disable
 #define ENABLE_SQTL_LOG_LEVEL_ERROR      1   // 1: enable, 0: disable
 #define ENABLE_SQTL_LOG_LEVEL_WARNING    1   // 1: enable, 0: disable
+#define ENABLE_SQTL_LOG_LEVEL_NOTE       1   // 1: enable, 0: disable
 #define ENABLE_SQTL_LOG_LEVEL_INFO       1   // 1: enable, 0: disable
 #define ENABLE_SQTL_LOG_LEVEL_DEBUG      0   // 1: enable, 0: disable; just for step-by-step testing
 #define ENABLE_SQTL_LOG_LEVEL_FUNCTION   1   // 1: enable, 0: disable; stack-trace
@@ -153,7 +154,7 @@ const QString CONSOLE_COLOR_ANSI_ESC_CODES_WARNING   = "\033[0;40;36m";   // for
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_WARNING_I = "\033[0;40;1;36m"; // foreground dark cyan (intense)
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG     = "\033[0;40;35m";   // foreground magenta
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG_I   = "\033[0;40;1;35m"; // foreground magenta (intense)
-const QString CONSOLE_COLOR_ANSI_ESC_CODES_NOTE      = "\033[0;40;1;37m"; // foreground white (intense)
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_NOTE_I    = "\033[0;40;1;37m"; // foreground white (intense)
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_FUNCTION  = "\033[0;32m";      // foreground green
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_RESET     = "\033[0m";         // normal
 
@@ -162,6 +163,7 @@ typedef enum {
   LogLevel_FATAL = 0, // Fatal error, the program execution has to be aborted
   LogLevel_ERROR,     // An error, that challenges the core operation
   LogLevel_WARNING,   // A warning, signalizing a deformity, without challenging the core operation
+  LogLevel_NOTE,      // Analysis information directed to supporters (same as INFO, just label NOTE in console-log)
   LogLevel_INFO,      // Analysis information directed to supporters
   LogLevel_DEBUG,     // Analysis debug information directed to developers
   LogLevel_FUNCTION,  // A trace level for function stack-tracing
@@ -169,7 +171,7 @@ typedef enum {
 }
 LogLevel;
 
-static const char LOG_LEVEL_CHAR[7] = {'!', 'E', 'W', 'I', 'D', 'F', '-'}; // MUST correspond to enum LogLevel, unchecked array!!!
+static const char LOG_LEVEL_CHAR[8] = {'!', 'E', 'W', 'N', 'I', 'D', 'F', '-'}; // MUST correspond to enum LogLevel, unchecked array!!!
 
 // Log-sinks (adjust at run-time)
 extern bool ENABLE_LOG_SINK_FILE;    // Log-sink: true: enable, false: disable, default: true
@@ -182,6 +184,7 @@ struct EnableLogLevels {
   bool logLevel_FATAL;    // Log-level: true: enable, false: disable, default: true
   bool logLevel_ERROR;    // Log-level: true: enable, false: disable, default: true
   bool logLevel_WARNING;  // Log-level: true: enable, false: disable, default: true
+  bool logLevel_NOTE;     // Log-level: true: enable, false: disable, default: true
   bool logLevel_INFO;     // Log-level: true: enable, false: disable, default: true
   bool logLevel_DEBUG;    // Log-level: true: enable, false: disable, default: false; just for step-by-step testing
   bool logLevel_FUNCTION; // Log-level: true: enable, false: disable, default: false; stack-trace
@@ -219,6 +222,7 @@ extern bool ENABLE_CONSOLE_COLOR; // Color for sink console: true: enable, false
 #define L_FATAL(text)   SQTL_L_BODY(text,ENABLE_SQTL_LOG_LEVEL_FATAL,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_FATAL,simpleqtlogger::LogLevel_FATAL)
 #define L_ERROR(text)   SQTL_L_BODY(text,ENABLE_SQTL_LOG_LEVEL_ERROR,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_ERROR,simpleqtlogger::LogLevel_ERROR)
 #define L_WARN(text)    SQTL_L_BODY(text,ENABLE_SQTL_LOG_LEVEL_WARNING,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_WARNING,simpleqtlogger::LogLevel_WARNING)
+#define L_NOTE(text)    SQTL_L_BODY(text,ENABLE_SQTL_LOG_LEVEL_NOTE,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_NOTE,simpleqtlogger::LogLevel_NOTE)
 #define L_INFO(text)    SQTL_L_BODY(text,ENABLE_SQTL_LOG_LEVEL_INFO,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_INFO,simpleqtlogger::LogLevel_INFO)
 #define L_DEBUG(text)   SQTL_L_BODY(text,ENABLE_SQTL_LOG_LEVEL_DEBUG,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_DEBUG,simpleqtlogger::LogLevel_DEBUG)
 #if ENABLE_SQTL_LOG_LEVEL_FUNCTION > 0
@@ -238,6 +242,7 @@ extern bool ENABLE_CONSOLE_COLOR; // Color for sink console: true: enable, false
 #define LS_FATAL(text)   SQTL_LS_BODY(text,ENABLE_SQTL_LOG_LEVEL_FATAL,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_FATAL,simpleqtlogger::LogLevel_FATAL)
 #define LS_ERROR(text)   SQTL_LS_BODY(text,ENABLE_SQTL_LOG_LEVEL_ERROR,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_ERROR,simpleqtlogger::LogLevel_ERROR)
 #define LS_WARN(text)    SQTL_LS_BODY(text,ENABLE_SQTL_LOG_LEVEL_WARNING,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_WARNING,simpleqtlogger::LogLevel_WARNING)
+#define LS_NOTE(text)    SQTL_LS_BODY(text,ENABLE_SQTL_LOG_LEVEL_NOTE,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_NOTE,simpleqtlogger::LogLevel_NOTE)
 #define LS_INFO(text)    SQTL_LS_BODY(text,ENABLE_SQTL_LOG_LEVEL_INFO,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_INFO,simpleqtlogger::LogLevel_INFO)
 #define LS_DEBUG(text)   SQTL_LS_BODY(text,ENABLE_SQTL_LOG_LEVEL_DEBUG,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_DEBUG,simpleqtlogger::LogLevel_DEBUG)
 #if ENABLE_SQTL_LOG_LEVEL_FUNCTION > 0

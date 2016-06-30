@@ -26,15 +26,17 @@ int main(int argc, char *argv[])
 
   // set log-features
   simpleqtlogger::ENABLE_LOG_SINK_FILE = true;
-  simpleqtlogger::ENABLE_LOG_SINK_CONSOLE = false;
+  simpleqtlogger::ENABLE_LOG_SINK_CONSOLE = true;
   simpleqtlogger::ENABLE_LOG_SINK_QDEBUG = false;
   simpleqtlogger::ENABLE_LOG_SINK_SIGNAL = true;
   simpleqtlogger::ENABLE_FUNCTION_STACK_TRACE = true;
   // set log-levels
+  simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_NOTE = true;
   simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_INFO = true;
   simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_DEBUG = false;
   simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_FUNCTION = true;
   simpleqtlogger::EnableLogLevels enableLogLevelsWarn = simpleqtlogger::ENABLE_LOG_LEVELS;
+  enableLogLevelsWarn.logLevel_NOTE = false;
   enableLogLevelsWarn.logLevel_INFO = false;
   enableLogLevelsWarn.logLevel_FUNCTION = false;
 

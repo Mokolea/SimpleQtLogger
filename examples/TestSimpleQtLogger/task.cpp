@@ -21,13 +21,13 @@ Task::Task(QObject *parent)
   : QObject(parent)
 {
   L_FUNC("");
-  qDebug("Task::Task"); // TODO comment this
+  // qDebug("Task::Task");
 }
 
 Task::~Task()
 {
   L_FUNC("");
-  qDebug("Task::~Task"); // TODO comment this
+  // qDebug("Task::~Task");
 }
 
 void Task::init()
@@ -38,6 +38,7 @@ void Task::init()
   L_FATAL("L_FATAL");
   L_ERROR("L_ERROR");
   L_WARN("L_WARN");
+  L_NOTE("L_NOTE");
   L_INFO("L_INFO");
   L_DEBUG("L_DEBUG");
   L_INFO("--- test Logger");
@@ -57,6 +58,7 @@ void Task::init()
   QString formattedOutput2 = "{<br>  \"firstName\": \"Mario\",<br>  \"age\": 44<br>}";
   L_INFO(formattedOutput2.prepend("JSON output 2:<br>").replace("<br>", "\n"));
 
+  L_NOTE("Start");
   QTimer::singleShot(1000, this, SLOT(slotRun()));
   QTimer::singleShot(1000, this, SLOT(slotRun()));
   QTimer::singleShot(3000, this, SLOT(slotRun()));
@@ -66,7 +68,7 @@ void Task::init()
 void Task::theEnd()
 {
   L_FUNC("");
-  L_INFO("Bye bye");
+  L_NOTE("Bye bye");
   emit finished();
 }
 
@@ -107,19 +109,19 @@ WorkerThread::WorkerThread(const QString& id, QObject *parent)
   , _id(id)
 {
   L_FUNC(QString("_id='%1'").arg(_id));
-  qDebug("WorkerThread::WorkerThread"); // TODO comment this
+  // qDebug("WorkerThread::WorkerThread");
 }
 
 WorkerThread::~WorkerThread()
 {
   L_FUNC(QString("_id='%1'").arg(_id));
-  qDebug("WorkerThread::~WorkerThread"); // TODO comment this
+  // qDebug("WorkerThread::~WorkerThread");
 }
 
 void WorkerThread::run()
 {
   L_FUNC(QString("_id='%1'").arg(_id));
-  qDebug("WorkerThread::run"); // TODO comment this
+  // qDebug("WorkerThread::run");
 
   msleep(500); // [ms]
   QString result = QString("%1: Calculate: 6! = %2").arg(_id).arg(factorial(6));
