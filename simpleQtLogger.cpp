@@ -169,18 +169,18 @@ void SinkConsoleLog::slotLog(const QString& ts, const QString& tid, const QStrin
   QTextStream out(stdout);
   // out.setCodec("UTF-8");
   if(ENABLE_CONSOLE_COLOR) {
-    // change some foreground (background) colors
+    // set text colors (foreground/background)
     if(logLevel == LogLevel_FATAL) {
-      out << CONSOLE_COLOR_ANSI_ESC_CODES_FATAL;
+      out << CONSOLE_COLOR_ANSI_ESC_CODES_FATAL_I << "FATAL" << CONSOLE_COLOR_ANSI_ESC_CODES_FATAL << ": ";
     }
     else if(logLevel == LogLevel_ERROR) {
-      out << CONSOLE_COLOR_ANSI_ESC_CODES_ERROR;
+      out << CONSOLE_COLOR_ANSI_ESC_CODES_ERROR_I << "ERROR" << CONSOLE_COLOR_ANSI_ESC_CODES_ERROR << ": ";
     }
     else if(logLevel == LogLevel_WARNING) {
-      out << CONSOLE_COLOR_ANSI_ESC_CODES_WARNING;
+      out << CONSOLE_COLOR_ANSI_ESC_CODES_WARNING_I << "WARNING" << CONSOLE_COLOR_ANSI_ESC_CODES_WARNING << ": ";
     }
     else if(logLevel == LogLevel_DEBUG) {
-      out << CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG;
+      out << CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG_I << "DEBUG" << CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG << ": ";
     }
     else if(logLevel == LogLevel_FUNCTION) {
       out << CONSOLE_COLOR_ANSI_ESC_CODES_FUNCTION;
@@ -520,6 +520,8 @@ SimpleQtLogger::SimpleQtLogger(QObject *parent)
   _sinkConsoleLog = new SinkConsoleLog(this);
   _sinkQDebugLog = new SinkQDebugLog(this);
   _sinkSignalLog = new SinkSignalLog(this);
+
+  _sinkConsoleLog->setLogFormat(DEFAULT_LOG_FORMAT_CONSOLE, DEFAULT_LOG_FORMAT_CONSOLE);
 
   // Qt::ConnectionType is Qt::AutoConnection (Default)
   // If the receiver lives in the thread that emits the signal, Qt::DirectConnection is used.

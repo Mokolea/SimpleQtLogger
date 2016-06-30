@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
   // initialize SimpleQtLogger (step 1/2)
   simpleqtlogger::SimpleQtLogger::createInstance(qApp)->setLogFileName("testSimpleQtLogger.log", 10*1000, 10);
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_file(simpleqtlogger::ENABLE_LOG_LEVELS);
-  simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_console(simpleqtlogger::ENABLE_LOG_LEVELS);
+  //simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_console(simpleqtlogger::ENABLE_LOG_LEVELS);
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_qDebug(simpleqtlogger::ENABLE_LOG_LEVELS);
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_signal(simpleqtlogger::ENABLE_LOG_LEVELS);
   //simpleqtlogger::SimpleQtLogger::getInstance()->addLogFilter_file(QRegularExpression("_id="));

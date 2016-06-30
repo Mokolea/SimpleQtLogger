@@ -142,13 +142,20 @@ const unsigned short CHECK_LOG_FILE_ACTIVITY_INTERVAL = 5000; // [ms]
 const QString DEFAULT_LOG_FORMAT          = "<TS> [<TID>] [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)";
 const QString DEFAULT_LOG_FORMAT_INTERNAL = "<TS> [<TID>] [<LL>] <TEXT>";
 
-// ANSI escape codes to set foreground (background) colors, http://en.wikipedia.org/wiki/ANSI_escape_code
-const QString CONSOLE_COLOR_ANSI_ESC_CODES_FATAL    = "\033[40;1;33m"; // foreground yellow
-const QString CONSOLE_COLOR_ANSI_ESC_CODES_ERROR    = "\033[40;1;31m"; // foreground dark red
-const QString CONSOLE_COLOR_ANSI_ESC_CODES_WARNING  = "\033[40;1;36m"; // foreground dark cyan
-const QString CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG    = "\033[40;35m";   // foreground magenta
-const QString CONSOLE_COLOR_ANSI_ESC_CODES_FUNCTION = "\033[32m";      // foreground green
-const QString CONSOLE_COLOR_ANSI_ESC_CODES_RESET    = "\033[0m";       // normal
+const QString DEFAULT_LOG_FORMAT_CONSOLE = "<TEXT>"; // same for internal
+
+// ANSI escape codes to set text colors (foreground/background), http://en.wikipedia.org/wiki/ANSI_escape_code
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_FATAL     = "\033[0;40;33m";   // foreground yellow
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_FATAL_I   = "\033[0;40;1;33m"; // foreground yellow (intense)
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_ERROR     = "\033[0;40;31m";   // foreground dark red
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_ERROR_I   = "\033[0;40;1;31m"; // foreground dark red (intense)
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_WARNING   = "\033[0;40;36m";   // foreground dark cyan
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_WARNING_I = "\033[0;40;1;36m"; // foreground dark cyan (intense)
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG     = "\033[0;40;35m";   // foreground magenta
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG_I   = "\033[0;40;1;35m"; // foreground magenta (intense)
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_NOTE      = "\033[0;40;1;37m"; // foreground white (intense)
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_FUNCTION  = "\033[0;32m";      // foreground green
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_RESET     = "\033[0m";         // normal
 
 // Log-level
 typedef enum {
