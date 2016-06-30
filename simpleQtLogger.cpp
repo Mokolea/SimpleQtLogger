@@ -26,16 +26,15 @@ bool ENABLE_LOG_SINK_SIGNAL = false;
 
 /* Log-level */
 EnableLogLevels::EnableLogLevels()
-{
-  logLevel_FATAL = true;
-  logLevel_ERROR = true;
-  logLevel_WARNING = true;
-  logLevel_NOTE = true;
-  logLevel_INFO = true;
-  logLevel_DEBUG = false;
-  logLevel_FUNCTION = false;
-  logLevel_INTERNAL = true;
-}
+  : logLevel_FATAL(true)
+  , logLevel_ERROR(true)
+  , logLevel_WARNING(true)
+  , logLevel_NOTE(true)
+  , logLevel_INFO(true)
+  , logLevel_DEBUG(false)
+  , logLevel_FUNCTION(false)
+  , logLevel_INTERNAL(true)
+{}
 bool EnableLogLevels::enabled(LogLevel logLevel) const
 {
   if(logLevel == LogLevel_FATAL) return logLevel_FATAL;
