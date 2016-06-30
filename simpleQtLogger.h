@@ -143,7 +143,7 @@ const unsigned short CHECK_LOG_FILE_ACTIVITY_INTERVAL = 5000; // [ms]
 const QString DEFAULT_LOG_FORMAT          = "<TS> [<TID>] [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)";
 const QString DEFAULT_LOG_FORMAT_INTERNAL = "<TS> [<TID>] [<LL>] <TEXT>";
 
-const QString DEFAULT_LOG_FORMAT_CONSOLE = "<TEXT>"; // same for internal
+const QString DEFAULT_LOG_FORMAT_CONSOLE = "<TEXT>"; // same for internal; output is prefixed with log-level (intense color, see ..._I): "<LOG-LEVEL-NAME>: "
 
 // ANSI escape codes to set text colors (foreground/background), http://en.wikipedia.org/wiki/ANSI_escape_code
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_FATAL     = "\033[0;40;33m";   // foreground yellow
