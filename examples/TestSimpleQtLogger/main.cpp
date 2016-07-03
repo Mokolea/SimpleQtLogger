@@ -24,35 +24,40 @@ int main(int argc, char *argv[])
 
   Q_ASSERT_X(SQTL_VERSION >= SQTL_VERSION_CHECK(1, 1, 0), "main", "SimpleQtLogger version");
 
-  // set log-features
+  // enable sinks
   simpleqtlogger::ENABLE_LOG_SINK_FILE = true;
   simpleqtlogger::ENABLE_LOG_SINK_CONSOLE = true;
   simpleqtlogger::ENABLE_LOG_SINK_QDEBUG = false;
   simpleqtlogger::ENABLE_LOG_SINK_SIGNAL = true;
+  // set log-features
   simpleqtlogger::ENABLE_FUNCTION_STACK_TRACE = true;
-  // set log-levels
-  simpleqtlogger::EnableLogLevels enableLogLevelsConsole = simpleqtlogger::ENABLE_LOG_LEVELS; // default
-  simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_NOTE = true;
-  simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_INFO = true;
-  simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_DEBUG = false;
+  // set log-levels (global; all enabled)
+  simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_DEBUG = true;
   simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_FUNCTION = true;
-  simpleqtlogger::EnableLogLevels enableLogLevelsWarn = simpleqtlogger::ENABLE_LOG_LEVELS;
-  enableLogLevelsWarn.logLevel_NOTE = false;
-  enableLogLevelsWarn.logLevel_INFO = false;
-  enableLogLevelsWarn.logLevel_FUNCTION = false;
+  // set log-levels (specific)
+  simpleqtlogger::EnableLogLevels enableLogLevels_file = simpleqtlogger::ENABLE_LOG_LEVELS;
+  simpleqtlogger::EnableLogLevels enableLogLevels_console = simpleqtlogger::ENABLE_LOG_LEVELS;
+  simpleqtlogger::EnableLogLevels enableLogLevels_qDebug = simpleqtlogger::ENABLE_LOG_LEVELS;
+  simpleqtlogger::EnableLogLevels enableLogLevels_signal = simpleqtlogger::ENABLE_LOG_LEVELS;
+  enableLogLevels_console.logLevel_FUNCTION = false;
+  simpleqtlogger::EnableLogLevels enableLogLevels_fileWarn = simpleqtlogger::ENABLE_LOG_LEVELS;
+  enableLogLevels_fileWarn.logLevel_NOTE = false;
+  enableLogLevels_fileWarn.logLevel_INFO = false;
+  enableLogLevels_fileWarn.logLevel_DEBUG = false;
+  enableLogLevels_fileWarn.logLevel_FUNCTION = false;
 
   // initialize SimpleQtLogger (step 1/2)
   simpleqtlogger::SimpleQtLogger::createInstance(qApp)->setLogFileName("testSimpleQtLogger.log", 10*1000, 10);
-  simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_file(simpleqtlogger::ENABLE_LOG_LEVELS);
-  simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_console(enableLogLevelsConsole);
-  simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_qDebug(simpleqtlogger::ENABLE_LOG_LEVELS);
-  simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_signal(simpleqtlogger::ENABLE_LOG_LEVELS);
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_file(enableLogLevels_file);
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_console(enableLogLevels_console);
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_qDebug(enableLogLevels_qDebug);
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_signal(enableLogLevels_signal);
   //simpleqtlogger::SimpleQtLogger::getInstance()->addLogFilter_file(QRegularExpression("_id="));
   //simpleqtlogger::SimpleQtLogger::getInstance()->addLogFilter_file(QRegularExpression("n="));
   // 2nd file-log (levels: warn..fatal)
   simpleqtlogger::SimpleQtLogger::getInstance()->addSinkFileLog("warn");
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogFileName("warn", "testSimpleQtLoggerWarn.log", 10*1000, 10);
-  simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_file("warn", enableLogLevelsWarn);
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_file("warn", enableLogLevels_fileWarn);
 
   // start and initialize the main task
   Task *task = new Task(&a);

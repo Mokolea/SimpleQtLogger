@@ -43,7 +43,7 @@
       simpleqtlogger::ENABLE_LOG_SINK_SIGNAL = false;
    - set log-features:
       simpleqtlogger::ENABLE_FUNCTION_STACK_TRACE = true;
-   - set log-levels (example):
+   - set log-levels (global):
       simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_INFO = true;
       simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_DEBUG = false;
       simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_FUNCTION = true;
@@ -132,7 +132,7 @@
 #define ENABLE_SQTL_LOG_LEVEL_WARNING    1   // 1: enable, 0: disable
 #define ENABLE_SQTL_LOG_LEVEL_NOTE       1   // 1: enable, 0: disable
 #define ENABLE_SQTL_LOG_LEVEL_INFO       1   // 1: enable, 0: disable
-#define ENABLE_SQTL_LOG_LEVEL_DEBUG      0   // 1: enable, 0: disable; just for step-by-step testing
+#define ENABLE_SQTL_LOG_LEVEL_DEBUG      1   // 1: enable, 0: disable; just for step-by-step testing
 #define ENABLE_SQTL_LOG_LEVEL_FUNCTION   1   // 1: enable, 0: disable; stack-trace
 
 namespace simpleqtlogger {
@@ -146,17 +146,17 @@ const QString DEFAULT_LOG_FORMAT_INTERNAL = "<TS> [<TID>] [<LL>] <TEXT>";
 const QString DEFAULT_LOG_FORMAT_CONSOLE = "<TEXT>"; // same for internal; output is prefixed with log-level (intense color, see ..._I): "<LOG-LEVEL-NAME>: "
 
 // ANSI escape codes to set text colors (foreground/background), http://en.wikipedia.org/wiki/ANSI_escape_code
-const QString CONSOLE_COLOR_ANSI_ESC_CODES_FATAL     = "\033[0;40;33m";   // foreground yellow
-const QString CONSOLE_COLOR_ANSI_ESC_CODES_FATAL_I   = "\033[0;40;1;33m"; // foreground yellow (intense)
-const QString CONSOLE_COLOR_ANSI_ESC_CODES_ERROR     = "\033[0;40;31m";   // foreground dark red
-const QString CONSOLE_COLOR_ANSI_ESC_CODES_ERROR_I   = "\033[0;40;1;31m"; // foreground dark red (intense)
-const QString CONSOLE_COLOR_ANSI_ESC_CODES_WARNING   = "\033[0;40;36m";   // foreground dark cyan
-const QString CONSOLE_COLOR_ANSI_ESC_CODES_WARNING_I = "\033[0;40;1;36m"; // foreground dark cyan (intense)
-const QString CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG     = "\033[0;40;35m";   // foreground magenta
-const QString CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG_I   = "\033[0;40;1;35m"; // foreground magenta (intense)
-const QString CONSOLE_COLOR_ANSI_ESC_CODES_NOTE_I    = "\033[0;40;1;37m"; // foreground white (intense)
-const QString CONSOLE_COLOR_ANSI_ESC_CODES_FUNCTION  = "\033[0;32m";      // foreground green
-const QString CONSOLE_COLOR_ANSI_ESC_CODES_RESET     = "\033[0m";         // normal
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_FATAL     = "\033[0;33m";   // foreground yellow
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_FATAL_I   = "\033[0;33;1m"; // foreground yellow (intense)
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_ERROR     = "\033[0;31m";   // foreground red
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_ERROR_I   = "\033[0;31;1m"; // foreground red (intense)
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_WARNING   = "\033[0;36m";   // foreground cyan
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_WARNING_I = "\033[0;36;1m"; // foreground cyan (intense)
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG     = "\033[0;35m";   // foreground magenta
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG_I   = "\033[0;35;1m"; // foreground magenta (intense)
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_NOTE_I    = "\033[0;37;1m"; // foreground white (intense)
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_FUNCTION  = "\033[0;32m";   // foreground green
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_RESET     = "\033[0m";      // reset all attributes
 
 // Log-level
 typedef enum {
