@@ -20,18 +20,29 @@ Dialog::Dialog(QWidget *parent)
   , ui(new Ui::Dialog)
 {
   L_FUNC("");
-  qDebug("Dialog::Dialog"); // TODO comment this
+  // qDebug("Dialog::Dialog");
   ui->setupUi(this);
 
   EventLog *eventLog = new EventLog(this);
   QObject::connect(eventLog, SIGNAL(eventInfo(const QString&)), this, SLOT(eventInfo(const QString&)), Qt::QueuedConnection); // Qt::QueuedConnection: Qt 5.4.x Debian
   installEventFilter(eventLog);
+
+  L_INFO("+++ test Logger");
+  L_FATAL("L_FATAL");
+  L_ERROR("L_ERROR");
+  L_WARN("L_WARN");
+  L_NOTE("L_NOTE");
+  L_INFO("L_INFO");
+  L_DEBUG("L_DEBUG");
+  L_INFO("--- test Logger");
+
+  L_NOTE("Start");
 }
 
 Dialog::~Dialog()
 {
   L_FUNC("");
-  qDebug("Dialog::~Dialog"); // TODO comment this
+  // qDebug("Dialog::~Dialog");
   delete ui;
 }
 
@@ -44,7 +55,7 @@ void Dialog::on_pushButtonAboutQt_clicked()
 void Dialog::on_pushButtonQuit_clicked()
 {
   L_FUNC("");
-  L_INFO("Bye bye");
+  L_NOTE("Bye bye");
   close();
 }
 

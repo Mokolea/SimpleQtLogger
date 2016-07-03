@@ -41,6 +41,7 @@ signals:
 
 private:
   void startWorkerThread(const QString& id);
+  void testLogLevels(const QString& logMessage, int repeat);
 };
 
 // -------------------------------------------------------------------------------------------------

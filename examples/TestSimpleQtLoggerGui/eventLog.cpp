@@ -18,13 +18,13 @@ EventLog::EventLog(QObject *parent)
   : QObject(parent)
 {
   L_FUNC("");
-  qDebug("EventLog::EventLog"); // TODO comment this
+  // qDebug("EventLog::EventLog");
 }
 
 EventLog::~EventLog()
 {
   L_FUNC("");
-  qDebug("EventLog::~EventLog"); // TODO comment this
+  // qDebug("EventLog::~EventLog");
 }
 
 bool EventLog::eventFilter(QObject *obj, QEvent *event)

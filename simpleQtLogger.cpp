@@ -26,20 +26,21 @@ bool ENABLE_LOG_SINK_SIGNAL = false;
 
 /* Log-level */
 EnableLogLevels::EnableLogLevels()
-{
-  logLevel_FATAL = true;
-  logLevel_ERROR = true;
-  logLevel_WARNING = true;
-  logLevel_INFO = true;
-  logLevel_DEBUG = false;
-  logLevel_FUNCTION = false;
-  logLevel_INTERNAL = true;
-}
+  : logLevel_FATAL(true)
+  , logLevel_ERROR(true)
+  , logLevel_WARNING(true)
+  , logLevel_NOTE(true)
+  , logLevel_INFO(true)
+  , logLevel_DEBUG(false)
+  , logLevel_FUNCTION(false)
+  , logLevel_INTERNAL(true)
+{}
 bool EnableLogLevels::enabled(LogLevel logLevel) const
 {
   if(logLevel == LogLevel_FATAL) return logLevel_FATAL;
   if(logLevel == LogLevel_ERROR) return logLevel_ERROR;
   if(logLevel == LogLevel_WARNING) return logLevel_WARNING;
+  if(logLevel == LogLevel_NOTE) return logLevel_NOTE;
   if(logLevel == LogLevel_INFO) return logLevel_INFO;
   if(logLevel == LogLevel_DEBUG) return logLevel_DEBUG;
   if(logLevel == LogLevel_FUNCTION) return logLevel_FUNCTION;
@@ -169,18 +170,21 @@ void SinkConsoleLog::slotLog(const QString& ts, const QString& tid, const QStrin
   QTextStream out(stdout);
   // out.setCodec("UTF-8");
   if(ENABLE_CONSOLE_COLOR) {
-    // change some foreground (background) colors
+    // set text colors (foreground/background)
     if(logLevel == LogLevel_FATAL) {
-      out << CONSOLE_COLOR_ANSI_ESC_CODES_FATAL;
+      out << CONSOLE_COLOR_ANSI_ESC_CODES_FATAL_I << "FATAL" << CONSOLE_COLOR_ANSI_ESC_CODES_FATAL << ": ";
     }
     else if(logLevel == LogLevel_ERROR) {
-      out << CONSOLE_COLOR_ANSI_ESC_CODES_ERROR;
+      out << CONSOLE_COLOR_ANSI_ESC_CODES_ERROR_I << "ERROR" << CONSOLE_COLOR_ANSI_ESC_CODES_ERROR << ": ";
     }
     else if(logLevel == LogLevel_WARNING) {
-      out << CONSOLE_COLOR_ANSI_ESC_CODES_WARNING;
+      out << CONSOLE_COLOR_ANSI_ESC_CODES_WARNING_I << "WARNING" << CONSOLE_COLOR_ANSI_ESC_CODES_WARNING << ": ";
+    }
+    else if(logLevel == LogLevel_NOTE) {
+      out << CONSOLE_COLOR_ANSI_ESC_CODES_NOTE_I << "NOTE" << CONSOLE_COLOR_ANSI_ESC_CODES_RESET << ": ";
     }
     else if(logLevel == LogLevel_DEBUG) {
-      out << CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG;
+      out << CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG_I << "DEBUG" << CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG << ": ";
     }
     else if(logLevel == LogLevel_FUNCTION) {
       out << CONSOLE_COLOR_ANSI_ESC_CODES_FUNCTION;
@@ -193,7 +197,7 @@ void SinkConsoleLog::slotLog(const QString& ts, const QString& tid, const QStrin
     out << getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
   }
   if(ENABLE_CONSOLE_COLOR) {
-    if(logLevel != LogLevel_INFO && logLevel != LogLevel_INTERNAL) {
+    if(logLevel != LogLevel_NOTE && logLevel != LogLevel_INFO && logLevel != LogLevel_INTERNAL) {
       out << CONSOLE_COLOR_ANSI_ESC_CODES_RESET;
     }
   }
@@ -520,6 +524,8 @@ SimpleQtLogger::SimpleQtLogger(QObject *parent)
   _sinkConsoleLog = new SinkConsoleLog(this);
   _sinkQDebugLog = new SinkQDebugLog(this);
   _sinkSignalLog = new SinkSignalLog(this);
+
+  _sinkConsoleLog->setLogFormat(DEFAULT_LOG_FORMAT_CONSOLE, DEFAULT_LOG_FORMAT_CONSOLE);
 
   // Qt::ConnectionType is Qt::AutoConnection (Default)
   // If the receiver lives in the thread that emits the signal, Qt::DirectConnection is used.

@@ -21,13 +21,13 @@ Task::Task(QObject *parent)
   : QObject(parent)
 {
   L_FUNC("");
-  qDebug("Task::Task"); // TODO comment this
+  // qDebug("Task::Task");
 }
 
 Task::~Task()
 {
   L_FUNC("");
-  qDebug("Task::~Task"); // TODO comment this
+  // qDebug("Task::~Task");
 }
 
 void Task::init()
@@ -38,6 +38,7 @@ void Task::init()
   L_FATAL("L_FATAL");
   L_ERROR("L_ERROR");
   L_WARN("L_WARN");
+  L_NOTE("L_NOTE");
   L_INFO("L_INFO");
   L_DEBUG("L_DEBUG");
   L_INFO("--- test Logger");
@@ -57,6 +58,10 @@ void Task::init()
   QString formattedOutput2 = "{<br>  \"firstName\": \"Mario\",<br>  \"age\": 44<br>}";
   L_INFO(formattedOutput2.prepend("JSON output 2:<br>").replace("<br>", "\n"));
 
+  testLogLevels("1234567890\n1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890\n"
+                "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890", 2);
+
+  L_NOTE("Start");
   QTimer::singleShot(1000, this, SLOT(slotRun()));
   QTimer::singleShot(1000, this, SLOT(slotRun()));
   QTimer::singleShot(3000, this, SLOT(slotRun()));
@@ -66,7 +71,7 @@ void Task::init()
 void Task::theEnd()
 {
   L_FUNC("");
-  L_INFO("Bye bye");
+  L_NOTE("Bye bye");
   emit finished();
 }
 
@@ -100,6 +105,17 @@ void Task::startWorkerThread(const QString& id)
   workerThread->start();
 }
 
+void Task::testLogLevels(const QString& logMessage, int repeat)
+{
+  L_FUNC("");
+  for(int i=0; i<repeat; ++i) { L_FATAL(logMessage); }
+  for(int i=0; i<repeat; ++i) { L_ERROR(logMessage); }
+  for(int i=0; i<repeat; ++i) { L_WARN(logMessage); }
+  for(int i=0; i<repeat; ++i) { L_NOTE(logMessage); }
+  for(int i=0; i<repeat; ++i) { L_INFO(logMessage); }
+  for(int i=0; i<repeat; ++i) { L_DEBUG(logMessage); }
+}
+
 // -------------------------------------------------------------------------------------------------
 
 WorkerThread::WorkerThread(const QString& id, QObject *parent)
@@ -107,19 +123,19 @@ WorkerThread::WorkerThread(const QString& id, QObject *parent)
   , _id(id)
 {
   L_FUNC(QString("_id='%1'").arg(_id));
-  qDebug("WorkerThread::WorkerThread"); // TODO comment this
+  // qDebug("WorkerThread::WorkerThread");
 }
 
 WorkerThread::~WorkerThread()
 {
   L_FUNC(QString("_id='%1'").arg(_id));
-  qDebug("WorkerThread::~WorkerThread"); // TODO comment this
+  // qDebug("WorkerThread::~WorkerThread");
 }
 
 void WorkerThread::run()
 {
   L_FUNC(QString("_id='%1'").arg(_id));
-  qDebug("WorkerThread::run"); // TODO comment this
+  // qDebug("WorkerThread::run");
 
   msleep(500); // [ms]
   QString result = QString("%1: Calculate: 6! = %2").arg(_id).arg(factorial(6));
