@@ -146,7 +146,7 @@ const QString DEFAULT_LOG_FORMAT_INTERNAL = "<TS> [<TID>] [<LL>] <TEXT>";
 const QString DEFAULT_LOG_FORMAT_CONSOLE = "<TEXT>"; // same for internal; output is prefixed with log-level (intense color, see ..._I): "<LOG-LEVEL-NAME>: "
 
 // ANSI escape codes to set text colors (foreground/background), http://en.wikipedia.org/wiki/ANSI_escape_code
-#if 1
+#if 0
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_FATAL     = "\033[0;33m";   // foreground yellow
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_FATAL_I   = "\033[0;33;1m"; // foreground yellow (intense)
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_ERROR     = "\033[0;31m";   // foreground red
@@ -169,6 +169,18 @@ const QString CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG     = "\033[0;47;35m";   // bac
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG_I   = "\033[0;47;35;1m"; // background white / foreground magenta (intense)
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_NOTE_I    = "\033[0;40;37;1m"; // background black / foreground white (intense)
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_FUNCTION  = "\033[0;40;32m";   // background black / foreground green
+#endif
+#if 1
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_FATAL     = "\033[0;33m";      // background -     / foreground yellow
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_FATAL_I   = "\033[0;40;33;1m"; // background black / foreground yellow (intense)
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_ERROR     = "\033[0;31m";      // background -     / foreground red
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_ERROR_I   = "\033[0;47;31;1m"; // background white / foreground red (intense)
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_WARNING   = "\033[0;36m";      // background -     / foreground cyan
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_WARNING_I = "\033[0;40;36;1m"; // background black / foreground cyan (intense)
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG     = "\033[0;35m";      // background -     / foreground magenta
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG_I   = "\033[0;47;35;1m"; // background white / foreground magenta (intense)
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_NOTE_I    = "\033[0;40;37;1m"; // background black / foreground white (intense)
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_FUNCTION  = "\033[0;32m";      // background -     / foreground green
 #endif
 #if 0
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_FATAL     = "\033[0;38;2;205;205;0m";   // foreground yellow
