@@ -132,7 +132,7 @@
 #define ENABLE_SQTL_LOG_LEVEL_WARNING    1   // 1: enable, 0: disable
 #define ENABLE_SQTL_LOG_LEVEL_NOTE       1   // 1: enable, 0: disable
 #define ENABLE_SQTL_LOG_LEVEL_INFO       1   // 1: enable, 0: disable
-#define ENABLE_SQTL_LOG_LEVEL_DEBUG      0   // 1: enable, 0: disable; just for step-by-step testing
+#define ENABLE_SQTL_LOG_LEVEL_DEBUG      1   // 1: enable, 0: disable; just for step-by-step testing
 #define ENABLE_SQTL_LOG_LEVEL_FUNCTION   1   // 1: enable, 0: disable; stack-trace
 
 namespace simpleqtlogger {
