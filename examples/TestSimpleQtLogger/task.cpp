@@ -58,6 +58,9 @@ void Task::init()
   QString formattedOutput2 = "{<br>  \"firstName\": \"Mario\",<br>  \"age\": 44<br>}";
   L_INFO(formattedOutput2.prepend("JSON output 2:<br>").replace("<br>", "\n"));
 
+  testLogLevels("1234567890\n1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890\n"
+                "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890", 2);
+
   L_NOTE("Start");
   QTimer::singleShot(1000, this, SLOT(slotRun()));
   QTimer::singleShot(1000, this, SLOT(slotRun()));
@@ -100,6 +103,17 @@ void Task::startWorkerThread(const QString& id)
   connect(workerThread, SIGNAL(resultReady(const QString&)), this, SLOT(slotResultReady(const QString&)));
   connect(workerThread, SIGNAL(finished()), workerThread, SLOT(deleteLater()));
   workerThread->start();
+}
+
+void Task::testLogLevels(const QString& logMessage, int repeat)
+{
+  L_FUNC("");
+  for(int i=0; i<repeat; ++i) { L_FATAL(logMessage); }
+  for(int i=0; i<repeat; ++i) { L_ERROR(logMessage); }
+  for(int i=0; i<repeat; ++i) { L_WARN(logMessage); }
+  for(int i=0; i<repeat; ++i) { L_NOTE(logMessage); }
+  for(int i=0; i<repeat; ++i) { L_INFO(logMessage); }
+  for(int i=0; i<repeat; ++i) { L_DEBUG(logMessage); }
 }
 
 // -------------------------------------------------------------------------------------------------
