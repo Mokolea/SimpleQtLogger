@@ -142,9 +142,10 @@ const char STACK_DEPTH_CHAR = '.'; // use e.g. ' ' or '.'
 const unsigned short CHECK_LOG_FILE_ACTIVITY_INTERVAL = 5000; // [ms]
 
 const QString DEFAULT_LOG_FORMAT          = "<TS> [<TID>] [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)";
-const QString DEFAULT_LOG_FORMAT_INTERNAL = "<TS> [<TID>] [<LL>] <TEXT>";
+const QString DEFAULT_LOG_FORMAT_INTERNAL = "<TS> [<TID>] [<LL>] <TEXT>"; // sink file-log: following TAGs are not processed: <FUNC>, <FILE>, <LINE>
 
-const QString DEFAULT_LOG_FORMAT_CONSOLE = "<TEXT> (<FUNC>)"; // same for internal; output is prefixed with log-level (intense color, see ..._I): "<LOG-LEVEL-NAME>: "
+const QString DEFAULT_LOG_FORMAT_CONSOLE = "<TEXT>"; // sink console-log: output is prefixed with log-level (intense color, see ..._I): "<LOG-LEVEL-NAME>: "
+const QString DEFAULT_LOG_FORMAT_CONSOLE_FUNCTION_SUFFIX = " (<FUNC>)"; // appended to DEFAULT_LOG_FORMAT_CONSOLE for LogLevel_FUNCTION
 
 // ANSI escape codes to set text colors (foreground/background), http://en.wikipedia.org/wiki/ANSI_escape_code
 #if 0
