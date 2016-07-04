@@ -43,6 +43,7 @@
       simpleqtlogger::ENABLE_LOG_SINK_SIGNAL = false;
    - set log-features:
       simpleqtlogger::ENABLE_FUNCTION_STACK_TRACE = true;
+      simpleqtlogger::ENABLE_CONSOLE_COLOR = true;
    - set log-levels (global):
       simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_INFO = true;
       simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_DEBUG = false;
@@ -144,8 +145,14 @@ const unsigned short CHECK_LOG_FILE_ACTIVITY_INTERVAL = 5000; // [ms]
 const QString DEFAULT_LOG_FORMAT          = "<TS> [<TID>] [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)";
 const QString DEFAULT_LOG_FORMAT_INTERNAL = "<TS> [<TID>] [<LL>] <TEXT>"; // sink file-log: following TAGs are not processed: <FUNC>, <FILE>, <LINE>
 
-const QString DEFAULT_LOG_FORMAT_CONSOLE = "<TEXT>"; // sink console-log: output is prefixed with log-level (intense color, see ..._I): "<LOG-LEVEL-NAME>: "
+const QString DEFAULT_LOG_FORMAT_CONSOLE = "<TEXT>"; // sink console-log: output is prefixed with log-level name (intense color, see ..._I): "<LOG-LEVEL-LABEL>: "
 const QString DEFAULT_LOG_FORMAT_CONSOLE_FUNCTION_SUFFIX = " (<FUNC>)"; // appended to DEFAULT_LOG_FORMAT_CONSOLE for LogLevel_FUNCTION
+
+const QString CONSOLE_LOG_LEVEL_LABEL_FATAL   = "FATAL";
+const QString CONSOLE_LOG_LEVEL_LABEL_ERROR   = "ERROR";
+const QString CONSOLE_LOG_LEVEL_LABEL_WARNING = "WARNING";
+const QString CONSOLE_LOG_LEVEL_LABEL_NOTE    = "NOTE";
+const QString CONSOLE_LOG_LEVEL_LABEL_DEBUG   = "DEBUG";
 
 // ANSI escape codes to set text colors (foreground/background), http://en.wikipedia.org/wiki/ANSI_escape_code
 #if 0
@@ -155,9 +162,9 @@ const QString CONSOLE_COLOR_ANSI_ESC_CODES_ERROR     = "\033[0;31m";   // foregr
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_ERROR_I   = "\033[0;31;1m"; // foreground red (intense)
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_WARNING   = "\033[0;36m";   // foreground cyan
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_WARNING_I = "\033[0;36;1m"; // foreground cyan (intense)
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_NOTE_I    = "\033[0;37;1m"; // foreground white (intense)
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG     = "\033[0;35m";   // foreground magenta
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG_I   = "\033[0;35;1m"; // foreground magenta (intense)
-const QString CONSOLE_COLOR_ANSI_ESC_CODES_NOTE_I    = "\033[0;37;1m"; // foreground white (intense)
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_FUNCTION  = "\033[0;32m";   // foreground green
 #endif
 #if 0
@@ -167,9 +174,9 @@ const QString CONSOLE_COLOR_ANSI_ESC_CODES_ERROR     = "\033[0;47;31m";   // bac
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_ERROR_I   = "\033[0;47;31;1m"; // background white / foreground red (intense)
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_WARNING   = "\033[0;40;36m";   // background black / foreground cyan
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_WARNING_I = "\033[0;40;36;1m"; // background black / foreground cyan (intense)
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_NOTE_I    = "\033[0;40;37;1m"; // background black / foreground white (intense)
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG     = "\033[0;47;35m";   // background white / foreground magenta
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG_I   = "\033[0;47;35;1m"; // background white / foreground magenta (intense)
-const QString CONSOLE_COLOR_ANSI_ESC_CODES_NOTE_I    = "\033[0;40;37;1m"; // background black / foreground white (intense)
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_FUNCTION  = "\033[0;40;32m";   // background black / foreground green
 #endif
 #if 1
@@ -179,9 +186,9 @@ const QString CONSOLE_COLOR_ANSI_ESC_CODES_ERROR     = "\033[0;31m";      // bac
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_ERROR_I   = "\033[0;47;31;1m"; // background white / foreground red (intense)
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_WARNING   = "\033[0;36m";      // background -     / foreground cyan
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_WARNING_I = "\033[0;40;36;1m"; // background black / foreground cyan (intense)
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_NOTE_I    = "\033[0;40;37;1m"; // background black / foreground white (intense)
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG     = "\033[0;35m";      // background -     / foreground magenta
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG_I   = "\033[0;47;35;1m"; // background white / foreground magenta (intense)
-const QString CONSOLE_COLOR_ANSI_ESC_CODES_NOTE_I    = "\033[0;40;37;1m"; // background black / foreground white (intense)
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_FUNCTION  = "\033[0;32m";      // background -     / foreground green
 #endif
 #if 0
@@ -192,9 +199,9 @@ const QString CONSOLE_COLOR_ANSI_ESC_CODES_ERROR     = "\033[0;38;2;205;0;0m";  
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_ERROR_I   = "\033[0;38;2;255;0;0m";     // foreground red (intense)
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_WARNING   = "\033[0;38;2;0;205;205m";   // foreground cyan
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_WARNING_I = "\033[0;38;2;0;255;255m";   // foreground cyan (intense)
+const QString CONSOLE_COLOR_ANSI_ESC_CODES_NOTE_I    = "\033[0;38;2;255;255;255m"; // foreground white (intense)
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG     = "\033[0;38;2;205;0;205m";   // foreground magenta
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG_I   = "\033[0;38;2;255;0;255m";   // foreground magenta (intense)
-const QString CONSOLE_COLOR_ANSI_ESC_CODES_NOTE_I    = "\033[0;38;2;255;255;255m"; // foreground white (intense)
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_FUNCTION  = "\033[0;38;2;0;205;0m";     // foreground green
 #endif
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_RESET     = "\033[0m";      // reset all attributes

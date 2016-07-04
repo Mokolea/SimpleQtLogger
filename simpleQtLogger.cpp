@@ -172,24 +172,42 @@ void SinkConsoleLog::slotLog(const QString& ts, const QString& tid, const QStrin
   if(ENABLE_CONSOLE_COLOR) {
     // set text colors (foreground/background)
     if(logLevel == LogLevel_FATAL) {
-      out << CONSOLE_COLOR_ANSI_ESC_CODES_FATAL_I << "FATAL" << CONSOLE_COLOR_ANSI_ESC_CODES_FATAL << ": ";
+      out << CONSOLE_COLOR_ANSI_ESC_CODES_FATAL_I << CONSOLE_LOG_LEVEL_LABEL_FATAL << CONSOLE_COLOR_ANSI_ESC_CODES_FATAL << ": ";
     }
     else if(logLevel == LogLevel_ERROR) {
-      out << CONSOLE_COLOR_ANSI_ESC_CODES_ERROR_I << "ERROR" << CONSOLE_COLOR_ANSI_ESC_CODES_ERROR << ": ";
+      out << CONSOLE_COLOR_ANSI_ESC_CODES_ERROR_I << CONSOLE_LOG_LEVEL_LABEL_ERROR << CONSOLE_COLOR_ANSI_ESC_CODES_ERROR << ": ";
     }
     else if(logLevel == LogLevel_WARNING) {
-      out << CONSOLE_COLOR_ANSI_ESC_CODES_WARNING_I << "WARNING" << CONSOLE_COLOR_ANSI_ESC_CODES_WARNING << ": ";
+      out << CONSOLE_COLOR_ANSI_ESC_CODES_WARNING_I << CONSOLE_LOG_LEVEL_LABEL_WARNING << CONSOLE_COLOR_ANSI_ESC_CODES_WARNING << ": ";
     }
     else if(logLevel == LogLevel_NOTE) {
-      out << CONSOLE_COLOR_ANSI_ESC_CODES_NOTE_I << "NOTE" << CONSOLE_COLOR_ANSI_ESC_CODES_RESET << ": ";
+      out << CONSOLE_COLOR_ANSI_ESC_CODES_NOTE_I << CONSOLE_LOG_LEVEL_LABEL_NOTE << CONSOLE_COLOR_ANSI_ESC_CODES_RESET << ": ";
     }
     else if(logLevel == LogLevel_DEBUG) {
-      out << CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG_I << "DEBUG" << CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG << ": ";
+      out << CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG_I << CONSOLE_LOG_LEVEL_LABEL_DEBUG << CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG << ": ";
     }
     else if(logLevel == LogLevel_FUNCTION) {
       out << CONSOLE_COLOR_ANSI_ESC_CODES_FUNCTION;
     }
   }
+  else {
+    if(logLevel == LogLevel_FATAL) {
+      out << CONSOLE_LOG_LEVEL_LABEL_FATAL << ": ";
+    }
+    else if(logLevel == LogLevel_ERROR) {
+      out << CONSOLE_LOG_LEVEL_LABEL_ERROR << ": ";
+    }
+    else if(logLevel == LogLevel_WARNING) {
+      out << CONSOLE_LOG_LEVEL_LABEL_WARNING << ": ";
+    }
+    else if(logLevel == LogLevel_NOTE) {
+      out << CONSOLE_LOG_LEVEL_LABEL_NOTE << ": ";
+    }
+    else if(logLevel == LogLevel_DEBUG) {
+      out << CONSOLE_LOG_LEVEL_LABEL_DEBUG << ": ";
+    }
+  }
+
   if(logLevel == LogLevel_INTERNAL) {
     out << getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
   }
@@ -199,6 +217,7 @@ void SinkConsoleLog::slotLog(const QString& ts, const QString& tid, const QStrin
   else {
     out << getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
   }
+
   if(ENABLE_CONSOLE_COLOR) {
     if(logLevel != LogLevel_NOTE && logLevel != LogLevel_INFO && logLevel != LogLevel_INTERNAL) {
       out << CONSOLE_COLOR_ANSI_ESC_CODES_RESET;
