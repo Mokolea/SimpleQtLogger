@@ -144,7 +144,7 @@ const unsigned short CHECK_LOG_FILE_ACTIVITY_INTERVAL = 5000; // [ms]
 const QString DEFAULT_LOG_FORMAT          = "<TS> [<TID>] [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)";
 const QString DEFAULT_LOG_FORMAT_INTERNAL = "<TS> [<TID>] [<LL>] <TEXT>";
 
-const QString DEFAULT_LOG_FORMAT_CONSOLE = "<TEXT>"; // same for internal; output is prefixed with log-level (intense color, see ..._I): "<LOG-LEVEL-NAME>: "
+const QString DEFAULT_LOG_FORMAT_CONSOLE = "<TEXT> (<FUNC>)"; // same for internal; output is prefixed with log-level (intense color, see ..._I): "<LOG-LEVEL-NAME>: "
 
 // ANSI escape codes to set text colors (foreground/background), http://en.wikipedia.org/wiki/ANSI_escape_code
 #if 0
@@ -184,6 +184,7 @@ const QString CONSOLE_COLOR_ANSI_ESC_CODES_NOTE_I    = "\033[0;40;37;1m"; // bac
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_FUNCTION  = "\033[0;32m";      // background -     / foreground green
 #endif
 #if 0
+// Xterm, KDE's Konsole, as well as all libvte based terminals (including GNOME Terminal) support ISO-8613-3 24-bit foreground and background color setting
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_FATAL     = "\033[0;38;2;205;205;0m";   // foreground yellow
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_FATAL_I   = "\033[0;38;2;255;255;0m";   // foreground yellow (intense)
 const QString CONSOLE_COLOR_ANSI_ESC_CODES_ERROR     = "\033[0;38;2;205;0;0m";     // foreground red
