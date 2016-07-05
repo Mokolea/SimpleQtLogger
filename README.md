@@ -28,14 +28,17 @@ For now, just see the comments in [simpleQtLogger.h](https://github.com/Mokolea/
 
 ## Log-format
 The following TAGs are available and expand to:
- - **\<TS\>** --> Time-stamp, "YYYY-MM-DD HH:MM:SS.SSS"
- - **\<TID\>** --> Thread-Id, 64bit value in hexadecimal
- - **\<TID32\>** --> Thread-Id, 32bit value in hexadecimal
- - **\<LL\>** --> Log-level, one character: '!', 'E', 'W', 'N', 'I', 'D' or 'F'
- - **\<TEXT\>** --> The log-message
- - **\<FUNC\>** --> Function-name
- - **\<FILE\>** --> File-name
- - **\<LINE\>** --> Line-number
+
+| TAG | Description |
+| :--- | :--- |
+| \<TS\> | Time-stamp, "YYYY-MM-DD HH:MM:SS.SSS" |
+| \<TID\> | Thread-Id, 64bit value in hexadecimal |
+| \<TID32\> | Thread-Id, 32bit value in hexadecimal |
+| \<LL\> | Log-level, one character: '!', 'E', 'W', 'N', 'I', 'D' or 'F' |
+| \<TEXT\> | The log-message |
+| \<FUNC\> | Function-name |
+| \<FILE\> | File-name |
+| \<LINE\> | Line-number |
 
 Using the default log-format `"<TS> [<TID>] [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)"` creates log-entries like:
 ```
