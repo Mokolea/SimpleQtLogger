@@ -58,6 +58,13 @@ void Task::init()
   QString formattedOutput2 = "{<br>  \"firstName\": \"Mario\",<br>  \"age\": 44<br>}";
   L_INFO(formattedOutput2.prepend("JSON output 2:<br>").replace("<br>", "\n"));
 
+  simpleqtlogger::EnableLogLevels enableLogLevels_console = simpleqtlogger::SimpleQtLogger::getInstance()->getLogLevels_console();
+  enableLogLevels_console.logLevel_INFO = false;
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_console(enableLogLevels_console);
+  L_INFO("Disabled");
+  enableLogLevels_console.logLevel_INFO = true;
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_console(enableLogLevels_console);
+
   testLogLevels("1234567890\n1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890\n"
                 "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890", 2);
 

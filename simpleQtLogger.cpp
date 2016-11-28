@@ -79,8 +79,14 @@ void Sink::setLogFormat(const QString& logFormat, const QString& logFormatInt)
 
 void Sink::setLogLevels(const EnableLogLevels& enableLogLevels)
 {
-  // qDebug("Sink::setLogLevel");
+  // qDebug("Sink::setLogLevels");
   _enableLogLevels = enableLogLevels;
+}
+
+EnableLogLevels Sink::getLogLevels()
+{
+  // qDebug("Sink::getLogLevels");
+  return _enableLogLevels;
 }
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
@@ -623,13 +629,13 @@ void SimpleQtLogger::setLogFormat_signal(const QString& logFormat, const QString
 
 void SimpleQtLogger::setLogLevels_file(const EnableLogLevels& enableLogLevels)
 {
-  // qDebug("SimpleQtLogger::setLogLevel_file");
+  // qDebug("SimpleQtLogger::setLogLevels_file");
   setLogLevels_file("main", enableLogLevels);
 }
 
 void SimpleQtLogger::setLogLevels_file(const QString& role, const EnableLogLevels& enableLogLevels)
 {
-  // qDebug("SimpleQtLogger::setLogLevel_file");
+  // qDebug("SimpleQtLogger::setLogLevels_file");
   if(_sinkFileLogMap.contains(role)) {
     _sinkFileLogMap[role]->setLogLevels(enableLogLevels);
   }
@@ -637,20 +643,55 @@ void SimpleQtLogger::setLogLevels_file(const QString& role, const EnableLogLevel
 
 void SimpleQtLogger::setLogLevels_console(const EnableLogLevels& enableLogLevels)
 {
-  // qDebug("SimpleQtLogger::setLogLevel_console");
+  // qDebug("SimpleQtLogger::setLogLevels_console");
   _sinkConsoleLog->setLogLevels(enableLogLevels);
 }
 
 void SimpleQtLogger::setLogLevels_qDebug(const EnableLogLevels& enableLogLevels)
 {
-  // qDebug("SimpleQtLogger::setLogLevel_qDebug");
+  // qDebug("SimpleQtLogger::setLogLevels_qDebug");
   _sinkQDebugLog->setLogLevels(enableLogLevels);
 }
 
 void SimpleQtLogger::setLogLevels_signal(const EnableLogLevels& enableLogLevels)
 {
-  // qDebug("SimpleQtLogger::setLogLevel_signal");
+  // qDebug("SimpleQtLogger::setLogLevels_signal");
   _sinkSignalLog->setLogLevels(enableLogLevels);
+}
+
+EnableLogLevels SimpleQtLogger::getLogLevels_file() // main
+{
+  // qDebug("SimpleQtLogger::getLogLevels_file");
+  return getLogLevels_file("main");
+}
+
+EnableLogLevels SimpleQtLogger::getLogLevels_file(const QString& role)
+{
+  // qDebug("SimpleQtLogger::getLogLevels_file");
+  if(_sinkFileLogMap.contains(role)) {
+    return _sinkFileLogMap[role]->getLogLevels();
+  }
+  else {
+    return ENABLE_LOG_LEVELS;
+  }
+}
+
+EnableLogLevels SimpleQtLogger::getLogLevels_console()
+{
+  // qDebug("SimpleQtLogger::getLogLevels_console");
+  return _sinkConsoleLog->getLogLevels();
+}
+
+EnableLogLevels SimpleQtLogger::getLogLevels_qDebug()
+{
+  // qDebug("SimpleQtLogger::getLogLevels_qDebug");
+  return _sinkQDebugLog->getLogLevels();
+}
+
+EnableLogLevels SimpleQtLogger::getLogLevels_signal()
+{
+  // qDebug("SimpleQtLogger::getLogLevels_signal");
+  return _sinkSignalLog->getLogLevels();
 }
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))

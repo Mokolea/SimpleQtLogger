@@ -117,8 +117,8 @@
 #include <QRegularExpression>
 #endif
 
-#define SQTL_VERSION_STR   "1.1.0"
-#define SQTL_VERSION       0x010100   // Version is: (major << 16) + (minor << 8) + patch
+#define SQTL_VERSION_STR   "1.2.0"
+#define SQTL_VERSION       0x010200   // Version is: (major << 16) + (minor << 8) + patch
 // SQTL_VERSION_CHECK can be used like: #if (SQTL_VERSION >= SQTL_VERSION_CHECK(1, 1, 0))
 #define SQTL_VERSION_CHECK(major,minor,patch)   ((major<<16)|(minor<<8)|(patch))
 
@@ -311,6 +311,7 @@ public:
 
   void setLogFormat(const QString& logFormat, const QString& logFormatInt);
   void setLogLevels(const EnableLogLevels& enableLogLevels);
+  EnableLogLevels getLogLevels();
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
   bool addLogFilter(const QRegularExpression& re);
 #endif
@@ -452,6 +453,12 @@ public:
   void setLogLevels_console(const EnableLogLevels& enableLogLevels);
   void setLogLevels_qDebug(const EnableLogLevels& enableLogLevels);
   void setLogLevels_signal(const EnableLogLevels& enableLogLevels);
+
+  EnableLogLevels getLogLevels_file(); // main
+  EnableLogLevels getLogLevels_file(const QString& role);
+  EnableLogLevels getLogLevels_console();
+  EnableLogLevels getLogLevels_qDebug();
+  EnableLogLevels getLogLevels_signal();
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
   bool addLogFilter_file(const QRegularExpression& re); // main
