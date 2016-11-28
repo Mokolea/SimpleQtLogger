@@ -83,7 +83,7 @@ void Sink::setLogLevels(const EnableLogLevels& enableLogLevels)
   _enableLogLevels = enableLogLevels;
 }
 
-EnableLogLevels Sink::getLogLevels()
+EnableLogLevels Sink::getLogLevels() const
 {
   // qDebug("Sink::getLogLevels");
   return _enableLogLevels;
@@ -659,13 +659,13 @@ void SimpleQtLogger::setLogLevels_signal(const EnableLogLevels& enableLogLevels)
   _sinkSignalLog->setLogLevels(enableLogLevels);
 }
 
-EnableLogLevels SimpleQtLogger::getLogLevels_file() // main
+EnableLogLevels SimpleQtLogger::getLogLevels_file() const // main
 {
   // qDebug("SimpleQtLogger::getLogLevels_file");
   return getLogLevels_file("main");
 }
 
-EnableLogLevels SimpleQtLogger::getLogLevels_file(const QString& role)
+EnableLogLevels SimpleQtLogger::getLogLevels_file(const QString& role) const
 {
   // qDebug("SimpleQtLogger::getLogLevels_file");
   if(_sinkFileLogMap.contains(role)) {
@@ -676,19 +676,19 @@ EnableLogLevels SimpleQtLogger::getLogLevels_file(const QString& role)
   }
 }
 
-EnableLogLevels SimpleQtLogger::getLogLevels_console()
+EnableLogLevels SimpleQtLogger::getLogLevels_console() const
 {
   // qDebug("SimpleQtLogger::getLogLevels_console");
   return _sinkConsoleLog->getLogLevels();
 }
 
-EnableLogLevels SimpleQtLogger::getLogLevels_qDebug()
+EnableLogLevels SimpleQtLogger::getLogLevels_qDebug() const
 {
   // qDebug("SimpleQtLogger::getLogLevels_qDebug");
   return _sinkQDebugLog->getLogLevels();
 }
 
-EnableLogLevels SimpleQtLogger::getLogLevels_signal()
+EnableLogLevels SimpleQtLogger::getLogLevels_signal() const
 {
   // qDebug("SimpleQtLogger::getLogLevels_signal");
   return _sinkSignalLog->getLogLevels();

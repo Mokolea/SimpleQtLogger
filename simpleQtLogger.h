@@ -311,7 +311,7 @@ public:
 
   void setLogFormat(const QString& logFormat, const QString& logFormatInt);
   void setLogLevels(const EnableLogLevels& enableLogLevels);
-  EnableLogLevels getLogLevels();
+  EnableLogLevels getLogLevels() const;
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
   bool addLogFilter(const QRegularExpression& re);
 #endif
@@ -454,11 +454,11 @@ public:
   void setLogLevels_qDebug(const EnableLogLevels& enableLogLevels);
   void setLogLevels_signal(const EnableLogLevels& enableLogLevels);
 
-  EnableLogLevels getLogLevels_file(); // main
-  EnableLogLevels getLogLevels_file(const QString& role);
-  EnableLogLevels getLogLevels_console();
-  EnableLogLevels getLogLevels_qDebug();
-  EnableLogLevels getLogLevels_signal();
+  EnableLogLevels getLogLevels_file() const; // main
+  EnableLogLevels getLogLevels_file(const QString& role) const;
+  EnableLogLevels getLogLevels_console() const;
+  EnableLogLevels getLogLevels_qDebug() const;
+  EnableLogLevels getLogLevels_signal() const;
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
   bool addLogFilter_file(const QRegularExpression& re); // main
