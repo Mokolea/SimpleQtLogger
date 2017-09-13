@@ -9,7 +9,6 @@
 */
 
 #include "task.h"
-#include "simpleQtLogger.h"
 
 #include <QTimer>
 #include <QThread>
@@ -96,10 +95,10 @@ void Task::slotResultReady(const QString& result)
   LS_INFO("WorkerThread: " << result);
 }
 
-void Task::slotLogForwarding(const QString& logMessage)
+void Task::slotLogForwarding(simpleqtlogger::LogLevel logLevel, const QString& logMessage)
 {
   QTextStream out(stdout);
-  out << "Log forwarding: " << logMessage << '\n';
+  out << "Log forwarding (" << logLevel << "): " << logMessage << '\n';
 }
 
 void Task::startWorkerThread(const QString& id)
