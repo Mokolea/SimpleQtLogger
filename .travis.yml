@@ -50,9 +50,9 @@ script:
   - qmake
   - make
 
-branches:
-  only:
-    - master
+# branches:
+#   only:
+#     - master
 
 notifications:
   email:
