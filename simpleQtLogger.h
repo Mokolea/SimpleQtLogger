@@ -99,7 +99,7 @@
    - Qt 5.5.0, Visual Studio 2013, 32 bit
 
   GNU Lesser General Public License v2.1
-  Copyright (C) 2015 Mario Ban
+  Copyright (C) 2017 Mario Ban
 */
 
 #ifndef _SIMPLE_QT_LOGGER_H
