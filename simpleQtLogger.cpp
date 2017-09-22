@@ -5,7 +5,7 @@
   https://github.com/Mokolea/SimpleQtLogger
 
   GNU Lesser General Public License v2.1
-  Copyright (C) 2015 Mario Ban
+  Copyright (C) 2017 Mario Ban
 */
 
 #include "simpleQtLogger.h"
@@ -305,10 +305,10 @@ void SinkSignalLog::slotLog(const QString& ts, const QString& tid, const QString
   }
 
   if(logLevel == LogLevel_INTERNAL) {
-    emit signalLogMessage(getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()));
+    emit signalLogMessage(logLevel, getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()));
   }
   else {
-    emit signalLogMessage(getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()));
+    emit signalLogMessage(logLevel, getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()));
   }
 }
 
@@ -760,7 +760,7 @@ bool SimpleQtLogger::setLogFileName(const QString& role, const QString& logFileN
 bool SimpleQtLogger::connectSinkSignalLog(const QObject* receiver, const char* method)
 {
   // qDebug("SimpleQtLogger::connectSinkSignalLog");
-  return QObject::connect(_sinkSignalLog, SIGNAL(signalLogMessage(const QString&)), receiver, method);
+  return QObject::connect(_sinkSignalLog, SIGNAL(signalLogMessage(simpleqtlogger::LogLevel, const QString&)), receiver, method);
 }
 
 QString SimpleQtLogger::timeStamp()

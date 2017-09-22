@@ -15,6 +15,8 @@
 #include <QString>
 #include <QThread>
 
+#include "simpleQtLogger.h"
+
 #define TEST_BURST   0   /* 1: enable, 0: disable */
 
 // -------------------------------------------------------------------------------------------------
@@ -34,7 +36,7 @@ private slots:
 public slots:
   void slotRun();
   void slotResultReady(const QString& result);
-  void slotLogForwarding(const QString& logMessage);
+  void slotLogForwarding(simpleqtlogger::LogLevel logLevel, const QString& logMessage);
 
 signals:
   void finished();

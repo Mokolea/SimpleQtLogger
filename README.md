@@ -1,6 +1,6 @@
 # SimpleQtLogger [![Build Status](https://travis-ci.org/Mokolea/SimpleQtLogger.svg)](https://travis-ci.org/Mokolea/SimpleQtLogger)
 
-Simple rolling file logger for C++ applications using the [Qt Framework](http://doc.qt.io).
+Simple rolling file logger for C++ applications using the [Qt Framework](https://doc.qt.io).
 
 [![Release](https://img.shields.io/github/release/Mokolea/SimpleQtLogger.svg)](https://github.com/Mokolea/SimpleQtLogger/releases)
 ![License](https://img.shields.io/github/license/Mokolea/SimpleQtLogger.svg)
@@ -23,8 +23,7 @@ Simple rolling file logger for C++ applications using the [Qt Framework](http://
  - log-file encoding: utf-8
  
 ## Usage
-**TODO...**
-For now, just see the comments in [simpleQtLogger.h](https://github.com/Mokolea/SimpleQtLogger/blob/master/simpleQtLogger.h) and the [examples](https://github.com/Mokolea/SimpleQtLogger/tree/master/examples)
+Just see the comments in [simpleQtLogger.h](simpleQtLogger.h) and the [examples](examples).
 
 ## Log-format
 The following TAGs are available and expand to:

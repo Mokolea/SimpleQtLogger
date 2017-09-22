@@ -1,12 +1,12 @@
 # SimpleQtLogger examples [![Build Status](https://travis-ci.org/Mokolea/SimpleQtLogger.svg)](https://travis-ci.org/Mokolea/SimpleQtLogger)
 
-**TODO...**
+Currently there are two examples showing the initialization and usage of the SimpleQtLogger.
 
 ## TestSimpleQtLogger
-Test logger with console-mode app
+Test logger with console-mode app.
 
 ## TestSimpleQtLoggerGui
-Test logger with gui (dialog-widget) app
+Test logger with gui (dialog-widget) app, by logging *random* dialog widget events.
 ![screen-shot](https://raw.githubusercontent.com/Mokolea/SimpleQtLogger/master/examples/TestSimpleQtLoggerGui_ScreenShot.png)
 
 Example log-file content:

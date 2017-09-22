@@ -99,7 +99,7 @@
    - Qt 5.5.0, Visual Studio 2013, 32 bit
 
   GNU Lesser General Public License v2.1
-  Copyright (C) 2015 Mario Ban
+  Copyright (C) 2017 Mario Ban
 */
 
 #ifndef _SIMPLE_QT_LOGGER_H
@@ -421,7 +421,7 @@ private slots:
   void slotLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber);
 
 signals:
-  void signalLogMessage(const QString& logMessage);
+  void signalLogMessage(simpleqtlogger::LogLevel logLevel, const QString& logMessage);
 
 private:
   // implicitly implemented, not to be used
@@ -471,7 +471,7 @@ public:
   bool setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber); // main
   bool setLogFileName(const QString& role, const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
 
-  bool connectSinkSignalLog(const QObject* receiver, const char* method); // You must use the SLOT() macro when specifying the method, e.g. SLOT(mySlotLog(const QString&))
+  bool connectSinkSignalLog(const QObject* receiver, const char* method); // You must use the SLOT() macro when specifying the method, e.g. SLOT(mySlotLog(simpleqtlogger::LogLevel, const QString&))
 
   static QString timeStamp();
   static QString threadId();
