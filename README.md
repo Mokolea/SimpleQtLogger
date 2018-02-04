@@ -3,7 +3,7 @@
 Simple rolling file logger for C++ applications using the [Qt Framework](https://doc.qt.io).
 
 [![Release](https://img.shields.io/github/release/Mokolea/SimpleQtLogger.svg)](https://github.com/Mokolea/SimpleQtLogger/releases)
-![License](https://img.shields.io/github/license/Mokolea/SimpleQtLogger.svg)
+[![License](https://img.shields.io/github/license/Mokolea/SimpleQtLogger.svg)](LICENSE)
 
 ## Design goals - simple
  - straightforward usage
