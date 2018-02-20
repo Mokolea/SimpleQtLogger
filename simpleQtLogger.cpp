@@ -164,7 +164,7 @@ void SinkConsoleLog::slotLog(const QString& ts, const QString& tid, const QStrin
   if(!checkLogLevelsEnabled(logLevel)) {
     return;
   }
-  if(!checkFilter(text)) {
+  if(logLevel != LogLevel_INTERNAL && !checkFilter(text)) {
     return;
   }
 
@@ -255,7 +255,7 @@ void SinkQDebugLog::slotLog(const QString& ts, const QString& tid, const QString
   if(!checkLogLevelsEnabled(logLevel)) {
     return;
   }
-  if(!checkFilter(text)) {
+  if(logLevel != LogLevel_INTERNAL && !checkFilter(text)) {
     return;
   }
 
@@ -295,7 +295,7 @@ void SinkSignalLog::slotLog(const QString& ts, const QString& tid, const QString
   if(!checkLogLevelsEnabled(logLevel)) {
     return;
   }
-  if(!checkFilter(text)) {
+  if(logLevel != LogLevel_INTERNAL && !checkFilter(text)) {
     return;
   }
 
@@ -378,7 +378,7 @@ void SinkFileLog::slotLog(const QString& ts, const QString& tid, const QString& 
   if(!checkLogLevelsEnabled(logLevel)) {
     return;
   }
-  if(!checkFilter(text)) {
+  if(logLevel != LogLevel_INTERNAL && !checkFilter(text)) {
     return;
   }
 
