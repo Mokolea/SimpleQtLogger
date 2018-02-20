@@ -37,7 +37,7 @@ bool EventLog::eventFilter(QObject *obj, QEvent *event)
     const QMetaObject* metaObject = obj->metaObject();
     QEvent::Type eventType = event->type();
 
-    if(eventType != QEvent::UpdateRequest && eventType != QEvent::MetaCall /*&& eventType != QEvent::InputMethodQuery*/) {
+    if(eventType != QEvent::UpdateRequest && eventType != QEvent::MetaCall && eventType != QEvent::Paint /*&& eventType != QEvent::InputMethodQuery*/) {
       int eventTypeEnumIndex = QEvent::staticMetaObject.indexOfEnumerator("Type");
       QString eventTypeName = QEvent::staticMetaObject.enumerator(eventTypeEnumIndex).valueToKey(eventType);
 
