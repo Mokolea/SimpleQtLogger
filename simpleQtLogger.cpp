@@ -54,6 +54,8 @@ bool ENABLE_FUNCTION_STACK_TRACE = true;
 
 /* Console color */
 bool ENABLE_CONSOLE_COLOR = true;
+/* Console trimmed messages */
+bool ENABLE_CONSOLE_TRIMMED = true;
 
 // -------------------------------------------------------------------------------------------------
 
@@ -221,7 +223,7 @@ void SinkConsoleLog::slotLog(const QString& ts, const QString& tid, const QStrin
     out << getLogFormat().append(DEFAULT_LOG_FORMAT_CONSOLE_FUNCTION_SUFFIX).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
   }
   else {
-    out << getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
+    out << getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : ENABLE_CONSOLE_TRIMMED ? text.trimmed() : text);
   }
 
   if(ENABLE_CONSOLE_COLOR) {

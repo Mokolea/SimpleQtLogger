@@ -247,6 +247,8 @@ extern bool ENABLE_FUNCTION_STACK_TRACE; // Log-function stack-trace: true: enab
 
 // Console color
 extern bool ENABLE_CONSOLE_COLOR; // Color for sink console: true: enable, false: disable, default: true
+// Console trimmed messages
+extern bool ENABLE_CONSOLE_TRIMMED; // Whitespaces trimmed for sink console: true: enable, false: disable, default: true
 
 // Microsoft Visual C++ compiler specific
 #if defined(_MSC_VER)

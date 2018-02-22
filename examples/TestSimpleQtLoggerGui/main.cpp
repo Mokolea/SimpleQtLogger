@@ -28,6 +28,7 @@ int main(int argc, char *argv[])
   // set log-features
   simpleqtlogger::ENABLE_FUNCTION_STACK_TRACE = true;
   simpleqtlogger::ENABLE_CONSOLE_COLOR = true;
+  simpleqtlogger::ENABLE_CONSOLE_TRIMMED = true;
   // set log-levels (global; all enabled)
   simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_DEBUG = true;
   simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_FUNCTION = true;
