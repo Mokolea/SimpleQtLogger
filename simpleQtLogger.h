@@ -245,10 +245,13 @@ extern EnableLogLevels ENABLE_LOG_LEVELS;
 // Log-function stack-trace
 extern bool ENABLE_FUNCTION_STACK_TRACE; // Log-function stack-trace: true: enable, false: disable, default: true
 
-// Console color
+// Sink console color
 extern bool ENABLE_CONSOLE_COLOR; // Color for sink console: true: enable, false: disable, default: true
-// Console trimmed messages
+// Sink console trimmed messages
 extern bool ENABLE_CONSOLE_TRIMMED; // Whitespaces trimmed for sink console: true: enable, false: disable, default: true
+
+// Console
+extern bool ENABLE_CONSOLE_LOG_FILE_STATE; // Console output log-file state: true: enable, false: disable, default: true
 
 // Microsoft Visual C++ compiler specific
 #if defined(_MSC_VER)

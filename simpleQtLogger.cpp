@@ -52,10 +52,13 @@ EnableLogLevels ENABLE_LOG_LEVELS;
 /* Log-function stack-trace */
 bool ENABLE_FUNCTION_STACK_TRACE = true;
 
-/* Console color */
+/* Sink console color */
 bool ENABLE_CONSOLE_COLOR = true;
-/* Console trimmed messages */
+/* Sink console trimmed messages */
 bool ENABLE_CONSOLE_TRIMMED = true;
+
+/* Console */
+bool ENABLE_CONSOLE_LOG_FILE_STATE = true;
 
 // -------------------------------------------------------------------------------------------------
 
@@ -427,7 +430,9 @@ bool SinkFileLog::checkLogFileOpen()
     return false;
   }
 
-  qDebug() << "Current log-file:" << _logFileName << "role" << _role;
+  if(ENABLE_CONSOLE_LOG_FILE_STATE) {
+    qDebug() << "Current log-file:" << _logFileName << "role" << _role;
+  }
 
   QTimer::singleShot(CHECK_LOG_FILE_ACTIVITY_INTERVAL, this, SLOT(slotCheckLogFileActivity()));
 
@@ -467,7 +472,9 @@ void SinkFileLog::checkLogFileRolling()
   logFileName.replace(".log", QString("_%1.log").arg(_logFileMaxNumber, 2, 10, QLatin1Char('0')));
   if(QFile::exists(logFileName)) {
     if(QFile::remove(logFileName)) {
-      qDebug() << "Removed" << logFileName << "role" << _role;
+      if(ENABLE_CONSOLE_LOG_FILE_STATE) {
+        qDebug() << "Removed" << logFileName << "role" << _role;
+      }
     }
     else {
       qWarning() << "ERROR: Remove" << logFileName << "role" << _role;
@@ -482,7 +489,9 @@ void SinkFileLog::checkLogFileRolling()
     logFileNameTo.replace(".log", QString("_%1.log").arg(i+1, 2, 10, QLatin1Char('0')));
     if(QFile::exists(logFileNameFrom)) {
       if(QFile::rename(logFileNameFrom, logFileNameTo)) {
-        qDebug() << "Moved" << logFileNameFrom << "to" << logFileNameTo << "role" << _role;
+        if(ENABLE_CONSOLE_LOG_FILE_STATE) {
+          qDebug() << "Moved" << logFileNameFrom << "to" << logFileNameTo << "role" << _role;
+        }
       }
       else {
         qWarning() << "ERROR: Move" << logFileNameFrom << "to" << logFileNameTo << "role" << _role;
@@ -497,7 +506,9 @@ void SinkFileLog::checkLogFileRolling()
   logFileNameTo.replace(".log", QString("_%1.log").arg(1, 2, 10, QLatin1Char('0')));
   if(QFile::exists(_logFileName)) {
     if(QFile::rename(_logFileName, logFileNameTo)) {
-      qDebug() << "Moved" << _logFileName << "to" << logFileNameTo << "role" << _role;
+      if(ENABLE_CONSOLE_LOG_FILE_STATE) {
+        qDebug() << "Moved" << _logFileName << "to" << logFileNameTo << "role" << _role;
+      }
     }
     else {
       qWarning() << "ERROR: Move" << _logFileName << "to" << logFileNameTo << "role" << _role;

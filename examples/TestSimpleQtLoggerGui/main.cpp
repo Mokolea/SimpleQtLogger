@@ -29,6 +29,7 @@ int main(int argc, char *argv[])
   simpleqtlogger::ENABLE_FUNCTION_STACK_TRACE = true;
   simpleqtlogger::ENABLE_CONSOLE_COLOR = true;
   simpleqtlogger::ENABLE_CONSOLE_TRIMMED = true;
+  simpleqtlogger::ENABLE_CONSOLE_LOG_FILE_STATE = true;
   // set log-levels (global; all enabled)
   simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_DEBUG = true;
   simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_FUNCTION = true;
@@ -45,17 +46,18 @@ int main(int argc, char *argv[])
   enableLogLevels_fileWarn.logLevel_FUNCTION = false;
 
   // initialize SimpleQtLogger (step 1/2)
-  simpleqtlogger::SimpleQtLogger::createInstance(qApp)->setLogFormat_file("<TS> [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)", "<TS> [<LL>] <TEXT>");
-  simpleqtlogger::SimpleQtLogger::getInstance()->setLogFileName(QDir::home().filePath("Documents/Qt/testSimpleQtLoggerGui.log"), 10*1000, 10);
+  simpleqtlogger::SimpleQtLogger::createInstance(qApp);
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogFormat_file("<TS> [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)", "<TS> [<LL>] <TEXT>");
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_file(enableLogLevels_file);
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogFileName(QDir::home().filePath("Documents/Qt/testSimpleQtLoggerGui.log"), 10*1000, 10);
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_console(enableLogLevels_console);
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_qDebug(enableLogLevels_qDebug);
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_signal(enableLogLevels_signal);
   // 2nd file-log (levels: warn..fatal)
   simpleqtlogger::SimpleQtLogger::getInstance()->addSinkFileLog("warn");
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogFormat_file("warn", "<TS> [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)", "<TS> [<LL>] <TEXT>");
-  simpleqtlogger::SimpleQtLogger::getInstance()->setLogFileName("warn", QDir::home().filePath("Documents/Qt/testSimpleQtLoggerGuiWarn.log"), 10*1000, 10);
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_file("warn", enableLogLevels_fileWarn);
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogFileName("warn", QDir::home().filePath("Documents/Qt/testSimpleQtLoggerGuiWarn.log"), 10*1000, 10);
 
   // start and initialize the main widget
   Dialog w(0);
