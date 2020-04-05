@@ -16,7 +16,8 @@
 #include <QFileInfo>
 #include <QtDebug>
 
-namespace simpleqtlogger {
+namespace simpleqtlogger
+{
 
 /* Log-sinks */
 bool ENABLE_LOG_SINK_FILE = true;
@@ -37,14 +38,30 @@ EnableLogLevels::EnableLogLevels()
 {}
 bool EnableLogLevels::enabled(LogLevel logLevel) const
 {
-  if(logLevel == LogLevel_FATAL) return logLevel_FATAL;
-  if(logLevel == LogLevel_ERROR) return logLevel_ERROR;
-  if(logLevel == LogLevel_WARNING) return logLevel_WARNING;
-  if(logLevel == LogLevel_NOTE) return logLevel_NOTE;
-  if(logLevel == LogLevel_INFO) return logLevel_INFO;
-  if(logLevel == LogLevel_DEBUG) return logLevel_DEBUG;
-  if(logLevel == LogLevel_FUNCTION) return logLevel_FUNCTION;
-  if(logLevel == LogLevel_INTERNAL) return logLevel_INTERNAL;
+  if (logLevel == LogLevel_FATAL) {
+    return logLevel_FATAL;
+  }
+  if (logLevel == LogLevel_ERROR) {
+    return logLevel_ERROR;
+  }
+  if (logLevel == LogLevel_WARNING) {
+    return logLevel_WARNING;
+  }
+  if (logLevel == LogLevel_NOTE) {
+    return logLevel_NOTE;
+  }
+  if (logLevel == LogLevel_INFO) {
+    return logLevel_INFO;
+  }
+  if (logLevel == LogLevel_DEBUG) {
+    return logLevel_DEBUG;
+  }
+  if (logLevel == LogLevel_FUNCTION) {
+    return logLevel_FUNCTION;
+  }
+  if (logLevel == LogLevel_INTERNAL) {
+    return logLevel_INTERNAL;
+  }
   return false;
 }
 EnableLogLevels ENABLE_LOG_LEVELS;
@@ -62,7 +79,7 @@ bool ENABLE_CONSOLE_LOG_FILE_STATE = true;
 
 // -------------------------------------------------------------------------------------------------
 
-Sink::Sink(QObject *parent)
+Sink::Sink(QObject* parent)
   : QObject(parent)
   , _logFormat(DEFAULT_LOG_FORMAT)
   , _logFormatInt(DEFAULT_LOG_FORMAT_INTERNAL)
@@ -98,7 +115,7 @@ EnableLogLevels Sink::getLogLevels() const
 bool Sink::addLogFilter(const QRegularExpression& re)
 {
   // qDebug("Sink::addLogFilter");
-  if(!re.isValid()) {
+  if (!re.isValid()) {
     return false;
   }
   _reList.append(re);
@@ -128,14 +145,14 @@ bool Sink::checkFilter(const QString& text) const
 {
   // qDebug("Sink::checkFilter");
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-  if(_reList.isEmpty()) {
+  if (_reList.isEmpty()) {
     return true;
   }
 
   // C++11: for(const QRegularExpression& re : _reList) {...}
   for (int i = 0; i < _reList.size(); ++i) {
     QRegularExpressionMatch match = _reList[i].match(text, 0);
-    if(match.hasMatch()) {
+    if (match.hasMatch()) {
       return true;
     }
   }
@@ -148,7 +165,7 @@ bool Sink::checkFilter(const QString& text) const
 
 // -------------------------------------------------------------------------------------------------
 
-SinkConsoleLog::SinkConsoleLog(QObject *parent)
+SinkConsoleLog::SinkConsoleLog(QObject* parent)
   : Sink(parent)
 {
   // qDebug("SinkConsoleLog::SinkConsoleLog");
@@ -163,74 +180,74 @@ void SinkConsoleLog::slotLog(const QString& ts, const QString& tid, const QStrin
 {
   // qDebug("SinkConsoleLog::slotLog");
 
-  if(!ENABLE_LOG_SINK_CONSOLE) {
+  if (!ENABLE_LOG_SINK_CONSOLE) {
     return;
   }
-  if(!checkLogLevelsEnabled(logLevel)) {
+  if (!checkLogLevelsEnabled(logLevel)) {
     return;
   }
-  if(logLevel != LogLevel_INTERNAL && !checkFilter(text)) {
+  if (logLevel != LogLevel_INTERNAL && !checkFilter(text)) {
     return;
   }
 
   QString textIsEmpty("?");
-  if(logLevel == LogLevel_FUNCTION) {
+  if (logLevel == LogLevel_FUNCTION) {
     textIsEmpty = "-";
   }
 
   QTextStream out(stdout);
   // out.setCodec("UTF-8");
-  if(ENABLE_CONSOLE_COLOR) {
+  if (ENABLE_CONSOLE_COLOR) {
     // set text colors (foreground/background)
-    if(logLevel == LogLevel_FATAL) {
+    if (logLevel == LogLevel_FATAL) {
       out << CONSOLE_COLOR_ANSI_ESC_CODES_FATAL_I << CONSOLE_LOG_LEVEL_LABEL_FATAL << CONSOLE_COLOR_ANSI_ESC_CODES_FATAL << ": ";
     }
-    else if(logLevel == LogLevel_ERROR) {
+    else if (logLevel == LogLevel_ERROR) {
       out << CONSOLE_COLOR_ANSI_ESC_CODES_ERROR_I << CONSOLE_LOG_LEVEL_LABEL_ERROR << CONSOLE_COLOR_ANSI_ESC_CODES_ERROR << ": ";
     }
-    else if(logLevel == LogLevel_WARNING) {
+    else if (logLevel == LogLevel_WARNING) {
       out << CONSOLE_COLOR_ANSI_ESC_CODES_WARNING_I << CONSOLE_LOG_LEVEL_LABEL_WARNING << CONSOLE_COLOR_ANSI_ESC_CODES_WARNING << ": ";
     }
-    else if(logLevel == LogLevel_NOTE) {
+    else if (logLevel == LogLevel_NOTE) {
       out << CONSOLE_COLOR_ANSI_ESC_CODES_NOTE_I << CONSOLE_LOG_LEVEL_LABEL_NOTE << CONSOLE_COLOR_ANSI_ESC_CODES_RESET << ": ";
     }
-    else if(logLevel == LogLevel_DEBUG) {
+    else if (logLevel == LogLevel_DEBUG) {
       out << CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG_I << CONSOLE_LOG_LEVEL_LABEL_DEBUG << CONSOLE_COLOR_ANSI_ESC_CODES_DEBUG << ": ";
     }
-    else if(logLevel == LogLevel_FUNCTION) {
+    else if (logLevel == LogLevel_FUNCTION) {
       out << CONSOLE_COLOR_ANSI_ESC_CODES_FUNCTION;
     }
   }
   else {
-    if(logLevel == LogLevel_FATAL) {
+    if (logLevel == LogLevel_FATAL) {
       out << CONSOLE_LOG_LEVEL_LABEL_FATAL << ": ";
     }
-    else if(logLevel == LogLevel_ERROR) {
+    else if (logLevel == LogLevel_ERROR) {
       out << CONSOLE_LOG_LEVEL_LABEL_ERROR << ": ";
     }
-    else if(logLevel == LogLevel_WARNING) {
+    else if (logLevel == LogLevel_WARNING) {
       out << CONSOLE_LOG_LEVEL_LABEL_WARNING << ": ";
     }
-    else if(logLevel == LogLevel_NOTE) {
+    else if (logLevel == LogLevel_NOTE) {
       out << CONSOLE_LOG_LEVEL_LABEL_NOTE << ": ";
     }
-    else if(logLevel == LogLevel_DEBUG) {
+    else if (logLevel == LogLevel_DEBUG) {
       out << CONSOLE_LOG_LEVEL_LABEL_DEBUG << ": ";
     }
   }
 
-  if(logLevel == LogLevel_INTERNAL) {
-    out << getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
+  if (logLevel == LogLevel_INTERNAL) {
+    out << getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4 * 2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
   }
-  else if(logLevel == LogLevel_FUNCTION) {
-    out << getLogFormat().append(DEFAULT_LOG_FORMAT_CONSOLE_FUNCTION_SUFFIX).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
+  else if (logLevel == LogLevel_FUNCTION) {
+    out << getLogFormat().append(DEFAULT_LOG_FORMAT_CONSOLE_FUNCTION_SUFFIX).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4 * 2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
   }
   else {
-    out << getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : ENABLE_CONSOLE_TRIMMED ? text.trimmed() : text);
+    out << getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4 * 2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : ENABLE_CONSOLE_TRIMMED ? text.trimmed() : text);
   }
 
-  if(ENABLE_CONSOLE_COLOR) {
-    if(logLevel != LogLevel_NOTE && logLevel != LogLevel_INFO && logLevel != LogLevel_INTERNAL) {
+  if (ENABLE_CONSOLE_COLOR) {
+    if (logLevel != LogLevel_NOTE && logLevel != LogLevel_INFO && logLevel != LogLevel_INTERNAL) {
       out << CONSOLE_COLOR_ANSI_ESC_CODES_RESET;
     }
   }
@@ -239,7 +256,7 @@ void SinkConsoleLog::slotLog(const QString& ts, const QString& tid, const QStrin
 
 // -------------------------------------------------------------------------------------------------
 
-SinkQDebugLog::SinkQDebugLog(QObject *parent)
+SinkQDebugLog::SinkQDebugLog(QObject* parent)
   : Sink(parent)
 {
   // qDebug("SinkQDebugLog::SinkQDebugLog");
@@ -254,32 +271,32 @@ void SinkQDebugLog::slotLog(const QString& ts, const QString& tid, const QString
 {
   // qDebug("SinkQDebugLog::slotLog");
 
-  if(!ENABLE_LOG_SINK_QDEBUG) {
+  if (!ENABLE_LOG_SINK_QDEBUG) {
     return;
   }
-  if(!checkLogLevelsEnabled(logLevel)) {
+  if (!checkLogLevelsEnabled(logLevel)) {
     return;
   }
-  if(logLevel != LogLevel_INTERNAL && !checkFilter(text)) {
+  if (logLevel != LogLevel_INTERNAL && !checkFilter(text)) {
     return;
   }
 
   QString textIsEmpty("?");
-  if(logLevel == LogLevel_FUNCTION) {
+  if (logLevel == LogLevel_FUNCTION) {
     textIsEmpty = "-";
   }
 
-  if(logLevel == LogLevel_INTERNAL) {
-    qDebug("%s", getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()).toStdString().c_str());
+  if (logLevel == LogLevel_INTERNAL) {
+    qDebug("%s", getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4 * 2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()).toStdString().c_str());
   }
   else {
-    qDebug("%s", getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()).toStdString().c_str());
+    qDebug("%s", getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4 * 2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()).toStdString().c_str());
   }
 }
 
 // -------------------------------------------------------------------------------------------------
 
-SinkSignalLog::SinkSignalLog(QObject *parent)
+SinkSignalLog::SinkSignalLog(QObject* parent)
   : Sink(parent)
 {
   // qDebug("SinkSignalLog::SinkSignalLog");
@@ -294,37 +311,37 @@ void SinkSignalLog::slotLog(const QString& ts, const QString& tid, const QString
 {
   // qDebug("SinkSignalLog::slotLog");
 
-  if(!ENABLE_LOG_SINK_SIGNAL) {
+  if (!ENABLE_LOG_SINK_SIGNAL) {
     return;
   }
-  if(!checkLogLevelsEnabled(logLevel)) {
+  if (!checkLogLevelsEnabled(logLevel)) {
     return;
   }
-  if(logLevel != LogLevel_INTERNAL && !checkFilter(text)) {
+  if (logLevel != LogLevel_INTERNAL && !checkFilter(text)) {
     return;
   }
 
   QString textIsEmpty("?");
-  if(logLevel == LogLevel_FUNCTION) {
+  if (logLevel == LogLevel_FUNCTION) {
     textIsEmpty = "-";
   }
 
-  if(logLevel == LogLevel_INTERNAL) {
-    emit signalLogMessage(logLevel, getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()));
+  if (logLevel == LogLevel_INTERNAL) {
+    emit signalLogMessage(logLevel, getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4 * 2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()));
   }
   else {
-    emit signalLogMessage(logLevel, getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()));
+    emit signalLogMessage(logLevel, getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4 * 2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()));
   }
 }
 
 // -------------------------------------------------------------------------------------------------
 
-SinkFileLog::SinkFileLog(QObject *parent, const QString& role)
+SinkFileLog::SinkFileLog(QObject* parent, const QString& role)
   : Sink(parent)
   , _role(role)
   , _logFileRotationSize(0)
   , _logFileMaxNumber(0)
-  , _logFile(0)
+  , _logFile(nullptr)
   , _logFileActivity(false)
   , _startMessage(false)
 {
@@ -336,12 +353,12 @@ SinkFileLog::~SinkFileLog()
   // qDebug("SinkFileLog::~SinkFileLog");
 
   // check close log file
-  if(_logFile) {
-    if(_logFile->isOpen()) {
+  if (_logFile) {
+    if (_logFile->isOpen()) {
       _logFile->close();
     }
     delete _logFile;
-    _logFile = 0;
+    _logFile = nullptr;
   }
 }
 
@@ -350,7 +367,7 @@ bool SinkFileLog::setLogFileName(const QString& logFileName, unsigned int logFil
   // qDebug("SinkFileLog::setLogFileName");
 
   // check valid log-file name ending
-  if(logFileName.right(4) != ".log") {
+  if (logFileName.right(4) != ".log") {
     qWarning() << "Name of log-file not ending with '.log'" << logFileName << "role" << _role;
     return false;
   }
@@ -360,13 +377,13 @@ bool SinkFileLog::setLogFileName(const QString& logFileName, unsigned int logFil
   _logFileMaxNumber = logFileMaxNumber;
 
   // check valid number ranges
-  if(_logFileRotationSize < 100) {
+  if (_logFileRotationSize < 100) {
     _logFileRotationSize = 100;
   }
-  if(_logFileMaxNumber < 1) {
+  if (_logFileMaxNumber < 1) {
     _logFileMaxNumber = 1;
   }
-  if(_logFileMaxNumber > 99) {
+  if (_logFileMaxNumber > 99) {
     _logFileMaxNumber = 99;
   }
 
@@ -377,30 +394,30 @@ void SinkFileLog::slotLog(const QString& ts, const QString& tid, const QString& 
 {
   // qDebug("SinkFileLog::slotLog");
 
-  if(!ENABLE_LOG_SINK_FILE) {
+  if (!ENABLE_LOG_SINK_FILE) {
     return;
   }
-  if(!checkLogLevelsEnabled(logLevel)) {
+  if (!checkLogLevelsEnabled(logLevel)) {
     return;
   }
-  if(logLevel != LogLevel_INTERNAL && !checkFilter(text)) {
+  if (logLevel != LogLevel_INTERNAL && !checkFilter(text)) {
     return;
   }
 
   QString textIsEmpty("?");
-  if(logLevel == LogLevel_FUNCTION) {
+  if (logLevel == LogLevel_FUNCTION) {
     textIsEmpty = "-";
   }
 
   // stream (append) to log file
-  if(_logFile && _logFile->isOpen()) {
+  if (_logFile && _logFile->isOpen()) {
     QTextStream out(_logFile);
     out.setCodec("UTF-8");
-    if(logLevel == LogLevel_INTERNAL) {
-      out << getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()) << '\n';
+    if (logLevel == LogLevel_INTERNAL) {
+      out << getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4 * 2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()) << '\n';
     }
     else {
-      out << getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4*2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()) << '\n';
+      out << getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4 * 2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()) << '\n';
     }
     _logFileActivity = true;
   }
@@ -411,8 +428,8 @@ bool SinkFileLog::checkLogFileOpen()
   // qDebug("SinkFileLog::checkLogFileOpen");
 
   // check close and open log file
-  if(_logFile) {
-    if(_logFile->isOpen()) {
+  if (_logFile) {
+    if (_logFile->isOpen()) {
       _logFile->close();
     }
     delete _logFile;
@@ -420,23 +437,23 @@ bool SinkFileLog::checkLogFileOpen()
 
   // open log-file
   _logFile = new QFile(_logFileName);
-  if(!_logFile->open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
+  if (!_logFile->open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
     delete _logFile;
-    _logFile = 0;
+    _logFile = nullptr;
     qWarning() << "Open log-file failed!" << _logFileName << "role" << _role;
   }
 
-  if(!_logFile) {
+  if (!_logFile) {
     return false;
   }
 
-  if(ENABLE_CONSOLE_LOG_FILE_STATE) {
+  if (ENABLE_CONSOLE_LOG_FILE_STATE) {
     qDebug() << "Current log-file:" << _logFileName << "role" << _role;
   }
 
   QTimer::singleShot(CHECK_LOG_FILE_ACTIVITY_INTERVAL, this, SLOT(slotCheckLogFileActivity()));
 
-  if(!_startMessage) {
+  if (!_startMessage) {
     _startMessage = true;
     slotLog(SimpleQtLogger::timeStamp(), SimpleQtLogger::threadId(), QString("Start file-log '%1'").arg(_role), LogLevel_INTERNAL, "", "", 0);
   }
@@ -448,7 +465,7 @@ void SinkFileLog::checkLogFileRolling()
 {
   // qDebug("SinkFileLog::checkLogFileRolling");
 
-  if(!_logFile) {
+  if (!_logFile) {
     return;
   }
 
@@ -456,7 +473,7 @@ void SinkFileLog::checkLogFileRolling()
   QFileInfo logFileInfo(*_logFile);
   qint64 logFileSize = logFileInfo.size();
 
-  if(logFileSize < _logFileRotationSize) {
+  if (logFileSize < _logFileRotationSize) {
     QTimer::singleShot(CHECK_LOG_FILE_ACTIVITY_INTERVAL, this, SLOT(slotCheckLogFileActivity()));
     return;
   }
@@ -470,9 +487,9 @@ void SinkFileLog::checkLogFileRolling()
   // delete last file
   QString logFileName = _logFileName;
   logFileName.replace(".log", QString("_%1.log").arg(_logFileMaxNumber, 2, 10, QLatin1Char('0')));
-  if(QFile::exists(logFileName)) {
-    if(QFile::remove(logFileName)) {
-      if(ENABLE_CONSOLE_LOG_FILE_STATE) {
+  if (QFile::exists(logFileName)) {
+    if (QFile::remove(logFileName)) {
+      if (ENABLE_CONSOLE_LOG_FILE_STATE) {
         qDebug() << "Removed" << logFileName << "role" << _role;
       }
     }
@@ -482,14 +499,14 @@ void SinkFileLog::checkLogFileRolling()
   }
 
   // rolling files
-  for(int i=_logFileMaxNumber-1; i>0; --i) {
+  for (int i = _logFileMaxNumber - 1; i > 0; --i) {
     QString logFileNameFrom = _logFileName;
     logFileNameFrom.replace(".log", QString("_%1.log").arg(i, 2, 10, QLatin1Char('0')));
     QString logFileNameTo = _logFileName;
-    logFileNameTo.replace(".log", QString("_%1.log").arg(i+1, 2, 10, QLatin1Char('0')));
-    if(QFile::exists(logFileNameFrom)) {
-      if(QFile::rename(logFileNameFrom, logFileNameTo)) {
-        if(ENABLE_CONSOLE_LOG_FILE_STATE) {
+    logFileNameTo.replace(".log", QString("_%1.log").arg(i + 1, 2, 10, QLatin1Char('0')));
+    if (QFile::exists(logFileNameFrom)) {
+      if (QFile::rename(logFileNameFrom, logFileNameTo)) {
+        if (ENABLE_CONSOLE_LOG_FILE_STATE) {
           qDebug() << "Moved" << logFileNameFrom << "to" << logFileNameTo << "role" << _role;
         }
       }
@@ -504,9 +521,9 @@ void SinkFileLog::checkLogFileRolling()
   // move first file
   QString logFileNameTo = _logFileName;
   logFileNameTo.replace(".log", QString("_%1.log").arg(1, 2, 10, QLatin1Char('0')));
-  if(QFile::exists(_logFileName)) {
-    if(QFile::rename(_logFileName, logFileNameTo)) {
-      if(ENABLE_CONSOLE_LOG_FILE_STATE) {
+  if (QFile::exists(_logFileName)) {
+    if (QFile::rename(_logFileName, logFileNameTo)) {
+      if (ENABLE_CONSOLE_LOG_FILE_STATE) {
         qDebug() << "Moved" << _logFileName << "to" << logFileNameTo << "role" << _role;
       }
     }
@@ -524,11 +541,11 @@ void SinkFileLog::slotCheckLogFileActivity()
 {
   // qDebug("SinkFileLog::slotCheckLogFileActivity");
 
-  if(!_logFile) {
+  if (!_logFile) {
     return;
   }
 
-  if(_logFileActivity) {
+  if (_logFileActivity) {
     _logFileActivity = false;
     checkLogFileRolling();
     return;
@@ -539,11 +556,11 @@ void SinkFileLog::slotCheckLogFileActivity()
 
 // -------------------------------------------------------------------------------------------------
 
-SimpleQtLogger* SimpleQtLogger::instance = 0;
+SimpleQtLogger* SimpleQtLogger::instance = nullptr;
 
-SimpleQtLogger* SimpleQtLogger::createInstance(QObject *parent)
+SimpleQtLogger* SimpleQtLogger::createInstance(QObject* parent)
 {
-  if(instance) {
+  if (instance) {
     delete instance;
   }
   instance = new SimpleQtLogger(parent);
@@ -555,7 +572,7 @@ SimpleQtLogger* SimpleQtLogger::getInstance()
   return instance;
 }
 
-SimpleQtLogger::SimpleQtLogger(QObject *parent)
+SimpleQtLogger::SimpleQtLogger(QObject* parent)
   : QObject(parent)
 {
   // qDebug("SimpleQtLogger::SimpleQtLogger");
@@ -573,15 +590,15 @@ SimpleQtLogger::SimpleQtLogger(QObject *parent)
   // Otherwise, Qt::QueuedConnection is used. The connection type is determined when the signal is emitted.
 #if ENABLE_SQTL_LOG_SINK_CONSOLE > 0
   QObject::connect(this, SIGNAL(signalLog(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)),
-    _sinkConsoleLog, SLOT(slotLog(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)));
+                   _sinkConsoleLog, SLOT(slotLog(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)));
 #endif
 #if ENABLE_SQTL_LOG_SINK_QDEBUG > 0
   QObject::connect(this, SIGNAL(signalLog(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)),
-    _sinkQDebugLog, SLOT(slotLog(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)));
+                   _sinkQDebugLog, SLOT(slotLog(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)));
 #endif
 #if ENABLE_SQTL_LOG_SINK_SIGNAL > 0
   QObject::connect(this, SIGNAL(signalLog(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)),
-    _sinkSignalLog, SLOT(slotLog(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)));
+                   _sinkSignalLog, SLOT(slotLog(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)));
 #endif
 
   addSinkFileLog("main");
@@ -596,7 +613,7 @@ void SimpleQtLogger::addSinkFileLog(const QString& role)
 {
   // qDebug("SimpleQtLogger::addSinkFileLog");
 
-  if(_sinkFileLogMap.contains(role)) {
+  if (_sinkFileLogMap.contains(role)) {
     return;
   }
 
@@ -604,7 +621,7 @@ void SimpleQtLogger::addSinkFileLog(const QString& role)
 
 #if ENABLE_SQTL_LOG_SINK_FILE > 0
   QObject::connect(this, SIGNAL(signalLog(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)),
-    _sinkFileLogMap[role], SLOT(slotLog(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)));
+                   _sinkFileLogMap[role], SLOT(slotLog(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)));
 #endif
 }
 
@@ -617,7 +634,7 @@ void SimpleQtLogger::setLogFormat_file(const QString& logFormat, const QString& 
 void SimpleQtLogger::setLogFormat_file(const QString& role, const QString& logFormat, const QString& logFormatInt)
 {
   // qDebug("SimpleQtLogger::setLogFormat_file");
-  if(_sinkFileLogMap.contains(role)) {
+  if (_sinkFileLogMap.contains(role)) {
     _sinkFileLogMap[role]->setLogFormat(logFormat, logFormatInt);
   }
 }
@@ -649,7 +666,7 @@ void SimpleQtLogger::setLogLevels_file(const EnableLogLevels& enableLogLevels)
 void SimpleQtLogger::setLogLevels_file(const QString& role, const EnableLogLevels& enableLogLevels)
 {
   // qDebug("SimpleQtLogger::setLogLevels_file");
-  if(_sinkFileLogMap.contains(role)) {
+  if (_sinkFileLogMap.contains(role)) {
     _sinkFileLogMap[role]->setLogLevels(enableLogLevels);
   }
 }
@@ -681,7 +698,7 @@ EnableLogLevels SimpleQtLogger::getLogLevels_file() const // main
 EnableLogLevels SimpleQtLogger::getLogLevels_file(const QString& role) const
 {
   // qDebug("SimpleQtLogger::getLogLevels_file");
-  if(_sinkFileLogMap.contains(role)) {
+  if (_sinkFileLogMap.contains(role)) {
     return _sinkFileLogMap[role]->getLogLevels();
   }
   else {
@@ -717,10 +734,10 @@ bool SimpleQtLogger::addLogFilter_file(const QRegularExpression& re)
 bool SimpleQtLogger::addLogFilter_file(const QString& role, const QRegularExpression& re)
 {
   // qDebug("SimpleQtLogger::addLogFilter_file");
-  if(!re.isValid()) {
+  if (!re.isValid()) {
     return false;
   }
-  if(_sinkFileLogMap.contains(role)) {
+  if (_sinkFileLogMap.contains(role)) {
     return _sinkFileLogMap[role]->addLogFilter(re);
   }
   return false;
@@ -729,7 +746,7 @@ bool SimpleQtLogger::addLogFilter_file(const QString& role, const QRegularExpres
 bool SimpleQtLogger::addLogFilter_console(const QRegularExpression& re)
 {
   // qDebug("SimpleQtLogger::addLogFilter_console");
-  if(!re.isValid()) {
+  if (!re.isValid()) {
     return false;
   }
   return _sinkConsoleLog->addLogFilter(re);
@@ -738,7 +755,7 @@ bool SimpleQtLogger::addLogFilter_console(const QRegularExpression& re)
 bool SimpleQtLogger::addLogFilter_qDebug(const QRegularExpression& re)
 {
   // qDebug("SimpleQtLogger::addLogFilter_qDebug");
-  if(!re.isValid()) {
+  if (!re.isValid()) {
     return false;
   }
   return _sinkQDebugLog->addLogFilter(re);
@@ -747,7 +764,7 @@ bool SimpleQtLogger::addLogFilter_qDebug(const QRegularExpression& re)
 bool SimpleQtLogger::addLogFilter_signal(const QRegularExpression& re)
 {
   // qDebug("SimpleQtLogger::addLogFilter_signal");
-  if(!re.isValid()) {
+  if (!re.isValid()) {
     return false;
   }
   return _sinkSignalLog->addLogFilter(re);
@@ -763,7 +780,7 @@ bool SimpleQtLogger::setLogFileName(const QString& logFileName, unsigned int log
 bool SimpleQtLogger::setLogFileName(const QString& role, const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber)
 {
   // qDebug("SimpleQtLogger::setLogFileName");
-  if(_sinkFileLogMap.contains(role) && _sinkFileLogMap[role]->setLogFileName(logFileName, logFileRotationSize, logFileMaxNumber)) {
+  if (_sinkFileLogMap.contains(role) && _sinkFileLogMap[role]->setLogFileName(logFileName, logFileRotationSize, logFileMaxNumber)) {
     // log(QString("Start file-log '%1'").arg(role), LogLevel_INTERNAL, "", "", 0);
     return true;
   }
@@ -790,7 +807,7 @@ QString SimpleQtLogger::threadId()
   // qDebug("SimpleQtLogger::threadId");
 
   // thread-id in hexadecimal
-  return QString("%1").arg((unsigned long int)QThread::currentThreadId(),16,16,QLatin1Char('0')); // field-with for 64bit
+  return QString("%1").arg((unsigned long int)QThread::currentThreadId(), 16, 16, QLatin1Char('0')); // field-with for 64bit
 }
 
 void SimpleQtLogger::log(const QString& text, LogLevel logLevel, const QString& functionName, const char* fileName, unsigned int lineNumber)
@@ -809,7 +826,7 @@ void SimpleQtLogger::logFuncBegin(const QString& text, const QString& functionNa
 
   // thread-safe
 
-  if(!ENABLE_FUNCTION_STACK_TRACE) {
+  if (!ENABLE_FUNCTION_STACK_TRACE) {
     log(QString("%1").arg(text), LogLevel_FUNCTION, functionName, fileName.toStdString().c_str(), lineNumber);
     return;
   }
@@ -823,10 +840,10 @@ void SimpleQtLogger::logFuncBegin(const QString& text, const QString& functionNa
   }
 
   QString stackDepth("");
-  for(unsigned int i=1; i<stackDepthThread; ++i) {
+  for (unsigned int i = 1; i < stackDepthThread; ++i) {
     stackDepth += STACK_DEPTH_CHAR;
   }
-  if(text.isEmpty()) {
+  if (text.isEmpty()) {
     log(QString("%1\\").arg(stackDepth), LogLevel_FUNCTION, functionName, fileName.toStdString().c_str(), lineNumber);
   }
   else {
@@ -840,7 +857,7 @@ void SimpleQtLogger::logFuncEnd(const QString& text, const QString& functionName
 
   // thread-safe
 
-  if(!ENABLE_FUNCTION_STACK_TRACE) {
+  if (!ENABLE_FUNCTION_STACK_TRACE) {
     return;
   }
 
@@ -853,10 +870,10 @@ void SimpleQtLogger::logFuncEnd(const QString& text, const QString& functionName
   }
 
   QString stackDepth("");
-  for(unsigned int i=1; i<stackDepthThread; ++i) {
+  for (unsigned int i = 1; i < stackDepthThread; ++i) {
     stackDepth += STACK_DEPTH_CHAR;
   }
-  if(text.isEmpty()) {
+  if (text.isEmpty()) {
     log(QString("%1/").arg(stackDepth), LogLevel_FUNCTION, functionName, fileName.toStdString().c_str(), lineNumber);
   }
   else {
@@ -875,13 +892,17 @@ SimpleQtLoggerFunc::SimpleQtLoggerFunc(const QString& text, const QString& funct
   , _lineNumber(lineNumber)
 {
   // qDebug("SimpleQtLoggerFunc::SimpleQtLoggerFunc");
-  if(ENABLE_SQTL_LOG_LEVEL_FUNCTION && ENABLE_LOG_LEVELS.logLevel_FUNCTION) SimpleQtLogger::getInstance()->logFuncBegin(_text, _functionName, _fileName, _lineNumber);
+  if (ENABLE_SQTL_LOG_LEVEL_FUNCTION && ENABLE_LOG_LEVELS.logLevel_FUNCTION) {
+    SimpleQtLogger::getInstance()->logFuncBegin(_text, _functionName, _fileName, _lineNumber);
+  }
 }
 
 SimpleQtLoggerFunc::~SimpleQtLoggerFunc()
 {
   // qDebug("SimpleQtLoggerFunc::~SimpleQtLoggerFunc");
-  if(ENABLE_SQTL_LOG_LEVEL_FUNCTION && ENABLE_LOG_LEVELS.logLevel_FUNCTION) SimpleQtLogger::getInstance()->logFuncEnd(_text, _functionName, _fileName, _lineNumber);
+  if (ENABLE_SQTL_LOG_LEVEL_FUNCTION && ENABLE_LOG_LEVELS.logLevel_FUNCTION) {
+    SimpleQtLogger::getInstance()->logFuncEnd(_text, _functionName, _fileName, _lineNumber);
+  }
 }
 #endif
 

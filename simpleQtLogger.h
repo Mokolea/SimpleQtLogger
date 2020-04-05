@@ -137,7 +137,8 @@
 #define ENABLE_SQTL_LOG_LEVEL_DEBUG      1   // 1: enable, 0: disable; just for step-by-step testing
 #define ENABLE_SQTL_LOG_LEVEL_FUNCTION   1   // 1: enable, 0: disable; stack-trace
 
-namespace simpleqtlogger {
+namespace simpleqtlogger
+{
 
 const char STACK_DEPTH_CHAR = '.'; // use e.g. ' ' or '.'
 const unsigned short CHECK_LOG_FILE_ACTIVITY_INTERVAL = 5000; // [ms]
@@ -269,7 +270,7 @@ extern bool ENABLE_CONSOLE_LOG_FILE_STATE; // Console output log-file state: tru
 #define SQTL_L_BODY(text,levelEnabledHard,levelEnabledSoft,level) \
   SQTL_MSVC_WARNING_SUPPRESS \
   do { if(levelEnabledHard && levelEnabledSoft) simpleqtlogger::SimpleQtLogger::getInstance()->log(text, level, __FUNCTION__, __FILE__, __LINE__); } while(0) \
-  SQTL_MSVC_WARNING_RESTORE
+    SQTL_MSVC_WARNING_RESTORE
 
 // Use these macros (thread-safe) to have function-, filename and linenumber set correct
 #define L_FATAL(text)   SQTL_L_BODY(text,ENABLE_SQTL_LOG_LEVEL_FATAL,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_FATAL,simpleqtlogger::LogLevel_FATAL)
@@ -288,8 +289,8 @@ extern bool ENABLE_CONSOLE_LOG_FILE_STATE; // Console output log-file state: tru
 #define SQTL_LS_BODY(text,levelEnabledHard,levelEnabledSoft,level) \
   SQTL_MSVC_WARNING_SUPPRESS \
   do { if(levelEnabledHard && levelEnabledSoft) { QString s; QTextStream ts(&s); ts << text; \
-    simpleqtlogger::SimpleQtLogger::getInstance()->log(s, level, __FUNCTION__, __FILE__, __LINE__); } } while(0) \
-  SQTL_MSVC_WARNING_RESTORE
+      simpleqtlogger::SimpleQtLogger::getInstance()->log(s, level, __FUNCTION__, __FILE__, __LINE__); } } while(0) \
+    SQTL_MSVC_WARNING_RESTORE
 
 // Support use of streaming operators
 #define LS_FATAL(text)   SQTL_LS_BODY(text,ENABLE_SQTL_LOG_LEVEL_FATAL,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_FATAL,simpleqtlogger::LogLevel_FATAL)
@@ -308,35 +309,35 @@ extern bool ENABLE_CONSOLE_LOG_FILE_STATE; // Console output log-file state: tru
 
 class Sink : public QObject
 {
-  Q_OBJECT
+    Q_OBJECT
 
-public:
-  explicit Sink(QObject *parent);
-  virtual ~Sink();
+  public:
+    explicit Sink(QObject* parent);
+    virtual ~Sink();
 
-  void setLogFormat(const QString& logFormat, const QString& logFormatInt);
-  void setLogLevels(const EnableLogLevels& enableLogLevels);
-  EnableLogLevels getLogLevels() const;
+    void setLogFormat(const QString& logFormat, const QString& logFormatInt);
+    void setLogLevels(const EnableLogLevels& enableLogLevels);
+    EnableLogLevels getLogLevels() const;
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-  bool addLogFilter(const QRegularExpression& re);
+    bool addLogFilter(const QRegularExpression& re);
 #endif
 
-protected:
-  QString getLogFormat() const;
-  QString getLogFormatInt() const;
-  bool checkLogLevelsEnabled(LogLevel logLevel) const;
-  bool checkFilter(const QString& text) const;
+  protected:
+    QString getLogFormat() const;
+    QString getLogFormatInt() const;
+    bool checkLogLevelsEnabled(LogLevel logLevel) const;
+    bool checkFilter(const QString& text) const;
 
-private:
-  // implicitly implemented, not to be used
-  Sink(const Sink&);
-  Sink& operator=(const Sink&);
+  private:
+    // implicitly implemented, not to be used
+    Sink(const Sink&);
+    Sink& operator=(const Sink&);
 
-  QString _logFormat;
-  QString _logFormatInt;
-  EnableLogLevels _enableLogLevels;
+    QString _logFormat;
+    QString _logFormatInt;
+    EnableLogLevels _enableLogLevels;
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-  QList<QRegularExpression> _reList;
+    QList<QRegularExpression> _reList;
 #endif
 };
 
@@ -344,168 +345,168 @@ private:
 
 class SinkFileLog : public Sink
 {
-  Q_OBJECT
+    Q_OBJECT
 
-public:
-  explicit SinkFileLog(QObject *parent, const QString& role);
-  virtual ~SinkFileLog();
+  public:
+    explicit SinkFileLog(QObject* parent, const QString& role);
+    virtual ~SinkFileLog();
 
-  bool setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
+    bool setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
 
-private slots:
-  void slotLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber);
-  void slotCheckLogFileActivity();
+  private slots:
+    void slotLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber);
+    void slotCheckLogFileActivity();
 
-private:
-  // implicitly implemented, not to be used
-  SinkFileLog(const SinkFileLog&);
-  SinkFileLog& operator=(const SinkFileLog&);
+  private:
+    // implicitly implemented, not to be used
+    SinkFileLog(const SinkFileLog&);
+    SinkFileLog& operator=(const SinkFileLog&);
 
-  bool checkLogFileOpen();
-  void checkLogFileRolling();
+    bool checkLogFileOpen();
+    void checkLogFileRolling();
 
-  const QString _role;
-  QString _logFileName;
-  unsigned int _logFileRotationSize; // [bytes] initiate log-file rolling
-  unsigned int _logFileMaxNumber; // max number of rolling log-file history, range 1..99
+    const QString _role;
+    QString _logFileName;
+    unsigned int _logFileRotationSize; // [bytes] initiate log-file rolling
+    unsigned int _logFileMaxNumber; // max number of rolling log-file history, range 1..99
 
-  QFile* _logFile;
-  bool _logFileActivity; // track log-file write (append) activity
-  bool _startMessage;
+    QFile* _logFile;
+    bool _logFileActivity; // track log-file write (append) activity
+    bool _startMessage;
 };
 
 // -------------------------------------------------------------------------------------------------
 
 class SinkConsoleLog : public Sink
 {
-  Q_OBJECT
+    Q_OBJECT
 
-public:
-  explicit SinkConsoleLog(QObject *parent);
-  virtual ~SinkConsoleLog();
+  public:
+    explicit SinkConsoleLog(QObject* parent);
+    virtual ~SinkConsoleLog();
 
-private slots:
-  void slotLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber);
+  private slots:
+    void slotLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber);
 
-private:
-  // implicitly implemented, not to be used
-  SinkConsoleLog(const SinkConsoleLog&);
-  SinkConsoleLog& operator=(const SinkConsoleLog&);
+  private:
+    // implicitly implemented, not to be used
+    SinkConsoleLog(const SinkConsoleLog&);
+    SinkConsoleLog& operator=(const SinkConsoleLog&);
 };
 
 // -------------------------------------------------------------------------------------------------
 
 class SinkQDebugLog : public Sink
 {
-  Q_OBJECT
+    Q_OBJECT
 
-public:
-  explicit SinkQDebugLog(QObject *parent);
-  virtual ~SinkQDebugLog();
+  public:
+    explicit SinkQDebugLog(QObject* parent);
+    virtual ~SinkQDebugLog();
 
-private slots:
-  void slotLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber);
+  private slots:
+    void slotLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber);
 
-private:
-  // implicitly implemented, not to be used
-  SinkQDebugLog(const SinkQDebugLog&);
-  SinkQDebugLog& operator=(const SinkQDebugLog&);
+  private:
+    // implicitly implemented, not to be used
+    SinkQDebugLog(const SinkQDebugLog&);
+    SinkQDebugLog& operator=(const SinkQDebugLog&);
 };
 
 // -------------------------------------------------------------------------------------------------
 
 class SinkSignalLog : public Sink
 {
-  Q_OBJECT
+    Q_OBJECT
 
-public:
-  explicit SinkSignalLog(QObject *parent);
-  virtual ~SinkSignalLog();
+  public:
+    explicit SinkSignalLog(QObject* parent);
+    virtual ~SinkSignalLog();
 
-private slots:
-  void slotLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber);
+  private slots:
+    void slotLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber);
 
-signals:
-  void signalLogMessage(simpleqtlogger::LogLevel logLevel, const QString& logMessage);
+  signals:
+    void signalLogMessage(simpleqtlogger::LogLevel logLevel, const QString& logMessage);
 
-private:
-  // implicitly implemented, not to be used
-  SinkSignalLog(const SinkSignalLog&);
-  SinkSignalLog& operator=(const SinkSignalLog&);
+  private:
+    // implicitly implemented, not to be used
+    SinkSignalLog(const SinkSignalLog&);
+    SinkSignalLog& operator=(const SinkSignalLog&);
 };
 
 // -------------------------------------------------------------------------------------------------
 
 class SimpleQtLogger : public QObject
 {
-  Q_OBJECT
+    Q_OBJECT
 
-public:
-  static SimpleQtLogger* createInstance(QObject *parent);
-  static SimpleQtLogger* getInstance(); // may return NULL pointer!
-  virtual ~SimpleQtLogger();
+  public:
+    static SimpleQtLogger* createInstance(QObject* parent);
+    static SimpleQtLogger* getInstance(); // may return NULL pointer!
+    virtual ~SimpleQtLogger();
 
-  void addSinkFileLog(const QString& role); // main is already added
+    void addSinkFileLog(const QString& role); // main is already added
 
-  void setLogFormat_file(const QString& logFormat, const QString& logFormatInt); // main
-  void setLogFormat_file(const QString& role, const QString& logFormat, const QString& logFormatInt);
-  void setLogFormat_console(const QString& logFormat, const QString& logFormatInt);
-  void setLogFormat_qDebug(const QString& logFormat, const QString& logFormatInt);
-  void setLogFormat_signal(const QString& logFormat, const QString& logFormatInt);
+    void setLogFormat_file(const QString& logFormat, const QString& logFormatInt); // main
+    void setLogFormat_file(const QString& role, const QString& logFormat, const QString& logFormatInt);
+    void setLogFormat_console(const QString& logFormat, const QString& logFormatInt);
+    void setLogFormat_qDebug(const QString& logFormat, const QString& logFormatInt);
+    void setLogFormat_signal(const QString& logFormat, const QString& logFormatInt);
 
-  void setLogLevels_file(const EnableLogLevels& enableLogLevels); // main
-  void setLogLevels_file(const QString& role, const EnableLogLevels& enableLogLevels);
-  void setLogLevels_console(const EnableLogLevels& enableLogLevels);
-  void setLogLevels_qDebug(const EnableLogLevels& enableLogLevels);
-  void setLogLevels_signal(const EnableLogLevels& enableLogLevels);
+    void setLogLevels_file(const EnableLogLevels& enableLogLevels); // main
+    void setLogLevels_file(const QString& role, const EnableLogLevels& enableLogLevels);
+    void setLogLevels_console(const EnableLogLevels& enableLogLevels);
+    void setLogLevels_qDebug(const EnableLogLevels& enableLogLevels);
+    void setLogLevels_signal(const EnableLogLevels& enableLogLevels);
 
-  EnableLogLevels getLogLevels_file() const; // main
-  EnableLogLevels getLogLevels_file(const QString& role) const;
-  EnableLogLevels getLogLevels_console() const;
-  EnableLogLevels getLogLevels_qDebug() const;
-  EnableLogLevels getLogLevels_signal() const;
+    EnableLogLevels getLogLevels_file() const; // main
+    EnableLogLevels getLogLevels_file(const QString& role) const;
+    EnableLogLevels getLogLevels_console() const;
+    EnableLogLevels getLogLevels_qDebug() const;
+    EnableLogLevels getLogLevels_signal() const;
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-  bool addLogFilter_file(const QRegularExpression& re); // main
-  bool addLogFilter_file(const QString& role, const QRegularExpression& re);
-  bool addLogFilter_console(const QRegularExpression& re);
-  bool addLogFilter_qDebug(const QRegularExpression& re);
-  bool addLogFilter_signal(const QRegularExpression& re);
+    bool addLogFilter_file(const QRegularExpression& re); // main
+    bool addLogFilter_file(const QString& role, const QRegularExpression& re);
+    bool addLogFilter_console(const QRegularExpression& re);
+    bool addLogFilter_qDebug(const QRegularExpression& re);
+    bool addLogFilter_signal(const QRegularExpression& re);
 #endif
 
-  bool setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber); // main
-  bool setLogFileName(const QString& role, const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
+    bool setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber); // main
+    bool setLogFileName(const QString& role, const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
 
-  bool connectSinkSignalLog(const QObject* receiver, const char* method); // You must use the SLOT() macro when specifying the method, e.g. SLOT(mySlotLog(simpleqtlogger::LogLevel, const QString&))
+    bool connectSinkSignalLog(const QObject* receiver, const char* method); // You must use the SLOT() macro when specifying the method, e.g. SLOT(mySlotLog(simpleqtlogger::LogLevel, const QString&))
 
-  static QString timeStamp();
-  static QString threadId();
+    static QString timeStamp();
+    static QString threadId();
 
-  // log-functions used by log-macros are thread-safe
-  void log(const QString& text, LogLevel logLevel, const QString& functionName, const char* fileName, unsigned int lineNumber);
+    // log-functions used by log-macros are thread-safe
+    void log(const QString& text, LogLevel logLevel, const QString& functionName, const char* fileName, unsigned int lineNumber);
 #if ENABLE_SQTL_LOG_LEVEL_FUNCTION > 0
-  void logFuncBegin(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber);
-  void logFuncEnd(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber);
+    void logFuncBegin(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber);
+    void logFuncEnd(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber);
 #endif
 
-signals:
-  // internal
-  void signalLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber);
+  signals:
+    // internal
+    void signalLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber);
 
-private:
-  explicit SimpleQtLogger(QObject *parent);
-  static SimpleQtLogger* instance;
-  // implicitly implemented, not to be used
-  SimpleQtLogger(const SimpleQtLogger&);
-  SimpleQtLogger& operator=(const SimpleQtLogger&);
+  private:
+    explicit SimpleQtLogger(QObject* parent);
+    static SimpleQtLogger* instance;
+    // implicitly implemented, not to be used
+    SimpleQtLogger(const SimpleQtLogger&);
+    SimpleQtLogger& operator=(const SimpleQtLogger&);
 
-  SinkConsoleLog* _sinkConsoleLog;
-  SinkQDebugLog* _sinkQDebugLog;
-  SinkSignalLog* _sinkSignalLog;
-  QMap<QString, SinkFileLog*> _sinkFileLogMap;
+    SinkConsoleLog* _sinkConsoleLog;
+    SinkQDebugLog* _sinkQDebugLog;
+    SinkSignalLog* _sinkSignalLog;
+    QMap<QString, SinkFileLog*> _sinkFileLogMap;
 
-  QMutex _mutex;
-  QMap<unsigned long int, unsigned int> _stackDepth; // current stack-depth per thread-id for function-log
+    QMutex _mutex;
+    QMap<unsigned long int, unsigned int> _stackDepth; // current stack-depth per thread-id for function-log
 };
 
 // -------------------------------------------------------------------------------------------------
@@ -514,19 +515,19 @@ private:
 
 class SimpleQtLoggerFunc
 {
-public:
-  SimpleQtLoggerFunc(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber);
-  virtual ~SimpleQtLoggerFunc();
+  public:
+    SimpleQtLoggerFunc(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber);
+    virtual ~SimpleQtLoggerFunc();
 
-private:
-  // implicitly implemented, not to be used
-  SimpleQtLoggerFunc(const SimpleQtLoggerFunc&);
-  SimpleQtLoggerFunc& operator=(const SimpleQtLoggerFunc&);
+  private:
+    // implicitly implemented, not to be used
+    SimpleQtLoggerFunc(const SimpleQtLoggerFunc&);
+    SimpleQtLoggerFunc& operator=(const SimpleQtLoggerFunc&);
 
-  QString _text;
-  QString _functionName;
-  QString _fileName;
-  unsigned int _lineNumber;
+    QString _text;
+    QString _functionName;
+    QString _fileName;
+    unsigned int _lineNumber;
 };
 
 #endif
