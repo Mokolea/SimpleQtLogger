@@ -341,7 +341,7 @@ SinkFileLog::SinkFileLog(QObject* parent, const QString& role)
   , _role(role)
   , _logFileRotationSize(0)
   , _logFileMaxNumber(0)
-  , _logFile(nullptr)
+  , _logFile(0) // TODO use C++11 nullptr
   , _logFileActivity(false)
   , _startMessage(false)
 {
@@ -358,7 +358,7 @@ SinkFileLog::~SinkFileLog()
       _logFile->close();
     }
     delete _logFile;
-    _logFile = nullptr;
+    _logFile = 0; // TODO use C++11 nullptr
   }
 }
 
@@ -439,7 +439,7 @@ bool SinkFileLog::checkLogFileOpen()
   _logFile = new QFile(_logFileName);
   if (!_logFile->open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
     delete _logFile;
-    _logFile = nullptr;
+    _logFile = 0; // TODO use C++11 nullptr
     qWarning() << "Open log-file failed!" << _logFileName << "role" << _role;
   }
 
@@ -556,7 +556,7 @@ void SinkFileLog::slotCheckLogFileActivity()
 
 // -------------------------------------------------------------------------------------------------
 
-SimpleQtLogger* SimpleQtLogger::instance = nullptr;
+SimpleQtLogger* SimpleQtLogger::instance = 0; // TODO use C++11 nullptr
 
 SimpleQtLogger* SimpleQtLogger::createInstance(QObject* parent)
 {
