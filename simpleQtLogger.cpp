@@ -787,10 +787,10 @@ bool SimpleQtLogger::setLogFileName(const QString& role, const QString& logFileN
   return false;
 }
 
-bool SimpleQtLogger::connectSinkSignalLog(const QObject* receiver, const char* method)
+bool SimpleQtLogger::connectSinkSignalLog(const QObject* receiver, const char* method, Qt::ConnectionType type)
 {
   // qDebug("SimpleQtLogger::connectSinkSignalLog");
-  return QObject::connect(_sinkSignalLog, SIGNAL(signalLogMessage(simpleqtlogger::LogLevel, const QString&)), receiver, method);
+  return QObject::connect(_sinkSignalLog, SIGNAL(signalLogMessage(simpleqtlogger::LogLevel, const QString&)), receiver, method, type);
 }
 
 QString SimpleQtLogger::timeStamp()

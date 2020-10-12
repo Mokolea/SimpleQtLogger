@@ -477,7 +477,7 @@ class SimpleQtLogger : public QObject
     bool setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber); // main
     bool setLogFileName(const QString& role, const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber);
 
-    bool connectSinkSignalLog(const QObject* receiver, const char* method); // You must use the SLOT() macro when specifying the method, e.g. SLOT(mySlotLog(simpleqtlogger::LogLevel, const QString&))
+    bool connectSinkSignalLog(const QObject* receiver, const char* method, Qt::ConnectionType type = Qt::AutoConnection); // You must use the SLOT() macro when specifying the method, e.g. SLOT(mySlotLog(simpleqtlogger::LogLevel, const QString&))
 
     static QString timeStamp();
     static QString threadId();
