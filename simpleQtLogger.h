@@ -1,7 +1,7 @@
 /*
   Simple Logger for Qt
 
-  Mario Ban, 05.2015
+  Mario Ban, 2015-05
   https://github.com/Mokolea/SimpleQtLogger
 
   Design goals - simple:
@@ -15,6 +15,7 @@
       - console, colored (ANSI escape codes)
       - qDebug
       - signal (forwarding)
+      - syslog (Linux only)
    - log-levels, function-log (stack-trace)
    - log-filters using regular expressions (needs Qt 5.0)
    - thread-safe use of log-macros
@@ -41,6 +42,7 @@
       simpleqtlogger::ENABLE_LOG_SINK_CONSOLE = false;
       simpleqtlogger::ENABLE_LOG_SINK_QDEBUG = false;
       simpleqtlogger::ENABLE_LOG_SINK_SIGNAL = false;
+      simpleqtlogger::ENABLE_LOG_SINK_SYSLOG = false;
    - set log-features:
       simpleqtlogger::ENABLE_FUNCTION_STACK_TRACE = true;
       simpleqtlogger::ENABLE_CONSOLE_COLOR = true;
@@ -83,6 +85,7 @@
    - maybe do all file-operations in worker-thread
 
   Done:
+   - added log sink syslog to send messages to the system logger (Linux only)
    - log forwarding by emitting a Qt signal
    - think about environment variable to specify log-file directory, os independent solution
       --> do it outside of SimpleQtLogger by using the QProcessEnvironment class
@@ -92,6 +95,7 @@
    - continuous integration using Travis CI: created a .travis.yml
 
   Tested using:
+   - Qt 5.12.8 Ubuntu 20.04.1 LTS (Focal Fossa)
    - Qt 5.6.0 (Community Open Source), Clang 7.3 (Apple) 64 bit
    - Qt 5.4.2 (Community Open Source), Clang 6.0 (Apple) 64 bit
    - Qt 4.8.6 Debian 8, gcc version 4.9.2 (Debian 4.9.2-10), 64 bit
@@ -99,7 +103,7 @@
    - Qt 5.5.0, Visual Studio 2013, 32 bit
 
   GNU Lesser General Public License v2.1
-  Copyright (C) 2017 Mario Ban
+  Copyright (C) 2020 Mario Ban
 */
 
 #ifndef _SIMPLE_QT_LOGGER_H
@@ -116,26 +120,58 @@
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
 #include <QRegularExpression>
 #endif
+#ifdef Q_OS_LINUX
+#include <syslog.h>
+#endif
 
-#define SQTL_VERSION_STR   "1.2.0"
-#define SQTL_VERSION       0x010200   // Version is: (major << 16) + (minor << 8) + patch
-// SQTL_VERSION_CHECK can be used like: #if (SQTL_VERSION >= SQTL_VERSION_CHECK(1, 1, 0))
+#define SQTL_VERSION_STR   "1.3.0"
+#define SQTL_VERSION       0x010300   // Version is: (major << 16) + (minor << 8) + patch
+// SQTL_VERSION_CHECK can be used like: #if (SQTL_VERSION >= SQTL_VERSION_CHECK(1, 3, 0))
 #define SQTL_VERSION_CHECK(major,minor,patch)   ((major<<16)|(minor<<8)|(patch))
 
 // Log-sinks (hard; adjust at pre-processor, compile-time)
-#define ENABLE_SQTL_LOG_SINK_FILE      1   // 1: enable, 0: disable; log to file (rolling)
-#define ENABLE_SQTL_LOG_SINK_CONSOLE   1   // 1: enable, 0: disable; log to console (colored log-levels)
-#define ENABLE_SQTL_LOG_SINK_QDEBUG    0   // 1: enable, 0: disable; log using qDebug; messages are sent to the console, if it is a console application
-#define ENABLE_SQTL_LOG_SINK_SIGNAL    1   // 1: enable, 0: disable; log forwarding by emitting a Qt signal
+#ifndef ENABLE_SQTL_LOG_SINK_FILE
+#  define ENABLE_SQTL_LOG_SINK_FILE      1   // 1: enable, 0: disable; log to file (rolling)
+#endif
+#ifndef ENABLE_SQTL_LOG_SINK_CONSOLE
+#  define ENABLE_SQTL_LOG_SINK_CONSOLE   1   // 1: enable, 0: disable; log to console (colored log-levels)
+#endif
+#ifndef ENABLE_SQTL_LOG_SINK_QDEBUG
+#  define ENABLE_SQTL_LOG_SINK_QDEBUG    0   // 1: enable, 0: disable; log using qDebug; messages are sent to the console, if it is a console application
+#endif
+#ifndef ENABLE_SQTL_LOG_SINK_SIGNAL
+#  define ENABLE_SQTL_LOG_SINK_SIGNAL    1   // 1: enable, 0: disable; log forwarding by emitting a Qt signal
+#endif
+#ifndef ENABLE_SQTL_LOG_SINK_SYSLOG
+#ifdef Q_OS_LINUX
+#  define ENABLE_SQTL_LOG_SINK_SYSLOG    1   // 1: enable, 0: disable; log to the system logger
+#else
+#  define ENABLE_SQTL_LOG_SINK_SYSLOG    0
+#endif
+#endif
 
 // Log-level (hard; adjust at pre-processor, compile-time)
-#define ENABLE_SQTL_LOG_LEVEL_FATAL      1   // 1: enable, 0: disable
-#define ENABLE_SQTL_LOG_LEVEL_ERROR      1   // 1: enable, 0: disable
-#define ENABLE_SQTL_LOG_LEVEL_WARNING    1   // 1: enable, 0: disable
-#define ENABLE_SQTL_LOG_LEVEL_NOTE       1   // 1: enable, 0: disable
-#define ENABLE_SQTL_LOG_LEVEL_INFO       1   // 1: enable, 0: disable
-#define ENABLE_SQTL_LOG_LEVEL_DEBUG      1   // 1: enable, 0: disable; just for step-by-step testing
-#define ENABLE_SQTL_LOG_LEVEL_FUNCTION   1   // 1: enable, 0: disable; stack-trace
+#ifndef ENABLE_SQTL_LOG_LEVEL_FATAL
+#  define ENABLE_SQTL_LOG_LEVEL_FATAL      1   // 1: enable, 0: disable
+#endif
+#ifndef ENABLE_SQTL_LOG_LEVEL_ERROR
+#  define ENABLE_SQTL_LOG_LEVEL_ERROR      1   // 1: enable, 0: disable
+#endif
+#ifndef ENABLE_SQTL_LOG_LEVEL_WARNING
+#  define ENABLE_SQTL_LOG_LEVEL_WARNING    1   // 1: enable, 0: disable
+#endif
+#ifndef ENABLE_SQTL_LOG_LEVEL_NOTE
+#  define ENABLE_SQTL_LOG_LEVEL_NOTE       1   // 1: enable, 0: disable
+#endif
+#ifndef ENABLE_SQTL_LOG_LEVEL_INFO
+#  define ENABLE_SQTL_LOG_LEVEL_INFO       1   // 1: enable, 0: disable
+#endif
+#ifndef ENABLE_SQTL_LOG_LEVEL_DEBUG
+#  define ENABLE_SQTL_LOG_LEVEL_DEBUG      1   // 1: enable, 0: disable; just for step-by-step testing
+#endif
+#ifndef ENABLE_SQTL_LOG_LEVEL_FUNCTION
+#  define ENABLE_SQTL_LOG_LEVEL_FUNCTION   1   // 1: enable, 0: disable; stack-trace
+#endif
 
 namespace simpleqtlogger
 {
@@ -148,6 +184,8 @@ const QString DEFAULT_LOG_FORMAT_INTERNAL = "<TS> [<TID>] [<LL>] <TEXT>"; // sin
 
 const QString DEFAULT_LOG_FORMAT_CONSOLE = "<TEXT>"; // sink console-log: output is prefixed with log-level name (intense color, see ..._I): "<LOG-LEVEL-LABEL>: "
 const QString DEFAULT_LOG_FORMAT_CONSOLE_FUNCTION_SUFFIX = " (<FUNC>)"; // appended to DEFAULT_LOG_FORMAT_CONSOLE for LogLevel_FUNCTION
+
+const QString DEFAULT_LOG_FORMAT_SYSLOG = "<TEXT>"; // sink syslog-log
 
 const QString CONSOLE_LOG_LEVEL_LABEL_FATAL   = "FATAL";
 const QString CONSOLE_LOG_LEVEL_LABEL_ERROR   = "ERROR";
@@ -227,6 +265,12 @@ extern bool ENABLE_LOG_SINK_FILE;    // Log-sink: true: enable, false: disable, 
 extern bool ENABLE_LOG_SINK_CONSOLE; // Log-sink: true: enable, false: disable, default: false
 extern bool ENABLE_LOG_SINK_QDEBUG;  // Log-sink: true: enable, false: disable, default: false
 extern bool ENABLE_LOG_SINK_SIGNAL;  // Log-sink: true: enable, false: disable, default: false
+extern bool ENABLE_LOG_SINK_SYSLOG;  // Log-sink: true: enable, false: disable, default: false
+
+#ifdef Q_OS_LINUX
+extern QString NAME_LOG_SINK_SYSLOG; // String is prepended to every message. If empty, the program name is used.
+extern int FACILITY_LOG_SINK_SYSLOG; // Used to specify what type of program is logging the message.
+#endif
 
 // Log-level (adjust at run-time)
 struct EnableLogLevels {
@@ -437,6 +481,27 @@ class SinkSignalLog : public Sink
 
 // -------------------------------------------------------------------------------------------------
 
+#ifdef Q_OS_LINUX
+class SinkSyslogLog : public Sink
+{
+    Q_OBJECT
+
+  public:
+    explicit SinkSyslogLog(QObject* parent);
+    virtual ~SinkSyslogLog();
+
+  private slots:
+    void slotLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber);
+
+  private:
+    // implicitly implemented, not to be used
+    SinkSyslogLog(const SinkSyslogLog&);
+    SinkSyslogLog& operator=(const SinkSyslogLog&);
+};
+#endif
+
+// -------------------------------------------------------------------------------------------------
+
 class SimpleQtLogger : public QObject
 {
     Q_OBJECT
@@ -453,18 +518,27 @@ class SimpleQtLogger : public QObject
     void setLogFormat_console(const QString& logFormat, const QString& logFormatInt);
     void setLogFormat_qDebug(const QString& logFormat, const QString& logFormatInt);
     void setLogFormat_signal(const QString& logFormat, const QString& logFormatInt);
+#ifdef Q_OS_LINUX
+    void setLogFormat_syslog(const QString& logFormat, const QString& logFormatInt);
+#endif
 
     void setLogLevels_file(const EnableLogLevels& enableLogLevels); // main
     void setLogLevels_file(const QString& role, const EnableLogLevels& enableLogLevels);
     void setLogLevels_console(const EnableLogLevels& enableLogLevels);
     void setLogLevels_qDebug(const EnableLogLevels& enableLogLevels);
     void setLogLevels_signal(const EnableLogLevels& enableLogLevels);
+#ifdef Q_OS_LINUX
+    void setLogLevels_syslog(const EnableLogLevels& enableLogLevels);
+#endif
 
     EnableLogLevels getLogLevels_file() const; // main
     EnableLogLevels getLogLevels_file(const QString& role) const;
     EnableLogLevels getLogLevels_console() const;
     EnableLogLevels getLogLevels_qDebug() const;
     EnableLogLevels getLogLevels_signal() const;
+#ifdef Q_OS_LINUX
+    EnableLogLevels getLogLevels_syslog() const;
+#endif
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
     bool addLogFilter_file(const QRegularExpression& re); // main
@@ -472,6 +546,9 @@ class SimpleQtLogger : public QObject
     bool addLogFilter_console(const QRegularExpression& re);
     bool addLogFilter_qDebug(const QRegularExpression& re);
     bool addLogFilter_signal(const QRegularExpression& re);
+#ifdef Q_OS_LINUX
+    bool addLogFilter_syslog(const QRegularExpression& re);
+#endif
 #endif
 
     bool setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber); // main
@@ -503,6 +580,9 @@ class SimpleQtLogger : public QObject
     SinkConsoleLog* _sinkConsoleLog;
     SinkQDebugLog* _sinkQDebugLog;
     SinkSignalLog* _sinkSignalLog;
+#ifdef Q_OS_LINUX
+    SinkSyslogLog* _sinkSyslogLog;
+#endif
     QMap<QString, SinkFileLog*> _sinkFileLogMap;
 
     QMutex _mutex;

@@ -29,6 +29,11 @@ int main(int argc, char *argv[])
   simpleqtlogger::ENABLE_LOG_SINK_CONSOLE = true;
   simpleqtlogger::ENABLE_LOG_SINK_QDEBUG = false;
   simpleqtlogger::ENABLE_LOG_SINK_SIGNAL = true;
+#ifdef Q_OS_LINUX
+  simpleqtlogger::ENABLE_LOG_SINK_SYSLOG = true;
+  simpleqtlogger::NAME_LOG_SINK_SYSLOG = "";
+  simpleqtlogger::FACILITY_LOG_SINK_SYSLOG = LOG_USER;
+#endif
   // set log-features
   simpleqtlogger::ENABLE_FUNCTION_STACK_TRACE = true;
   simpleqtlogger::ENABLE_CONSOLE_COLOR = true;
@@ -42,12 +47,14 @@ int main(int argc, char *argv[])
   simpleqtlogger::EnableLogLevels enableLogLevels_console = simpleqtlogger::ENABLE_LOG_LEVELS;
   simpleqtlogger::EnableLogLevels enableLogLevels_qDebug = simpleqtlogger::ENABLE_LOG_LEVELS;
   simpleqtlogger::EnableLogLevels enableLogLevels_signal = simpleqtlogger::ENABLE_LOG_LEVELS;
+  simpleqtlogger::EnableLogLevels enableLogLevels_syslog = simpleqtlogger::ENABLE_LOG_LEVELS;
   enableLogLevels_console.logLevel_FUNCTION = false;
   simpleqtlogger::EnableLogLevels enableLogLevels_fileWarn = simpleqtlogger::ENABLE_LOG_LEVELS;
   enableLogLevels_fileWarn.logLevel_NOTE = false;
   enableLogLevels_fileWarn.logLevel_INFO = false;
   enableLogLevels_fileWarn.logLevel_DEBUG = false;
   enableLogLevels_fileWarn.logLevel_FUNCTION = false;
+  enableLogLevels_syslog.logLevel_FUNCTION = false;
 
   // initialize SimpleQtLogger (step 1/2)
   simpleqtlogger::SimpleQtLogger::createInstance(qApp);
@@ -56,6 +63,7 @@ int main(int argc, char *argv[])
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_console(enableLogLevels_console);
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_qDebug(enableLogLevels_qDebug);
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_signal(enableLogLevels_signal);
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_syslog(enableLogLevels_syslog);
   //simpleqtlogger::SimpleQtLogger::getInstance()->addLogFilter_file(QRegularExpression("_id="));
   //simpleqtlogger::SimpleQtLogger::getInstance()->addLogFilter_file(QRegularExpression("n="));
   // 2nd file-log (levels: warn..fatal)

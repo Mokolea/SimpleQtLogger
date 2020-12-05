@@ -1,11 +1,11 @@
 /*
   Simple Logger for Qt
 
-  Mario Ban, 05.2015
+  Mario Ban, 2015-05
   https://github.com/Mokolea/SimpleQtLogger
 
   GNU Lesser General Public License v2.1
-  Copyright (C) 2017 Mario Ban
+  Copyright (C) 2020 Mario Ban
 */
 
 #include "simpleQtLogger.h"
@@ -24,6 +24,12 @@ bool ENABLE_LOG_SINK_FILE = true;
 bool ENABLE_LOG_SINK_CONSOLE = false;
 bool ENABLE_LOG_SINK_QDEBUG = false;
 bool ENABLE_LOG_SINK_SIGNAL = false;
+bool ENABLE_LOG_SINK_SYSLOG = false;
+
+#ifdef Q_OS_LINUX
+QString NAME_LOG_SINK_SYSLOG = "";
+int FACILITY_LOG_SINK_SYSLOG = LOG_USER;
+#endif
 
 /* Log-level */
 EnableLogLevels::EnableLogLevels()
@@ -336,6 +342,66 @@ void SinkSignalLog::slotLog(const QString& ts, const QString& tid, const QString
 
 // -------------------------------------------------------------------------------------------------
 
+#ifdef Q_OS_LINUX
+SinkSyslogLog::SinkSyslogLog(QObject* parent)
+  : Sink(parent)
+{
+  // qDebug("SinkSyslogLog::SinkSyslogLog");
+  openlog(NAME_LOG_SINK_SYSLOG.isEmpty() ? NULL : NAME_LOG_SINK_SYSLOG.toStdString().c_str(), LOG_PID, FACILITY_LOG_SINK_SYSLOG);
+}
+
+SinkSyslogLog::~SinkSyslogLog()
+{
+  // qDebug("SinkSyslogLog::~SinkSyslogLog");
+  closelog(); // optional
+}
+
+void SinkSyslogLog::slotLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber)
+{
+  // qDebug("SinkSyslogLog::slotLog");
+
+  if (!ENABLE_LOG_SINK_SYSLOG) {
+    return;
+  }
+  if (!checkLogLevelsEnabled(logLevel)) {
+    return;
+  }
+  if (logLevel != LogLevel_INTERNAL && !checkFilter(text)) {
+    return;
+  }
+
+  QString textIsEmpty("?");
+  if (logLevel == LogLevel_FUNCTION) {
+    textIsEmpty = "-";
+  }
+
+  if (logLevel == LogLevel_INTERNAL) {
+    syslog(LOG_INFO, "%s", getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4 * 2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()).toStdString().c_str());
+  }
+  else {
+    int level = LOG_INFO;
+    if (logLevel == LogLevel_DEBUG) {
+      level = LOG_DEBUG;
+    }
+    else if (logLevel == LogLevel_NOTE) {
+      level = LOG_NOTICE;
+    }
+    else if (logLevel == LogLevel_WARNING) {
+      level = LOG_WARNING;
+    }
+    else if (logLevel == LogLevel_ERROR) {
+      level = LOG_ERR;
+    }
+    else if (logLevel == LogLevel_FATAL) {
+      level = LOG_CRIT;
+    }
+    syslog(level, "%s", getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4 * 2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()).toStdString().c_str());
+  }
+}
+#endif
+
+// -------------------------------------------------------------------------------------------------
+
 SinkFileLog::SinkFileLog(QObject* parent, const QString& role)
   : Sink(parent)
   , _role(role)
@@ -582,8 +648,14 @@ SimpleQtLogger::SimpleQtLogger(QObject* parent)
   _sinkConsoleLog = new SinkConsoleLog(this);
   _sinkQDebugLog = new SinkQDebugLog(this);
   _sinkSignalLog = new SinkSignalLog(this);
+#ifdef Q_OS_LINUX
+  _sinkSyslogLog = new SinkSyslogLog(this);
+#endif
 
   _sinkConsoleLog->setLogFormat(DEFAULT_LOG_FORMAT_CONSOLE, DEFAULT_LOG_FORMAT_INTERNAL);
+#ifdef Q_OS_LINUX
+  _sinkSyslogLog->setLogFormat(DEFAULT_LOG_FORMAT_SYSLOG, DEFAULT_LOG_FORMAT_SYSLOG);
+#endif
 
   // Qt::ConnectionType is Qt::AutoConnection (Default)
   // If the receiver lives in the thread that emits the signal, Qt::DirectConnection is used.
@@ -599,6 +671,12 @@ SimpleQtLogger::SimpleQtLogger(QObject* parent)
 #if ENABLE_SQTL_LOG_SINK_SIGNAL > 0
   QObject::connect(this, SIGNAL(signalLog(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)),
                    _sinkSignalLog, SLOT(slotLog(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)));
+#endif
+#if ENABLE_SQTL_LOG_SINK_SYSLOG > 0
+#ifdef Q_OS_LINUX
+  QObject::connect(this, SIGNAL(signalLog(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)),
+                   _sinkSyslogLog, SLOT(slotLog(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)));
+#endif
 #endif
 
   addSinkFileLog("main");
@@ -657,6 +735,14 @@ void SimpleQtLogger::setLogFormat_signal(const QString& logFormat, const QString
   _sinkSignalLog->setLogFormat(logFormat, logFormatInt);
 }
 
+#ifdef Q_OS_LINUX
+void SimpleQtLogger::setLogFormat_syslog(const QString& logFormat, const QString& logFormatInt)
+{
+  // qDebug("SimpleQtLogger::setLogFormat_syslog");
+  _sinkSyslogLog->setLogFormat(logFormat, logFormatInt);
+}
+#endif
+
 void SimpleQtLogger::setLogLevels_file(const EnableLogLevels& enableLogLevels)
 {
   // qDebug("SimpleQtLogger::setLogLevels_file");
@@ -688,6 +774,14 @@ void SimpleQtLogger::setLogLevels_signal(const EnableLogLevels& enableLogLevels)
   // qDebug("SimpleQtLogger::setLogLevels_signal");
   _sinkSignalLog->setLogLevels(enableLogLevels);
 }
+
+#ifdef Q_OS_LINUX
+void SimpleQtLogger::setLogLevels_syslog(const EnableLogLevels& enableLogLevels)
+{
+  // qDebug("SimpleQtLogger::setLogLevels_syslog");
+  _sinkSyslogLog->setLogLevels(enableLogLevels);
+}
+#endif
 
 EnableLogLevels SimpleQtLogger::getLogLevels_file() const // main
 {
@@ -723,6 +817,14 @@ EnableLogLevels SimpleQtLogger::getLogLevels_signal() const
   // qDebug("SimpleQtLogger::getLogLevels_signal");
   return _sinkSignalLog->getLogLevels();
 }
+
+#ifdef Q_OS_LINUX
+EnableLogLevels SimpleQtLogger::getLogLevels_syslog() const
+{
+  // qDebug("SimpleQtLogger::getLogLevels_syslog");
+  return _sinkSyslogLog->getLogLevels();
+}
+#endif
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
 bool SimpleQtLogger::addLogFilter_file(const QRegularExpression& re)
@@ -769,6 +871,17 @@ bool SimpleQtLogger::addLogFilter_signal(const QRegularExpression& re)
   }
   return _sinkSignalLog->addLogFilter(re);
 }
+
+#ifdef Q_OS_LINUX
+bool SimpleQtLogger::addLogFilter_syslog(const QRegularExpression& re)
+{
+  // qDebug("SimpleQtLogger::addLogFilter_syslog");
+  if (!re.isValid()) {
+    return false;
+  }
+  return _sinkSyslogLog->addLogFilter(re);
+}
+#endif
 #endif
 
 bool SimpleQtLogger::setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber)
