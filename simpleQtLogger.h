@@ -481,7 +481,6 @@ class SinkSignalLog : public Sink
 
 // -------------------------------------------------------------------------------------------------
 
-#ifdef Q_OS_LINUX
 class SinkSyslogLog : public Sink
 {
     Q_OBJECT
@@ -498,7 +497,6 @@ class SinkSyslogLog : public Sink
     SinkSyslogLog(const SinkSyslogLog&);
     SinkSyslogLog& operator=(const SinkSyslogLog&);
 };
-#endif
 
 // -------------------------------------------------------------------------------------------------
 
@@ -518,27 +516,21 @@ class SimpleQtLogger : public QObject
     void setLogFormat_console(const QString& logFormat, const QString& logFormatInt);
     void setLogFormat_qDebug(const QString& logFormat, const QString& logFormatInt);
     void setLogFormat_signal(const QString& logFormat, const QString& logFormatInt);
-#ifdef Q_OS_LINUX
     void setLogFormat_syslog(const QString& logFormat, const QString& logFormatInt);
-#endif
 
     void setLogLevels_file(const EnableLogLevels& enableLogLevels); // main
     void setLogLevels_file(const QString& role, const EnableLogLevels& enableLogLevels);
     void setLogLevels_console(const EnableLogLevels& enableLogLevels);
     void setLogLevels_qDebug(const EnableLogLevels& enableLogLevels);
     void setLogLevels_signal(const EnableLogLevels& enableLogLevels);
-#ifdef Q_OS_LINUX
     void setLogLevels_syslog(const EnableLogLevels& enableLogLevels);
-#endif
 
     EnableLogLevels getLogLevels_file() const; // main
     EnableLogLevels getLogLevels_file(const QString& role) const;
     EnableLogLevels getLogLevels_console() const;
     EnableLogLevels getLogLevels_qDebug() const;
     EnableLogLevels getLogLevels_signal() const;
-#ifdef Q_OS_LINUX
     EnableLogLevels getLogLevels_syslog() const;
-#endif
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
     bool addLogFilter_file(const QRegularExpression& re); // main
@@ -546,9 +538,7 @@ class SimpleQtLogger : public QObject
     bool addLogFilter_console(const QRegularExpression& re);
     bool addLogFilter_qDebug(const QRegularExpression& re);
     bool addLogFilter_signal(const QRegularExpression& re);
-#ifdef Q_OS_LINUX
     bool addLogFilter_syslog(const QRegularExpression& re);
-#endif
 #endif
 
     bool setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber); // main

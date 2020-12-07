@@ -342,24 +342,28 @@ void SinkSignalLog::slotLog(const QString& ts, const QString& tid, const QString
 
 // -------------------------------------------------------------------------------------------------
 
-#ifdef Q_OS_LINUX
 SinkSyslogLog::SinkSyslogLog(QObject* parent)
   : Sink(parent)
 {
   // qDebug("SinkSyslogLog::SinkSyslogLog");
+#ifdef Q_OS_LINUX
   openlog(NAME_LOG_SINK_SYSLOG.isEmpty() ? NULL : NAME_LOG_SINK_SYSLOG.toStdString().c_str(), LOG_PID, FACILITY_LOG_SINK_SYSLOG);
+#endif
 }
 
 SinkSyslogLog::~SinkSyslogLog()
 {
   // qDebug("SinkSyslogLog::~SinkSyslogLog");
+#ifdef Q_OS_LINUX
   closelog(); // optional
+#endif
 }
 
 void SinkSyslogLog::slotLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber)
 {
   // qDebug("SinkSyslogLog::slotLog");
 
+#ifdef Q_OS_LINUX
   if (!ENABLE_LOG_SINK_SYSLOG) {
     return;
   }
@@ -397,8 +401,8 @@ void SinkSyslogLog::slotLog(const QString& ts, const QString& tid, const QString
     }
     syslog(level, "%s", getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4 * 2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()).toStdString().c_str());
   }
-}
 #endif
+}
 
 // -------------------------------------------------------------------------------------------------
 
@@ -735,13 +739,13 @@ void SimpleQtLogger::setLogFormat_signal(const QString& logFormat, const QString
   _sinkSignalLog->setLogFormat(logFormat, logFormatInt);
 }
 
-#ifdef Q_OS_LINUX
 void SimpleQtLogger::setLogFormat_syslog(const QString& logFormat, const QString& logFormatInt)
 {
   // qDebug("SimpleQtLogger::setLogFormat_syslog");
+#ifdef Q_OS_LINUX
   _sinkSyslogLog->setLogFormat(logFormat, logFormatInt);
-}
 #endif
+}
 
 void SimpleQtLogger::setLogLevels_file(const EnableLogLevels& enableLogLevels)
 {
@@ -775,13 +779,13 @@ void SimpleQtLogger::setLogLevels_signal(const EnableLogLevels& enableLogLevels)
   _sinkSignalLog->setLogLevels(enableLogLevels);
 }
 
-#ifdef Q_OS_LINUX
 void SimpleQtLogger::setLogLevels_syslog(const EnableLogLevels& enableLogLevels)
 {
   // qDebug("SimpleQtLogger::setLogLevels_syslog");
+#ifdef Q_OS_LINUX
   _sinkSyslogLog->setLogLevels(enableLogLevels);
-}
 #endif
+}
 
 EnableLogLevels SimpleQtLogger::getLogLevels_file() const // main
 {
@@ -818,13 +822,15 @@ EnableLogLevels SimpleQtLogger::getLogLevels_signal() const
   return _sinkSignalLog->getLogLevels();
 }
 
-#ifdef Q_OS_LINUX
 EnableLogLevels SimpleQtLogger::getLogLevels_syslog() const
 {
   // qDebug("SimpleQtLogger::getLogLevels_syslog");
+#ifdef Q_OS_LINUX
   return _sinkSyslogLog->getLogLevels();
-}
+#else
+  return ENABLE_LOG_LEVELS;
 #endif
+}
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
 bool SimpleQtLogger::addLogFilter_file(const QRegularExpression& re)
@@ -872,16 +878,18 @@ bool SimpleQtLogger::addLogFilter_signal(const QRegularExpression& re)
   return _sinkSignalLog->addLogFilter(re);
 }
 
-#ifdef Q_OS_LINUX
 bool SimpleQtLogger::addLogFilter_syslog(const QRegularExpression& re)
 {
   // qDebug("SimpleQtLogger::addLogFilter_syslog");
+#ifdef Q_OS_LINUX
   if (!re.isValid()) {
     return false;
   }
   return _sinkSyslogLog->addLogFilter(re);
-}
+#else
+  return false;
 #endif
+}
 #endif
 
 bool SimpleQtLogger::setLogFileName(const QString& logFileName, unsigned int logFileRotationSize, unsigned int logFileMaxNumber)
