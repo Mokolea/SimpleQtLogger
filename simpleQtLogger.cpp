@@ -15,6 +15,9 @@
 #include <QDateTime>
 #include <QFileInfo>
 #include <QtDebug>
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
+#include <QElapsedTimer>
+#endif
 
 namespace simpleqtlogger
 {
