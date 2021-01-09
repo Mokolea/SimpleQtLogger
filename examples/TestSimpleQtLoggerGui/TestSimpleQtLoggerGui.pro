@@ -15,6 +15,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = TestSimpleQtLoggerGui
 
+#CONFIG += sdk_no_version_check
+
 TEMPLATE = app
 
 QMAKE_CXXFLAGS_DEBUG += -Wextra

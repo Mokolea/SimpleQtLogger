@@ -557,7 +557,11 @@ void SinkFileLog::checkLogFileRolling()
   }
   slotLog(SimpleQtLogger::timeStamp(), SimpleQtLogger::threadId(), QString("Current log-file '%1' size=%2 (rotation-size=%3) --> rolling").arg(_role).arg(logFileSize).arg(_logFileRotationSize), LogLevel_INTERNAL, "", "", 0);
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
+  QElapsedTimer timeRolling;
+#else
   QTime timeRolling;
+#endif
   timeRolling.start();
 
   // handle file rolling
