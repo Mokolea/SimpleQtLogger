@@ -30,10 +30,10 @@ public:
   ~Task();
 
 private slots:
-  void init();
   void theEnd();
 
 public slots:
+  void init();
   void slotRun();
   void slotResultReady(const QString& result);
   void slotLogForwarding(simpleqtlogger::LogLevel logLevel, const QString& logMessage);

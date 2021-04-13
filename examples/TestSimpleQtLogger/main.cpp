@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 {
   QCoreApplication a(argc, argv);
 
-  Q_ASSERT_X(SQTL_VERSION >= SQTL_VERSION_CHECK(1, 3, 0), "main", "SimpleQtLogger version");
+  Q_ASSERT_X(SQTL_VERSION >= SQTL_VERSION_CHECK(1, 3, 1), "main", "SimpleQtLogger version");
 
   // enable sinks
   simpleqtlogger::ENABLE_LOG_SINK_FILE = true;
@@ -74,7 +74,11 @@ int main(int argc, char *argv[])
   // start and initialize the main task
   Task *task = new Task(&a);
   QObject::connect(task, SIGNAL(finished()), &a, SLOT(quit()));
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
+  QTimer::singleShot(0, task, &Task::init);
+#else
   QTimer::singleShot(0, task, SLOT(init()));
+#endif
 
   // test log forwarding (ENABLE_LOG_SINK_SIGNAL)
   //simpleqtlogger::SimpleQtLogger::getInstance()->connectSinkSignalLog(task, SLOT(slotLogForwarding(simpleqtlogger::LogLevel, const QString&)));

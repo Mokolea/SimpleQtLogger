@@ -68,10 +68,17 @@ void Task::init()
                 "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890", 2);
 
   L_NOTE("Start");
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
+  QTimer::singleShot(1000, this, &Task::slotRun);
+  QTimer::singleShot(1000, this, &Task::slotRun);
+  QTimer::singleShot(3000, this, &Task::slotRun);
+  QTimer::singleShot(6000, this, &Task::theEnd);
+#else
   QTimer::singleShot(1000, this, SLOT(slotRun()));
   QTimer::singleShot(1000, this, SLOT(slotRun()));
   QTimer::singleShot(3000, this, SLOT(slotRun()));
   QTimer::singleShot(6000, this, SLOT(theEnd()));
+#endif
 }
 
 void Task::theEnd()

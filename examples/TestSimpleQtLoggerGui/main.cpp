@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 {
   QApplication a(argc, argv);
 
-  Q_ASSERT_X(SQTL_VERSION >= SQTL_VERSION_CHECK(1, 3, 0), "main", "SimpleQtLogger version");
+  Q_ASSERT_X(SQTL_VERSION >= SQTL_VERSION_CHECK(1, 3, 1), "main", "SimpleQtLogger version");
 
   // enable sinks
   simpleqtlogger::ENABLE_LOG_SINK_FILE = true;

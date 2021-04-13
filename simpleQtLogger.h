@@ -124,8 +124,8 @@
 #include <syslog.h>
 #endif
 
-#define SQTL_VERSION_STR   "1.3.0"
-#define SQTL_VERSION       0x010300   // Version is: (major << 16) + (minor << 8) + patch
+#define SQTL_VERSION_STR   "1.3.1"
+#define SQTL_VERSION       0x010301   // Version is: (major << 16) + (minor << 8) + patch
 // SQTL_VERSION_CHECK can be used like: #if (SQTL_VERSION >= SQTL_VERSION_CHECK(1, 3, 0))
 #define SQTL_VERSION_CHECK(major,minor,patch)   ((major<<16)|(minor<<8)|(patch))
 
