@@ -576,7 +576,7 @@ class SimpleQtLogger : public QObject
     QMap<QString, SinkFileLog*> _sinkFileLogMap;
 
     QMutex _mutex;
-    QMap<unsigned long int, unsigned int> _stackDepth; // current stack-depth per thread-id for function-log
+    QMap<unsigned long long, unsigned int> _stackDepth; // current stack-depth per thread-id for function-log
 };
 
 // -------------------------------------------------------------------------------------------------
