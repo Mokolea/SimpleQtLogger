@@ -961,7 +961,7 @@ QString SimpleQtLogger::threadId()
   // qDebug("SimpleQtLogger::threadId");
 
   // thread-id in hexadecimal
-  return QString("%1").arg((unsigned long long)QThread::currentThreadId(), 16, 16, QLatin1Char('0')); // field-with for 64bit
+  return QString("%1").arg((unsigned long long int)QThread::currentThreadId(), 16, 16, QLatin1Char('0')); // field-with for 64bit
 }
 
 void SimpleQtLogger::log(const QString& text, LogLevel logLevel, const QString& functionName, const char* fileName, unsigned int lineNumber)
@@ -989,7 +989,7 @@ void SimpleQtLogger::logFuncBegin(const QString& text, const QString& functionNa
   {
     QMutexLocker locker(&_mutex);
     // adjust stack-trace depth (++ before log)
-    unsigned int& value = _stackDepth[(unsigned long long)QThread::currentThreadId()];
+    unsigned int& value = _stackDepth[(unsigned long long int)QThread::currentThreadId()];
     stackDepthThread = ++value;
   }
 
@@ -1019,7 +1019,7 @@ void SimpleQtLogger::logFuncEnd(const QString& text, const QString& functionName
   {
     QMutexLocker locker(&_mutex);
     // adjust stack-trace depth (-- after log)
-    unsigned int& value = _stackDepth[(unsigned long long)QThread::currentThreadId()];
+    unsigned int& value = _stackDepth[(unsigned long long int)QThread::currentThreadId()];
     stackDepthThread = value--;
   }
 
