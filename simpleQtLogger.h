@@ -85,7 +85,8 @@
    - maybe do all file-operations in worker-thread
 
   Done:
-   - added log sink syslog to send messages to the system logger (Linux only)
+   - add hexdump
+   - add log sink syslog to send messages to the system logger (Linux only)
    - log forwarding by emitting a Qt signal
    - think about environment variable to specify log-file directory, os independent solution
       --> do it outside of SimpleQtLogger by using the QProcessEnvironment class
@@ -548,6 +549,7 @@ class SimpleQtLogger : public QObject
 
     static QString timeStamp();
     static QString threadId();
+    static QString toHexdump(const QByteArray& ba);
 
     // log-functions used by log-macros are thread-safe
     void log(const QString& text, LogLevel logLevel, const QString& functionName, const char* fileName, unsigned int lineNumber);

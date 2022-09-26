@@ -655,7 +655,7 @@ void SinkFileLog::slotCheckLogFileActivity()
 
 SimpleQtLogger* SimpleQtLogger::instance = 0; // TODO use C++11 nullptr
 
-SimpleQtLogger* SimpleQtLogger::createInstance(QObject* parent)
+/*static*/ SimpleQtLogger* SimpleQtLogger::createInstance(QObject* parent)
 {
   if (instance) {
     delete instance;
@@ -664,7 +664,7 @@ SimpleQtLogger* SimpleQtLogger::createInstance(QObject* parent)
   return instance;
 }
 
-SimpleQtLogger* SimpleQtLogger::getInstance()
+/*static*/ SimpleQtLogger* SimpleQtLogger::getInstance()
 {
   return instance;
 }
@@ -947,7 +947,7 @@ bool SimpleQtLogger::connectSinkSignalLog(const QObject* receiver, const char* m
   return QObject::connect(_sinkSignalLog, SIGNAL(signalLogMessage(simpleqtlogger::LogLevel, const QString&)), receiver, method, type);
 }
 
-QString SimpleQtLogger::timeStamp()
+/*static*/ QString SimpleQtLogger::timeStamp()
 {
   // qDebug("SimpleQtLogger::timeStamp");
 
@@ -956,12 +956,51 @@ QString SimpleQtLogger::timeStamp()
   return dateTime.toString("yyyy-MM-dd hh:mm:ss.zzz");
 }
 
-QString SimpleQtLogger::threadId()
+/*static*/ QString SimpleQtLogger::threadId()
 {
   // qDebug("SimpleQtLogger::threadId");
 
   // thread-id in hexadecimal
   return QString("%1").arg((unsigned long long int)QThread::currentThreadId(), 16, 16, QLatin1Char('0')); // field-with for 64bit
+}
+
+/*static*/ QString SimpleQtLogger::toHexdump(const QByteArray& ba)
+{
+  // qDebug("SimpleQtLogger::toHexdump");
+  QString hexdump(QString("Size: %1").arg(ba.size()));
+
+  QString text;
+  int offset = 0;
+  for (int i = 0; i < ba.size(); ++i) {
+    if (i % 16 == 0) {
+      hexdump.append(QString("\n%1 ").arg(i, 8, 16, QLatin1Char('0')));
+      offset = 0;
+    }
+    if (offset == 8) {
+      hexdump.append(" ");
+    }
+    hexdump.append(QString(" %1").arg((unsigned char)ba[i], 2, 16, QLatin1Char('0')));
+    if (ba[i] < 32 || ba[i] > 126) {
+      text.append('.');
+    }
+    else {
+      text.append(ba[i]);
+    }
+    ++offset;
+    if (offset >= 16) {
+      hexdump.append(QString("  %1").arg(text));
+      text.clear();
+    }
+    // handle remaining
+    if (i + 1 >= ba.size() && offset <= 15) {
+      if (offset <= 8) {
+        hexdump.append(" ");
+      }
+      hexdump.append(QString("%1  %2").arg(QString(3 * (16 - offset), ' ')).arg(text));
+    }
+  }
+
+  return hexdump;
 }
 
 void SimpleQtLogger::log(const QString& text, LogLevel logLevel, const QString& functionName, const char* fileName, unsigned int lineNumber)

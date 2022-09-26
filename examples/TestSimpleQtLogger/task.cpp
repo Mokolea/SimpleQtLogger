@@ -67,6 +67,66 @@ void Task::init()
   testLogLevels("1234567890\n1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890\n"
                 "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890", 2);
 
+  L_INFO("Test hexdump 1");
+  QByteArray ba1;
+  L_DEBUG(simpleqtlogger::SimpleQtLogger::toHexdump(ba1)); // size: 0
+  ba1.append("1");
+  L_DEBUG(simpleqtlogger::SimpleQtLogger::toHexdump(ba1)); // size: 1
+  ba1.append("234567");
+  L_DEBUG(simpleqtlogger::SimpleQtLogger::toHexdump(ba1)); // size: 7
+  ba1.append("8");
+  L_DEBUG(simpleqtlogger::SimpleQtLogger::toHexdump(ba1)); // size: 8
+  ba1.append("9");
+  L_DEBUG(simpleqtlogger::SimpleQtLogger::toHexdump(ba1)); // size: 9
+  ba1.append("012345");
+  L_DEBUG(simpleqtlogger::SimpleQtLogger::toHexdump(ba1)); // size: 15
+  ba1.append("6");
+  L_DEBUG(simpleqtlogger::SimpleQtLogger::toHexdump(ba1)); // size: 16
+  ba1.append("7");
+  L_DEBUG(simpleqtlogger::SimpleQtLogger::toHexdump(ba1)); // size: 17
+  ba1.append("890123");
+  L_DEBUG(simpleqtlogger::SimpleQtLogger::toHexdump(ba1)); // size: 23
+  ba1.append("4");
+  L_DEBUG(simpleqtlogger::SimpleQtLogger::toHexdump(ba1)); // size: 24
+  ba1.append("5");
+  L_DEBUG(simpleqtlogger::SimpleQtLogger::toHexdump(ba1)); // size: 25
+  ba1.append("678901");
+  L_DEBUG(simpleqtlogger::SimpleQtLogger::toHexdump(ba1)); // size: 31
+  ba1.append("2");
+  L_DEBUG(simpleqtlogger::SimpleQtLogger::toHexdump(ba1)); // size: 32
+  ba1.append("3");
+  L_DEBUG(simpleqtlogger::SimpleQtLogger::toHexdump(ba1)); // size: 33
+
+  L_INFO("Test hexdump 2");
+  QByteArray ba2("12345678");
+  L_DEBUG(simpleqtlogger::SimpleQtLogger::toHexdump(ba2)); // size: 8
+  ba2.append("901234567890");
+  L_DEBUG(simpleqtlogger::SimpleQtLogger::toHexdump(ba2)); // size: 20
+  ba2.append('\0');
+  ba2.append('\1');
+  ba2.append(30);
+  ba2.append(31);
+  ba2.append(" abc ABC!");
+  L_DEBUG(simpleqtlogger::SimpleQtLogger::toHexdump(ba2)); // size: 33
+  ba2.append(" Hello");
+  L_DEBUG(simpleqtlogger::SimpleQtLogger::toHexdump(ba2)); // size: 39
+  ba2.append(" xyz XYZ!");
+  L_DEBUG(simpleqtlogger::SimpleQtLogger::toHexdump(ba2)); // size: 48
+
+  L_INFO("Test hexdump 3");
+  QByteArray ba3;
+  for (unsigned char i = 32; i <= 126; ++i) {
+    ba3.append(i);
+  }
+  L_DEBUG(simpleqtlogger::SimpleQtLogger::toHexdump(ba3)); // size: 95
+
+  L_INFO("Test hexdump 4");
+  QByteArray ba4;
+  for (unsigned short i = 0; i < 256; ++i) {
+    ba4.append(i);
+  }
+  L_DEBUG(simpleqtlogger::SimpleQtLogger::toHexdump(ba4)); // size: 256
+
   L_NOTE("Start");
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
   QTimer::singleShot(1000, this, &Task::slotRun);
