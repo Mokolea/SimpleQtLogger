@@ -978,6 +978,7 @@ bool SimpleQtLogger::connectSinkSignalLog(const QObject* receiver, const char* m
     }
     if (offset == 8) {
       hexdump.append(" ");
+      text.append(" ");
     }
     hexdump.append(QString(" %1").arg((unsigned char)ba[i], 2, 16, QLatin1Char('0')));
     if (ba[i] < 32 || ba[i] > 126) {
