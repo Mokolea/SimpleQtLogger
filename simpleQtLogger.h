@@ -96,6 +96,7 @@
    - continuous integration using Travis CI: created a .travis.yml
 
   Tested using:
+   - Qt 6.4.2 Debian 12 rc3 (GCC 12.2.0, x86_64)
    - Qt 5.12.8 Ubuntu 20.04.1 LTS (Focal Fossa)
    - Qt 5.6.0 (Community Open Source), Clang 7.3 (Apple) 64 bit
    - Qt 5.4.2 (Community Open Source), Clang 6.0 (Apple) 64 bit
@@ -104,7 +105,7 @@
    - Qt 5.5.0, Visual Studio 2013, 32 bit
 
   GNU Lesser General Public License v2.1
-  Copyright (C) 2020 Mario Ban
+  Copyright (C) 2023 Mario Ban
 */
 
 #ifndef _SIMPLE_QT_LOGGER_H
@@ -125,8 +126,8 @@
 #include <syslog.h>
 #endif
 
-#define SQTL_VERSION_STR   "1.3.1"
-#define SQTL_VERSION       0x010301   // Version is: (major << 16) + (minor << 8) + patch
+#define SQTL_VERSION_STR   "1.3.2"
+#define SQTL_VERSION       0x010302   // Version is: (major << 16) + (minor << 8) + patch
 // SQTL_VERSION_CHECK can be used like: #if (SQTL_VERSION >= SQTL_VERSION_CHECK(1, 3, 0))
 #define SQTL_VERSION_CHECK(major,minor,patch)   ((major<<16)|(minor<<8)|(patch))
 

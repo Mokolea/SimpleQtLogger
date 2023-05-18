@@ -5,7 +5,7 @@
   https://github.com/Mokolea/SimpleQtLogger
 
   GNU Lesser General Public License v2.1
-  Copyright (C) 2020 Mario Ban
+  Copyright (C) 2023 Mario Ban
 */
 
 #include "simpleQtLogger.h"
@@ -493,7 +493,11 @@ void SinkFileLog::slotLog(const QString& ts, const QString& tid, const QString& 
   // stream (append) to log file
   if (_logFile && _logFile->isOpen()) {
     QTextStream out(_logFile);
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    out.setEncoding(QStringConverter::Utf8); // default
+#else
     out.setCodec("UTF-8");
+#endif
     if (logLevel == LogLevel_INTERNAL) {
       out << getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4 * 2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()) << '\n';
     }
