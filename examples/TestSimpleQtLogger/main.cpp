@@ -9,7 +9,7 @@
    - Qt 4.8.6 Debian 8, gcc version 4.9.2 (Debian 4.9.2-10), 64 bit
 
   GNU Lesser General Public License v2.1
-  Copyright (C) 2015 Mario Ban
+  Copyright (C) 2023 Mario Ban
 */
 
 #include <QCoreApplication>
@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 {
   QCoreApplication a(argc, argv);
 
-  Q_ASSERT_X(SQTL_VERSION >= SQTL_VERSION_CHECK(1, 3, 1), "main", "SimpleQtLogger version");
+  Q_ASSERT_X(SQTL_VERSION >= SQTL_VERSION_CHECK(1, 3, 2), "main", "SimpleQtLogger version");
 
   // enable sinks
   simpleqtlogger::ENABLE_LOG_SINK_FILE = true;
