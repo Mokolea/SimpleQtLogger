@@ -315,7 +315,8 @@ extern bool ENABLE_CONSOLE_LOG_FILE_STATE; // Console output log-file state: tru
 // Macro body
 #define SQTL_L_BODY(text,levelEnabledHard,levelEnabledSoft,level) \
   SQTL_MSVC_WARNING_SUPPRESS \
-  do { if(levelEnabledHard && levelEnabledSoft) simpleqtlogger::SimpleQtLogger::getInstance()->log(text, level, __FUNCTION__, __FILE__, __LINE__); } while(0) \
+  do { if(levelEnabledHard && levelEnabledSoft) { simpleqtlogger::SimpleQtLogger* _sqtl_logger_ = simpleqtlogger::SimpleQtLogger::getInstance(); \
+      if(_sqtl_logger_) _sqtl_logger_->log(text, level, __FUNCTION__, __FILE__, __LINE__); } } while(0) \
     SQTL_MSVC_WARNING_RESTORE
 
 // Use these macros (thread-safe) to have function-, filename and linenumber set correct
@@ -334,8 +335,9 @@ extern bool ENABLE_CONSOLE_LOG_FILE_STATE; // Console output log-file state: tru
 // Macro body
 #define SQTL_LS_BODY(text,levelEnabledHard,levelEnabledSoft,level) \
   SQTL_MSVC_WARNING_SUPPRESS \
-  do { if(levelEnabledHard && levelEnabledSoft) { QString s; QTextStream ts(&s); ts << text; \
-      simpleqtlogger::SimpleQtLogger::getInstance()->log(s, level, __FUNCTION__, __FILE__, __LINE__); } } while(0) \
+  do { if(levelEnabledHard && levelEnabledSoft) { simpleqtlogger::SimpleQtLogger* _sqtl_logger_ = simpleqtlogger::SimpleQtLogger::getInstance(); \
+      if(_sqtl_logger_) { QString _sqtl_s_; QTextStream _sqtl_ts_(&_sqtl_s_); _sqtl_ts_ << text; \
+        _sqtl_logger_->log(_sqtl_s_, level, __FUNCTION__, __FILE__, __LINE__); } } } while(0) \
     SQTL_MSVC_WARNING_RESTORE
 
 // Support use of streaming operators
@@ -346,7 +348,7 @@ extern bool ENABLE_CONSOLE_LOG_FILE_STATE; // Console output log-file state: tru
 #define LS_INFO(text)    SQTL_LS_BODY(text,ENABLE_SQTL_LOG_LEVEL_INFO,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_INFO,simpleqtlogger::LogLevel_INFO)
 #define LS_DEBUG(text)   SQTL_LS_BODY(text,ENABLE_SQTL_LOG_LEVEL_DEBUG,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_DEBUG,simpleqtlogger::LogLevel_DEBUG)
 #if ENABLE_SQTL_LOG_LEVEL_FUNCTION > 0
-#define LS_FUNC(text)    QString _s_; { QTextStream ts(&_s_); ts << text; } simpleqtlogger::SimpleQtLoggerFunc _simpleQtLoggerFunc_(_s_, __FUNCTION__, __FILE__, __LINE__)
+#define LS_FUNC(text)    QString _sqtl_func_s_; { QTextStream _sqtl_func_ts_(&_sqtl_func_s_); _sqtl_func_ts_ << text; } simpleqtlogger::SimpleQtLoggerFunc _simpleQtLoggerFunc_(_sqtl_func_s_, __FUNCTION__, __FILE__, __LINE__)
 #else
 #define LS_FUNC(text)    /* nop */
 #endif
@@ -498,6 +500,8 @@ class SinkSyslogLog : public Sink
     // implicitly implemented, not to be used
     SinkSyslogLog(const SinkSyslogLog&);
     SinkSyslogLog& operator=(const SinkSyslogLog&);
+
+    QByteArray _ident; // openlog() keeps the pointer, so the string has to outlive the syslog connection
 };
 
 // -------------------------------------------------------------------------------------------------

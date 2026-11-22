@@ -350,7 +350,8 @@ SinkSyslogLog::SinkSyslogLog(QObject* parent)
 {
   // qDebug("SinkSyslogLog::SinkSyslogLog");
 #ifdef Q_OS_LINUX
-  openlog(NAME_LOG_SINK_SYSLOG.isEmpty() ? NULL : NAME_LOG_SINK_SYSLOG.toStdString().c_str(), LOG_PID, FACILITY_LOG_SINK_SYSLOG);
+  _ident = NAME_LOG_SINK_SYSLOG.toUtf8();
+  openlog(_ident.isEmpty() ? NULL : _ident.constData(), LOG_PID, FACILITY_LOG_SINK_SYSLOG);
 #endif
 }
 
@@ -550,6 +551,12 @@ bool SinkFileLog::checkLogFileOpen()
   return true;
 }
 
+// Insert the rolling number in front of the ".log" ending only (not elsewhere in the path)
+static QString rolledLogFileName(const QString& logFileName, unsigned int number)
+{
+  return logFileName.left(logFileName.size() - 4) + QString("_%1.log").arg(number, 2, 10, QLatin1Char('0'));
+}
+
 void SinkFileLog::checkLogFileRolling()
 {
   // qDebug("SinkFileLog::checkLogFileRolling");
@@ -582,8 +589,7 @@ void SinkFileLog::checkLogFileRolling()
   // handle file rolling
 
   // delete last file
-  QString logFileName = _logFileName;
-  logFileName.replace(".log", QString("_%1.log").arg(_logFileMaxNumber, 2, 10, QLatin1Char('0')));
+  QString logFileName = rolledLogFileName(_logFileName, _logFileMaxNumber);
   if (QFile::exists(logFileName)) {
     if (QFile::remove(logFileName)) {
       if (ENABLE_CONSOLE_LOG_FILE_STATE) {
@@ -597,10 +603,8 @@ void SinkFileLog::checkLogFileRolling()
 
   // rolling files
   for (int i = _logFileMaxNumber - 1; i > 0; --i) {
-    QString logFileNameFrom = _logFileName;
-    logFileNameFrom.replace(".log", QString("_%1.log").arg(i, 2, 10, QLatin1Char('0')));
-    QString logFileNameTo = _logFileName;
-    logFileNameTo.replace(".log", QString("_%1.log").arg(i + 1, 2, 10, QLatin1Char('0')));
+    QString logFileNameFrom = rolledLogFileName(_logFileName, i);
+    QString logFileNameTo = rolledLogFileName(_logFileName, i + 1);
     if (QFile::exists(logFileNameFrom)) {
       if (QFile::rename(logFileNameFrom, logFileNameTo)) {
         if (ENABLE_CONSOLE_LOG_FILE_STATE) {
@@ -616,8 +620,7 @@ void SinkFileLog::checkLogFileRolling()
   _logFile->close();
 
   // move first file
-  QString logFileNameTo = _logFileName;
-  logFileNameTo.replace(".log", QString("_%1.log").arg(1, 2, 10, QLatin1Char('0')));
+  QString logFileNameTo = rolledLogFileName(_logFileName, 1);
   if (QFile::exists(_logFileName)) {
     if (QFile::rename(_logFileName, logFileNameTo)) {
       if (ENABLE_CONSOLE_LOG_FILE_STATE) {
@@ -720,6 +723,9 @@ SimpleQtLogger::SimpleQtLogger(QObject* parent)
 SimpleQtLogger::~SimpleQtLogger()
 {
   // qDebug("SimpleQtLogger::~SimpleQtLogger");
+  if (instance == this) {
+    instance = 0; // TODO use C++11 nullptr
+  }
 }
 
 void SimpleQtLogger::addSinkFileLog(const QString& role)
@@ -1090,16 +1096,18 @@ SimpleQtLoggerFunc::SimpleQtLoggerFunc(const QString& text, const QString& funct
   , _lineNumber(lineNumber)
 {
   // qDebug("SimpleQtLoggerFunc::SimpleQtLoggerFunc");
-  if (ENABLE_SQTL_LOG_LEVEL_FUNCTION && ENABLE_LOG_LEVELS.logLevel_FUNCTION) {
-    SimpleQtLogger::getInstance()->logFuncBegin(_text, _functionName, _fileName, _lineNumber);
+  SimpleQtLogger* logger = SimpleQtLogger::getInstance();
+  if (ENABLE_SQTL_LOG_LEVEL_FUNCTION && ENABLE_LOG_LEVELS.logLevel_FUNCTION && logger) {
+    logger->logFuncBegin(_text, _functionName, _fileName, _lineNumber);
   }
 }
 
 SimpleQtLoggerFunc::~SimpleQtLoggerFunc()
 {
   // qDebug("SimpleQtLoggerFunc::~SimpleQtLoggerFunc");
-  if (ENABLE_SQTL_LOG_LEVEL_FUNCTION && ENABLE_LOG_LEVELS.logLevel_FUNCTION) {
-    SimpleQtLogger::getInstance()->logFuncEnd(_text, _functionName, _fileName, _lineNumber);
+  SimpleQtLogger* logger = SimpleQtLogger::getInstance();
+  if (ENABLE_SQTL_LOG_LEVEL_FUNCTION && ENABLE_LOG_LEVELS.logLevel_FUNCTION && logger) {
+    logger->logFuncEnd(_text, _functionName, _fileName, _lineNumber);
   }
 }
 #endif
