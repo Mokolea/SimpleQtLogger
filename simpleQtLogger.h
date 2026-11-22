@@ -72,6 +72,16 @@
    - <FILE> --> File-name
    - <LINE> --> Line-number
 
+  Log-levels in the syslog sink (Linux: syslog priority, macOS 10.12+: os_log type):
+   - FATAL    --> LOG_CRIT (2),    Fault
+   - ERROR    --> LOG_ERR (3),     Error
+   - WARNING  --> LOG_WARNING (4), Default
+   - NOTE     --> LOG_NOTICE (5),  Default
+   - INFO     --> LOG_INFO (6),    Info
+   - DEBUG    --> LOG_DEBUG (7),   Debug (macOS: not stored, only shown live)
+   - FUNCTION --> LOG_INFO (6),    Info
+   - INTERNAL --> LOG_INFO (6),    Info
+
   TODO:
    - enhance log-format (TAG <TEXT>) by adding a flexible layout configurable with pattern string
    - trimming (removing of whitespace) selectable, at least for at the start of log-message

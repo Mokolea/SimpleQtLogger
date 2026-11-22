@@ -26,6 +26,24 @@ Simple rolling file logger for C++ applications using the [Qt Framework](https:/
 ## Usage
 Just see the comments in [simpleQtLogger.h](simpleQtLogger.h) and the [examples](examples).
 
+## Log-levels in the syslog sink
+The syslog sink writes to the system log: on Linux through `syslog()` (journald), on macOS 10.12+ through `os_log` (unified log, shown in Console.app and by `log`). The log-levels map as follows:
+
+| Log-level | Macro | \<LL\> | Linux: syslog priority | macOS: os_log type |
+| :--- | :--- | :---: | :--- | :--- |
+| FATAL | `L_FATAL` | ! | `LOG_CRIT` (2) | Fault |
+| ERROR | `L_ERROR` | E | `LOG_ERR` (3) | Error |
+| WARNING | `L_WARN` | W | `LOG_WARNING` (4) | Default |
+| NOTE | `L_NOTE` | N | `LOG_NOTICE` (5) | Default |
+| INFO | `L_INFO` | I | `LOG_INFO` (6) | Info |
+| DEBUG | `L_DEBUG` | D | `LOG_DEBUG` (7) | Debug |
+| FUNCTION | `L_FUNC` | F | `LOG_INFO` (6) | Info |
+| INTERNAL | - | - | `LOG_INFO` (6) | Info |
+
+- Linux: show the messages with e.g. `journalctl -t <program-name>`, filter by priority with `-p`, e.g. `-p err` for FATAL and ERROR.
+- macOS: Console.app shows Info and Debug messages only with "Include Info Messages" / "Include Debug Messages" turned on. Debug messages are not stored, so they only show live, e.g. with `log stream --level debug --predicate 'process == "<program-name>"'`.
+- macOS before 10.12 uses `syslog()` with the Linux priorities.
+
 ## Log-format
 The following TAGs are available and expand to:
 
