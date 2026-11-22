@@ -432,6 +432,7 @@ SinkFileLog::SinkFileLog(QObject* parent, const QString& role)
   , _logFileActivity(false)
   , _startMessage(false)
   , _activityCheckTimer(new QTimer(this))
+  , _openFailed(false)
 {
   // qDebug("SinkFileLog::SinkFileLog");
 
@@ -484,6 +485,7 @@ bool SinkFileLog::setLogFileName(const QString& logFileName, unsigned int logFil
     _logFileMaxNumber = 99;
   }
 
+  _openFailed = false; // a new log-file name gets its own open-failure warning
   return checkLogFileOpen();
 }
 
@@ -541,10 +543,14 @@ bool SinkFileLog::checkLogFileOpen()
   if (!_logFile->open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
     delete _logFile;
     _logFile = 0; // TODO use C++11 nullptr
-    qWarning() << "Open log-file failed!" << _logFileName << "role" << _role;
+    if (!_openFailed) {
+      _openFailed = true;
+      qWarning() << "Open log-file failed! Retrying every" << CHECK_LOG_FILE_ACTIVITY_INTERVAL << "ms" << _logFileName << "role" << _role;
+    }
   }
 
   if (!_logFile) {
+    _activityCheckTimer->start(); // retry
     return false;
   }
 
@@ -557,6 +563,11 @@ bool SinkFileLog::checkLogFileOpen()
   if (!_startMessage) {
     _startMessage = true;
     slotLog(SimpleQtLogger::timeStamp(), SimpleQtLogger::threadId(), QString("Start file-log '%1'").arg(_role), LogLevel_INTERNAL, "", "", 0);
+  }
+
+  if (_openFailed) {
+    _openFailed = false;
+    slotLog(SimpleQtLogger::timeStamp(), SimpleQtLogger::threadId(), QString("Log-file '%1' re-opened after open failure (messages in between are lost)").arg(_role), LogLevel_INTERNAL, "", "", 0);
   }
 
   return true;
@@ -649,6 +660,9 @@ void SinkFileLog::slotCheckLogFileActivity()
   // qDebug("SinkFileLog::slotCheckLogFileActivity");
 
   if (!_logFile) {
+    if (!_logFileName.isEmpty()) {
+      checkLogFileOpen(); // retry; re-arms the timer in both outcomes
+    }
     return;
   }
 

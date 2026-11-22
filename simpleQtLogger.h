@@ -83,9 +83,9 @@
    - maybe flush periodically on idle-time
    - maybe do file rolling (check file size periodically) on idle-time
    - maybe do all file-operations in worker-thread
-   - if re-opening the log-file fails during rolling, file-logging stops for good (activity check is not re-armed); retry instead
 
   Done:
+   - retry opening the log-file (every activity check) if it failed, e.g. during rolling
    - keep a single activity-check timer per file-log (setLogFileName() can be called again)
    - open the syslog connection only when the syslog sink is used
    - add hexdump
@@ -428,6 +428,7 @@ class SinkFileLog : public Sink
     bool _logFileActivity; // track log-file write (append) activity
     bool _startMessage;
     QTimer* _activityCheckTimer; // single-shot, re-armed after each check; one per sink
+    bool _openFailed; // last open failed; retried on each activity check, warned once
 };
 
 // -------------------------------------------------------------------------------------------------
