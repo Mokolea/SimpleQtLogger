@@ -97,6 +97,7 @@
 
   Tested using:
    - Qt 6.4.2 Debian 12 rc3 (GCC 12.2.0, x86_64)
+   - Qt 5.15.3 Ubuntu 22.04.5 LTS (GCC 11.4.0, x86_64)
    - Qt 5.12.8 Ubuntu 20.04.1 LTS (Focal Fossa)
    - Qt 5.6.0 (Community Open Source), Clang 7.3 (Apple) 64 bit
    - Qt 5.4.2 (Community Open Source), Clang 6.0 (Apple) 64 bit
