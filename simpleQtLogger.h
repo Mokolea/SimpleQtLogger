@@ -15,7 +15,7 @@
       - console, colored (ANSI escape codes)
       - qDebug
       - signal (forwarding)
-      - syslog (Linux only)
+      - syslog (Linux; macOS via os_log)
    - log-levels, function-log (stack-trace)
    - log-filters using regular expressions (needs Qt 5.0)
    - thread-safe use of log-macros
@@ -85,6 +85,7 @@
    - maybe do all file-operations in worker-thread
 
   Done:
+   - syslog sink also on macOS (os_log: FATAL --> Fault, ERROR --> Error in Console.app)
    - retry opening the log-file (every activity check) if it failed, e.g. during rolling
    - keep a single activity-check timer per file-log (setLogFileName() can be called again)
    - open the syslog connection only when the syslog sink is used
@@ -128,8 +129,18 @@
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
 #include <QRegularExpression>
 #endif
-#ifdef Q_OS_LINUX
-#include <syslog.h>
+// Sink syslog is available on Linux (journald) and Darwin/macOS (unified log, Console.app)
+#if defined(Q_OS_LINUX) || defined(Q_OS_DARWIN)
+#  define SQTL_SYSLOG_AVAILABLE
+#  include <syslog.h>
+#endif
+// On macOS 10.12+ the syslog sink uses os_log, so FATAL/ERROR get the unified log types Fault/Error (Console.app)
+#ifdef Q_OS_DARWIN
+#  include <AvailabilityMacros.h>
+#  if defined(MAC_OS_X_VERSION_MIN_REQUIRED) && (MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
+#    define SQTL_SYSLOG_USE_OSLOG
+#    include <os/log.h>
+#  endif
 #endif
 
 #define SQTL_VERSION_STR   "1.3.3"
@@ -151,7 +162,7 @@
 #  define ENABLE_SQTL_LOG_SINK_SIGNAL    1   // 1: enable, 0: disable; log forwarding by emitting a Qt signal
 #endif
 #ifndef ENABLE_SQTL_LOG_SINK_SYSLOG
-#ifdef Q_OS_LINUX
+#ifdef SQTL_SYSLOG_AVAILABLE
 #  define ENABLE_SQTL_LOG_SINK_SYSLOG    1   // 1: enable, 0: disable; log to the system logger
 #else
 #  define ENABLE_SQTL_LOG_SINK_SYSLOG    0
@@ -275,9 +286,9 @@ extern bool ENABLE_LOG_SINK_QDEBUG;  // Log-sink: true: enable, false: disable, 
 extern bool ENABLE_LOG_SINK_SIGNAL;  // Log-sink: true: enable, false: disable, default: false
 extern bool ENABLE_LOG_SINK_SYSLOG;  // Log-sink: true: enable, false: disable, default: false
 
-#ifdef Q_OS_LINUX
-extern QString NAME_LOG_SINK_SYSLOG; // String is prepended to every message. If empty, the program name is used.
-extern int FACILITY_LOG_SINK_SYSLOG; // Used to specify what type of program is logging the message.
+#ifdef SQTL_SYSLOG_AVAILABLE
+extern QString NAME_LOG_SINK_SYSLOG; // String is prepended to every message. If empty, the program name is used. macOS (os_log): used as subsystem, if empty the default log is used.
+extern int FACILITY_LOG_SINK_SYSLOG; // Used to specify what type of program is logging the message. macOS (os_log): ignored.
 #endif
 
 // Log-level (adjust at run-time)
@@ -509,8 +520,11 @@ class SinkSyslogLog : public Sink
     SinkSyslogLog(const SinkSyslogLog&);
     SinkSyslogLog& operator=(const SinkSyslogLog&);
 
-    bool _opened; // openlog() called (lazily, on first message sent to syslog)
+    bool _opened; // openlog() / os_log_create() called (lazily, on first message sent to syslog)
     QByteArray _ident; // openlog() keeps the pointer, so the string has to outlive the syslog connection
+#ifdef SQTL_SYSLOG_USE_OSLOG
+    os_log_t _osLog; // os_log handle, valid if _opened (lives as long as the process)
+#endif
 };
 
 // -------------------------------------------------------------------------------------------------
@@ -586,7 +600,7 @@ class SimpleQtLogger : public QObject
     SinkConsoleLog* _sinkConsoleLog;
     SinkQDebugLog* _sinkQDebugLog;
     SinkSignalLog* _sinkSignalLog;
-#ifdef Q_OS_LINUX
+#ifdef SQTL_SYSLOG_AVAILABLE
     SinkSyslogLog* _sinkSyslogLog;
 #endif
     QMap<QString, SinkFileLog*> _sinkFileLogMap;

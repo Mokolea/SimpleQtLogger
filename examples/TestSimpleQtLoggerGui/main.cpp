@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
   simpleqtlogger::ENABLE_LOG_SINK_CONSOLE = true;
   simpleqtlogger::ENABLE_LOG_SINK_QDEBUG = false;
   simpleqtlogger::ENABLE_LOG_SINK_SIGNAL = false;
-#ifdef Q_OS_LINUX
+#ifdef SQTL_SYSLOG_AVAILABLE
   simpleqtlogger::ENABLE_LOG_SINK_SYSLOG = true;
   simpleqtlogger::NAME_LOG_SINK_SYSLOG = "";
   simpleqtlogger::FACILITY_LOG_SINK_SYSLOG = LOG_USER;

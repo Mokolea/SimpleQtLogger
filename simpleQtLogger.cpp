@@ -28,7 +28,7 @@ bool ENABLE_LOG_SINK_QDEBUG = false;
 bool ENABLE_LOG_SINK_SIGNAL = false;
 bool ENABLE_LOG_SINK_SYSLOG = false;
 
-#ifdef Q_OS_LINUX
+#ifdef SQTL_SYSLOG_AVAILABLE
 QString NAME_LOG_SINK_SYSLOG = "";
 int FACILITY_LOG_SINK_SYSLOG = LOG_USER;
 #endif
@@ -347,26 +347,30 @@ void SinkSignalLog::slotLog(const QString& ts, const QString& tid, const QString
 SinkSyslogLog::SinkSyslogLog(QObject* parent)
   : Sink(parent)
   , _opened(false)
+#ifdef SQTL_SYSLOG_USE_OSLOG
+  , _osLog(0) // TODO use C++11 nullptr
+#endif
 {
   // qDebug("SinkSyslogLog::SinkSyslogLog");
-  // openlog() is called lazily in slotLog, so an application's own syslog setup is not touched while this sink is unused
+  // openlog() / os_log_create() is called lazily in slotLog, so an application's own syslog setup is not touched while this sink is unused
 }
 
 SinkSyslogLog::~SinkSyslogLog()
 {
   // qDebug("SinkSyslogLog::~SinkSyslogLog");
-#ifdef Q_OS_LINUX
+#if defined(SQTL_SYSLOG_AVAILABLE) && !defined(SQTL_SYSLOG_USE_OSLOG)
   if (_opened) {
     closelog(); // optional
   }
 #endif
+  // os_log: the handle is not released, it lives as long as the process
 }
 
 void SinkSyslogLog::slotLog(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber)
 {
   // qDebug("SinkSyslogLog::slotLog");
 
-#ifdef Q_OS_LINUX
+#ifdef SQTL_SYSLOG_AVAILABLE
   if (!ENABLE_LOG_SINK_SYSLOG) {
     return;
   }
@@ -379,7 +383,11 @@ void SinkSyslogLog::slotLog(const QString& ts, const QString& tid, const QString
 
   if (!_opened) {
     _ident = NAME_LOG_SINK_SYSLOG.toUtf8(); // openlog() keeps the pointer
+#ifdef SQTL_SYSLOG_USE_OSLOG
+    _osLog = _ident.isEmpty() ? OS_LOG_DEFAULT : os_log_create(_ident.constData(), "SimpleQtLogger"); // name is the subsystem
+#else
     openlog(_ident.isEmpty() ? NULL : _ident.constData(), LOG_PID, FACILITY_LOG_SINK_SYSLOG);
+#endif
     _opened = true;
   }
 
@@ -388,28 +396,49 @@ void SinkSyslogLog::slotLog(const QString& ts, const QString& tid, const QString
     textIsEmpty = "-";
   }
 
+  QString message;
   if (logLevel == LogLevel_INTERNAL) {
-    syslog(LOG_INFO, "%s", getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4 * 2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()).toStdString().c_str());
+    message = getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4 * 2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
   }
   else {
-    int level = LOG_INFO;
-    if (logLevel == LogLevel_DEBUG) {
-      level = LOG_DEBUG;
-    }
-    else if (logLevel == LogLevel_NOTE) {
-      level = LOG_NOTICE;
-    }
-    else if (logLevel == LogLevel_WARNING) {
-      level = LOG_WARNING;
-    }
-    else if (logLevel == LogLevel_ERROR) {
-      level = LOG_ERR;
-    }
-    else if (logLevel == LogLevel_FATAL) {
-      level = LOG_CRIT;
-    }
-    syslog(level, "%s", getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4 * 2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()).toStdString().c_str());
+    message = getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4 * 2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
   }
+
+#ifdef SQTL_SYSLOG_USE_OSLOG
+  // unified log types: Fault and Error are shown as such in Console.app
+  os_log_type_t type = OS_LOG_TYPE_INFO; // INFO, FUNCTION, INTERNAL
+  if (logLevel == LogLevel_DEBUG) {
+    type = OS_LOG_TYPE_DEBUG;
+  }
+  else if (logLevel == LogLevel_NOTE || logLevel == LogLevel_WARNING) {
+    type = OS_LOG_TYPE_DEFAULT;
+  }
+  else if (logLevel == LogLevel_ERROR) {
+    type = OS_LOG_TYPE_ERROR;
+  }
+  else if (logLevel == LogLevel_FATAL) {
+    type = OS_LOG_TYPE_FAULT;
+  }
+  os_log_with_type(_osLog, type, "%{public}s", message.toStdString().c_str()); // public: not redacted as <private>
+#else
+  int level = LOG_INFO; // INFO, FUNCTION, INTERNAL
+  if (logLevel == LogLevel_DEBUG) {
+    level = LOG_DEBUG;
+  }
+  else if (logLevel == LogLevel_NOTE) {
+    level = LOG_NOTICE;
+  }
+  else if (logLevel == LogLevel_WARNING) {
+    level = LOG_WARNING;
+  }
+  else if (logLevel == LogLevel_ERROR) {
+    level = LOG_ERR;
+  }
+  else if (logLevel == LogLevel_FATAL) {
+    level = LOG_CRIT;
+  }
+  syslog(level, "%s", message.toStdString().c_str());
+#endif
 #else
   Q_UNUSED(ts);
   Q_UNUSED(tid);
@@ -704,12 +733,12 @@ SimpleQtLogger::SimpleQtLogger(QObject* parent)
   _sinkConsoleLog = new SinkConsoleLog(this);
   _sinkQDebugLog = new SinkQDebugLog(this);
   _sinkSignalLog = new SinkSignalLog(this);
-#ifdef Q_OS_LINUX
+#ifdef SQTL_SYSLOG_AVAILABLE
   _sinkSyslogLog = new SinkSyslogLog(this);
 #endif
 
   _sinkConsoleLog->setLogFormat(DEFAULT_LOG_FORMAT_CONSOLE, DEFAULT_LOG_FORMAT_INTERNAL);
-#ifdef Q_OS_LINUX
+#ifdef SQTL_SYSLOG_AVAILABLE
   _sinkSyslogLog->setLogFormat(DEFAULT_LOG_FORMAT_SYSLOG, DEFAULT_LOG_FORMAT_SYSLOG);
 #endif
 
@@ -729,7 +758,7 @@ SimpleQtLogger::SimpleQtLogger(QObject* parent)
                    _sinkSignalLog, SLOT(slotLog(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)));
 #endif
 #if ENABLE_SQTL_LOG_SINK_SYSLOG > 0
-#ifdef Q_OS_LINUX
+#ifdef SQTL_SYSLOG_AVAILABLE
   QObject::connect(this, SIGNAL(signalLog(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)),
                    _sinkSyslogLog, SLOT(slotLog(const QString&, const QString&, const QString&, LogLevel, const QString&, const QString&, unsigned int)));
 #endif
@@ -797,7 +826,7 @@ void SimpleQtLogger::setLogFormat_signal(const QString& logFormat, const QString
 void SimpleQtLogger::setLogFormat_syslog(const QString& logFormat, const QString& logFormatInt)
 {
   // qDebug("SimpleQtLogger::setLogFormat_syslog");
-#ifdef Q_OS_LINUX
+#ifdef SQTL_SYSLOG_AVAILABLE
   _sinkSyslogLog->setLogFormat(logFormat, logFormatInt);
 #else
   Q_UNUSED(logFormat);
@@ -840,7 +869,7 @@ void SimpleQtLogger::setLogLevels_signal(const EnableLogLevels& enableLogLevels)
 void SimpleQtLogger::setLogLevels_syslog(const EnableLogLevels& enableLogLevels)
 {
   // qDebug("SimpleQtLogger::setLogLevels_syslog");
-#ifdef Q_OS_LINUX
+#ifdef SQTL_SYSLOG_AVAILABLE
   _sinkSyslogLog->setLogLevels(enableLogLevels);
 #else
   Q_UNUSED(enableLogLevels);
@@ -885,7 +914,7 @@ EnableLogLevels SimpleQtLogger::getLogLevels_signal() const
 EnableLogLevels SimpleQtLogger::getLogLevels_syslog() const
 {
   // qDebug("SimpleQtLogger::getLogLevels_syslog");
-#ifdef Q_OS_LINUX
+#ifdef SQTL_SYSLOG_AVAILABLE
   return _sinkSyslogLog->getLogLevels();
 #else
   return ENABLE_LOG_LEVELS;
@@ -941,7 +970,7 @@ bool SimpleQtLogger::addLogFilter_signal(const QRegularExpression& re)
 bool SimpleQtLogger::addLogFilter_syslog(const QRegularExpression& re)
 {
   // qDebug("SimpleQtLogger::addLogFilter_syslog");
-#ifdef Q_OS_LINUX
+#ifdef SQTL_SYSLOG_AVAILABLE
   if (!re.isValid()) {
     return false;
   }
