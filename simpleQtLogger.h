@@ -84,9 +84,9 @@
    - maybe do file rolling (check file size periodically) on idle-time
    - maybe do all file-operations in worker-thread
    - if re-opening the log-file fails during rolling, file-logging stops for good (activity check is not re-armed); retry instead
-   - calling setLogFileName() again starts an additional activity-check timer chain; keep just one
 
   Done:
+   - keep a single activity-check timer per file-log (setLogFileName() can be called again)
    - open the syslog connection only when the syslog sink is used
    - add hexdump
    - add log sink syslog to send messages to the system logger (Linux only)
@@ -124,6 +124,7 @@
 #include <QMutex>
 #include <QMutexLocker>
 #include <QMap>
+#include <QTimer>
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
 #include <QRegularExpression>
 #endif
@@ -426,6 +427,7 @@ class SinkFileLog : public Sink
     QFile* _logFile;
     bool _logFileActivity; // track log-file write (append) activity
     bool _startMessage;
+    QTimer* _activityCheckTimer; // single-shot, re-armed after each check; one per sink
 };
 
 // -------------------------------------------------------------------------------------------------

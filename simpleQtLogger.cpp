@@ -11,7 +11,6 @@
 #include "simpleQtLogger.h"
 
 #include <QCoreApplication>
-#include <QTimer>
 #include <QDateTime>
 #include <QFileInfo>
 #include <QtDebug>
@@ -432,8 +431,18 @@ SinkFileLog::SinkFileLog(QObject* parent, const QString& role)
   , _logFile(0) // TODO use C++11 nullptr
   , _logFileActivity(false)
   , _startMessage(false)
+  , _activityCheckTimer(new QTimer(this))
 {
   // qDebug("SinkFileLog::SinkFileLog");
+
+  // one single-shot timer per sink, re-armed after each check; start() restarts it, so there is never more than one pending check
+  _activityCheckTimer->setSingleShot(true);
+  _activityCheckTimer->setInterval(CHECK_LOG_FILE_ACTIVITY_INTERVAL);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+  QObject::connect(_activityCheckTimer, &QTimer::timeout, this, &SinkFileLog::slotCheckLogFileActivity);
+#else
+  QObject::connect(_activityCheckTimer, SIGNAL(timeout()), this, SLOT(slotCheckLogFileActivity()));
+#endif
 }
 
 SinkFileLog::~SinkFileLog()
@@ -543,11 +552,7 @@ bool SinkFileLog::checkLogFileOpen()
     qDebug() << "Current log-file:" << _logFileName << "role" << _role;
   }
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
-  QTimer::singleShot(CHECK_LOG_FILE_ACTIVITY_INTERVAL, this, &SinkFileLog::slotCheckLogFileActivity);
-#else
-  QTimer::singleShot(CHECK_LOG_FILE_ACTIVITY_INTERVAL, this, SLOT(slotCheckLogFileActivity()));
-#endif
+  _activityCheckTimer->start();
 
   if (!_startMessage) {
     _startMessage = true;
@@ -576,11 +581,7 @@ void SinkFileLog::checkLogFileRolling()
   qint64 logFileSize = logFileInfo.size();
 
   if (logFileSize < _logFileRotationSize) {
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
-    QTimer::singleShot(CHECK_LOG_FILE_ACTIVITY_INTERVAL, this, &SinkFileLog::slotCheckLogFileActivity);
-#else
-    QTimer::singleShot(CHECK_LOG_FILE_ACTIVITY_INTERVAL, this, SLOT(slotCheckLogFileActivity()));
-#endif
+    _activityCheckTimer->start();
     return;
   }
   slotLog(SimpleQtLogger::timeStamp(), SimpleQtLogger::threadId(), QString("Current log-file '%1' size=%2 (rotation-size=%3) --> rolling").arg(_role).arg(logFileSize).arg(_logFileRotationSize), LogLevel_INTERNAL, "", "", 0);
@@ -657,11 +658,7 @@ void SinkFileLog::slotCheckLogFileActivity()
     return;
   }
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
-  QTimer::singleShot(CHECK_LOG_FILE_ACTIVITY_INTERVAL, this, &SinkFileLog::slotCheckLogFileActivity);
-#else
-  QTimer::singleShot(CHECK_LOG_FILE_ACTIVITY_INTERVAL, this, SLOT(slotCheckLogFileActivity()));
-#endif
+  _activityCheckTimer->start();
 }
 
 // -------------------------------------------------------------------------------------------------
