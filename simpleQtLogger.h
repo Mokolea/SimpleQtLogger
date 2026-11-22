@@ -329,7 +329,7 @@ extern bool ENABLE_CONSOLE_LOG_FILE_STATE; // Console output log-file state: tru
 #define L_INFO(text)    SQTL_L_BODY(text,ENABLE_SQTL_LOG_LEVEL_INFO,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_INFO,simpleqtlogger::LogLevel_INFO)
 #define L_DEBUG(text)   SQTL_L_BODY(text,ENABLE_SQTL_LOG_LEVEL_DEBUG,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_DEBUG,simpleqtlogger::LogLevel_DEBUG)
 #if ENABLE_SQTL_LOG_LEVEL_FUNCTION > 0
-#define L_FUNC(text)    simpleqtlogger::SimpleQtLoggerFunc _simpleQtLoggerFunc_(text, __FUNCTION__, __FILE__, __LINE__)
+#define L_FUNC(text)    simpleqtlogger::SimpleQtLoggerFunc _sqtl_func_(text, __FUNCTION__, __FILE__, __LINE__)
 #else
 #define L_FUNC(text)    /* nop */
 #endif
@@ -350,7 +350,7 @@ extern bool ENABLE_CONSOLE_LOG_FILE_STATE; // Console output log-file state: tru
 #define LS_INFO(text)    SQTL_LS_BODY(text,ENABLE_SQTL_LOG_LEVEL_INFO,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_INFO,simpleqtlogger::LogLevel_INFO)
 #define LS_DEBUG(text)   SQTL_LS_BODY(text,ENABLE_SQTL_LOG_LEVEL_DEBUG,simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_DEBUG,simpleqtlogger::LogLevel_DEBUG)
 #if ENABLE_SQTL_LOG_LEVEL_FUNCTION > 0
-#define LS_FUNC(text)    QString _sqtl_func_s_; { QTextStream _sqtl_func_ts_(&_sqtl_func_s_); _sqtl_func_ts_ << text; } simpleqtlogger::SimpleQtLoggerFunc _simpleQtLoggerFunc_(_sqtl_func_s_, __FUNCTION__, __FILE__, __LINE__)
+#define LS_FUNC(text)    QString _sqtl_func_s_; { QTextStream _sqtl_func_ts_(&_sqtl_func_s_); _sqtl_func_ts_ << text; } simpleqtlogger::SimpleQtLoggerFunc _sqtl_func_(_sqtl_func_s_, __FUNCTION__, __FILE__, __LINE__)
 #else
 #define LS_FUNC(text)    /* nop */
 #endif
