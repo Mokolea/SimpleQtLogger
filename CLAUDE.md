@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 SimpleQtLogger is a rolling-file logger library for Qt C++ applications. The whole library is a single header/source pair at the repo root: `simpleQtLogger.h` and `simpleQtLogger.cpp`. Design goals are deliberately minimal: straightforward usage, single source file, no configuration file. Users compile the two files directly into their project (moc must run on the header). There is no separate library build.
 
-The big comment block at the top of `simpleQtLogger.h` is the user documentation: usage, restrictions, log-format TAGs, TODO/Done lists, and the "Tested using" list. Keep it (and `README.md`) in sync when behavior changes. The version is in `SQTL_VERSION_STR` / `SQTL_VERSION` in the header.
+The big comment block at the top of `simpleQtLogger.h` is the user documentation: usage, restrictions, log-format TAGs, TODO/Done lists, and the "Tested using" list. Keep it in sync with `README.md` when behavior changes: the "Facts" list and the log-format TAG table appear in both. The version is in `SQTL_VERSION_STR` / `SQTL_VERSION` in the header.
 
 ## Build and run
 
@@ -17,12 +17,14 @@ The only buildable targets are the two qmake example apps under `examples/`, and
 mkdir -p examples/build-console && cd examples/build-console
 qmake CONFIG+=debug ../TestSimpleQtLogger && make && ./TestSimpleQtLogger
 
-# GUI example (dialog widget)
+# GUI example (dialog widget): runs until its Quit button is clicked, so start it in the background or with a timeout
 mkdir -p examples/build-gui && cd examples/build-gui
 qmake CONFIG+=debug ../TestSimpleQtLoggerGui && make && ./TestSimpleQtLoggerGui
 ```
 
 Use `qmake6` (or `qmake -qt=qt6`) to build against Qt 6. Each `.pro` adds `../../simpleQtLogger.cpp` to SOURCES and `../..` to INCLUDEPATH. Only debug builds add `-Wextra` (`QMAKE_CXXFLAGS_DEBUG`), so pass `CONFIG+=debug` when you check for warnings. Recent commits focus on removing compiler warnings, so new code should build warning-free.
+
+There is no way to run a single test. To check one behavior on its own (e.g. a run-time flag change or a cross-thread connection), build a throwaway qmake console project outside the repo. It needs `SOURCES` and `HEADERS` pointing at the two library files, plus a `main.cpp` that calls `createInstance(qApp)` and exercises the case.
 
 To verify log-file rolling, run the console app three times in a row, as the legacy CI did. It writes `testSimpleQtLogger.log` (role `main`) and `testSimpleQtLoggerWarn.log` (role `warn`) into the current directory with a small 10 KB rotation size, so `_01.log`, `_02.log`, … files should appear. Generated `testSimpleQtLogger*log` files are gitignored. Qt Creator shadow-build dirs (`examples/build-TestSimpleQtLogger-Desktop_Qt_…`) may also exist locally; they are gitignored and are not part of the source.
 
