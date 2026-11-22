@@ -682,6 +682,7 @@ SimpleQtLogger::SimpleQtLogger(QObject* parent)
   // qDebug("SimpleQtLogger::SimpleQtLogger");
 
   qRegisterMetaType<LogLevel>("LogLevel"); // to use type in Qt::QueuedConnection
+  qRegisterMetaType<LogLevel>("simpleqtlogger::LogLevel"); // name used by signalLogMessage (sink signal-log)
 
   _sinkConsoleLog = new SinkConsoleLog(this);
   _sinkQDebugLog = new SinkQDebugLog(this);
@@ -1024,7 +1025,7 @@ void SimpleQtLogger::log(const QString& text, LogLevel logLevel, const QString& 
 }
 
 #if ENABLE_SQTL_LOG_LEVEL_FUNCTION > 0
-void SimpleQtLogger::logFuncBegin(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber)
+bool SimpleQtLogger::logFuncBegin(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber)
 {
   // qDebug("SimpleQtLogger::logFuncBegin");
 
@@ -1032,7 +1033,7 @@ void SimpleQtLogger::logFuncBegin(const QString& text, const QString& functionNa
 
   if (!ENABLE_FUNCTION_STACK_TRACE) {
     log(QString("%1").arg(text), LogLevel_FUNCTION, functionName, fileName.toStdString().c_str(), lineNumber);
-    return;
+    return false;
   }
 
   unsigned int stackDepthThread;
@@ -1053,6 +1054,7 @@ void SimpleQtLogger::logFuncBegin(const QString& text, const QString& functionNa
   else {
     log(QString("%1\\ %2").arg(stackDepth).arg(text), LogLevel_FUNCTION, functionName, fileName.toStdString().c_str(), lineNumber);
   }
+  return true;
 }
 
 void SimpleQtLogger::logFuncEnd(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber)
@@ -1061,16 +1063,25 @@ void SimpleQtLogger::logFuncEnd(const QString& text, const QString& functionName
 
   // thread-safe
 
-  if (!ENABLE_FUNCTION_STACK_TRACE) {
-    return;
-  }
-
+  // called only if logFuncBegin incremented the stack-depth, so always decrement (keep begin/end balanced)
   unsigned int stackDepthThread;
   {
     QMutexLocker locker(&_mutex);
-    // adjust stack-trace depth (-- after log)
-    unsigned int& value = _stackDepth[(unsigned long long int)QThread::currentThreadId()];
-    stackDepthThread = value--;
+    // adjust stack-trace depth (-- after log), never below 0 (e.g. logger instance re-created in between)
+    const unsigned long long int tid = (unsigned long long int)QThread::currentThreadId();
+    unsigned int& value = _stackDepth[tid];
+    stackDepthThread = value;
+    if (value > 0) {
+      --value;
+    }
+    if (value == 0) {
+      _stackDepth.remove(tid); // back at top level, drop entry (thread-ids may come and go)
+    }
+  }
+
+  // log-level may have been disabled at run-time in between
+  if (!ENABLE_LOG_LEVELS.logLevel_FUNCTION) {
+    return;
   }
 
   QString stackDepth("");
@@ -1094,19 +1105,21 @@ SimpleQtLoggerFunc::SimpleQtLoggerFunc(const QString& text, const QString& funct
   , _functionName(functionName)
   , _fileName(fileName)
   , _lineNumber(lineNumber)
+  , _depthIncremented(false)
 {
   // qDebug("SimpleQtLoggerFunc::SimpleQtLoggerFunc");
   SimpleQtLogger* logger = SimpleQtLogger::getInstance();
   if (ENABLE_SQTL_LOG_LEVEL_FUNCTION && ENABLE_LOG_LEVELS.logLevel_FUNCTION && logger) {
-    logger->logFuncBegin(_text, _functionName, _fileName, _lineNumber);
+    _depthIncremented = logger->logFuncBegin(_text, _functionName, _fileName, _lineNumber);
   }
 }
 
 SimpleQtLoggerFunc::~SimpleQtLoggerFunc()
 {
   // qDebug("SimpleQtLoggerFunc::~SimpleQtLoggerFunc");
+  // decide on the state at construction time, not on the current run-time flags, to keep begin/end balanced
   SimpleQtLogger* logger = SimpleQtLogger::getInstance();
-  if (ENABLE_SQTL_LOG_LEVEL_FUNCTION && ENABLE_LOG_LEVELS.logLevel_FUNCTION && logger) {
+  if (_depthIncremented && logger) {
     logger->logFuncEnd(_text, _functionName, _fileName, _lineNumber);
   }
 }

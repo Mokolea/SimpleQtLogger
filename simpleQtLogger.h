@@ -560,7 +560,7 @@ class SimpleQtLogger : public QObject
     // log-functions used by log-macros are thread-safe
     void log(const QString& text, LogLevel logLevel, const QString& functionName, const char* fileName, unsigned int lineNumber);
 #if ENABLE_SQTL_LOG_LEVEL_FUNCTION > 0
-    void logFuncBegin(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber);
+    bool logFuncBegin(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber); // returns true if the stack-depth was incremented
     void logFuncEnd(const QString& text, const QString& functionName, const QString& fileName, unsigned int lineNumber);
 #endif
 
@@ -606,6 +606,7 @@ class SimpleQtLoggerFunc
     QString _functionName;
     QString _fileName;
     unsigned int _lineNumber;
+    bool _depthIncremented; // logFuncEnd only if logFuncBegin incremented the stack-depth (keeps begin/end balanced)
 };
 
 #endif

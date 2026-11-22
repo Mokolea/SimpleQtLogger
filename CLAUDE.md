@@ -13,16 +13,18 @@ The big comment block at the top of `simpleQtLogger.h` is the user documentation
 The only buildable targets are the two qmake example apps under `examples/`, and they double as the test suite (there are no unit tests). Build out-of-source in `examples/build*`, which is gitignored:
 
 ```sh
-# Console example (also what CI runs, three times, to exercise log-file rolling)
+# Console example: exits by itself after ~6 s
 mkdir -p examples/build-console && cd examples/build-console
-qmake ../TestSimpleQtLogger && make && ./TestSimpleQtLogger
+qmake CONFIG+=debug ../TestSimpleQtLogger && make && ./TestSimpleQtLogger
 
 # GUI example (dialog widget)
 mkdir -p examples/build-gui && cd examples/build-gui
-qmake ../TestSimpleQtLoggerGui && make && ./TestSimpleQtLoggerGui
+qmake CONFIG+=debug ../TestSimpleQtLoggerGui && make && ./TestSimpleQtLoggerGui
 ```
 
-Use `qmake6` (or `qmake -qt=qt6`) to build against Qt 6. Generated `testSimpleQtLogger*log` files are gitignored. Each `.pro` adds `../../simpleQtLogger.cpp` to SOURCES and `../..` to INCLUDEPATH, and debug builds use `-Wextra`. Recent commits focus on removing compiler warnings, so new code should build warning-free.
+Use `qmake6` (or `qmake -qt=qt6`) to build against Qt 6. Each `.pro` adds `../../simpleQtLogger.cpp` to SOURCES and `../..` to INCLUDEPATH. Only debug builds add `-Wextra` (`QMAKE_CXXFLAGS_DEBUG`), so pass `CONFIG+=debug` when you check for warnings. Recent commits focus on removing compiler warnings, so new code should build warning-free.
+
+To verify log-file rolling, run the console app three times in a row, as the legacy CI did. It writes `testSimpleQtLogger.log` (role `main`) and `testSimpleQtLoggerWarn.log` (role `warn`) into the current directory with a small 10 KB rotation size, so `_01.log`, `_02.log`, … files should appear. Generated `testSimpleQtLogger*log` files are gitignored. Qt Creator shadow-build dirs (`examples/build-TestSimpleQtLogger-Desktop_Qt_…`) may also exist locally; they are gitignored and are not part of the source.
 
 `.travis.yml` is legacy (Travis CI, Qt 4) and is not actively used.
 
@@ -34,11 +36,11 @@ The code supports Qt 4.8 through Qt 6 at the same time. Version-dependent code i
 
 - **Singleton `SimpleQtLogger`** (`createInstance(qApp)` / `getInstance()`, which may return NULL) owns all sinks as QObject children.
 - **Sinks** derive from `Sink` (a QObject): `SinkFileLog` (rolling file, one per *role*; `"main"` always exists, and more are added with `addSinkFileLog(role)`), `SinkConsoleLog` (ANSI colors), `SinkQDebugLog`, `SinkSignalLog` (re-emits `signalLogMessage` for app consumption via `connectSinkSignalLog`), and `SinkSyslogLog`. Only one instance of each sink type exists, except for file sinks.
-- **Dispatch / thread-safety:** `SimpleQtLogger::log()` only stamps the time and thread-id, then `emit signalLog(...)`. Every sink's `slotLog` is connected with `Qt::AutoConnection`, so logging from worker threads is queued to the sinks' (main) thread. This is why `LogLevel` is registered with `qRegisterMetaType`. Shared mutable state, such as per-thread function stack depth, is protected by `_mutex`.
+- **Dispatch / thread-safety:** `SimpleQtLogger::log()` only stamps the time and thread-id, then `emit signalLog(...)`. Every sink's `slotLog` is connected with `Qt::AutoConnection`, so logging from worker threads is queued to the sinks' (main) thread. This is why `LogLevel` is registered with `qRegisterMetaType`, under both `"LogLevel"` and `"simpleqtlogger::LogLevel"`, because the type names used in signal signatures must match. Shared mutable state, such as per-thread function stack depth, is protected by `_mutex`.
 - **Three layers of log-level gating:** a message is logged only if all three allow it:
   1. Compile-time `ENABLE_SQTL_LOG_LEVEL_*` / `ENABLE_SQTL_LOG_SINK_*` macros (overridable via `-D`)
   2. The run-time global `simpleqtlogger::ENABLE_LOG_LEVELS` and `ENABLE_LOG_SINK_*` flags, checked in the macros
   3. Per-sink levels (`setLogLevels_file/console/...`) plus optional per-sink regex filters
-- **Macros:** `L_*` take a QString, `LS_*` take a `QTextStream` `<<` expression, and `L_FUNC` / `LS_FUNC` create an RAII `SimpleQtLoggerFunc` that logs function entry/exit (`\` and `/`) with per-thread stack-depth indentation.
-- **File rolling:** `SinkFileLog` re-arms a `QTimer::singleShot` every `CHECK_LOG_FILE_ACTIVITY_INTERVAL` ms to flush and check the size. When the size exceeds the rotation size, it shifts `name.log` → `name_01.log` → `name_02.log` … up to the configured count. Log-file names must end in `.log`.
+- **Macros:** `L_*` take a QString, `LS_*` take a `QTextStream` `<<` expression, and `L_FUNC` / `LS_FUNC` create an RAII `SimpleQtLoggerFunc` that logs function entry/exit (`\` and `/`) with per-thread stack-depth indentation. The destructor calls `logFuncEnd` only if the constructor's `logFuncBegin` incremented the depth, and it decides from the state at construction, not from the current run-time flags. This keeps the depth balanced when `ENABLE_LOG_LEVELS.logLevel_FUNCTION` or `ENABLE_FUNCTION_STACK_TRACE` change while a traced function is running.
+- **File rolling:** `SinkFileLog` re-arms a `QTimer::singleShot` every `CHECK_LOG_FILE_ACTIVITY_INTERVAL` ms. If anything was written since the last check, it checks the on-disk size. There is no explicit `flush()`, but each message's `QTextStream` hands its text to the file as it goes out of scope, so lines reach the file right away. A log can therefore grow well past the rotation size before the next check. When the size exceeds the rotation size, it shifts `name.log` → `name_01.log` → `name_02.log` … up to the configured count. Log-file names must end in `.log`.
 - **Log format** is a template string with `<TS>`, `<TID>`, `<TID32>`, `<LL>`, `<TEXT>`, `<FUNC>`, `<FILE>` and `<LINE>` TAGs. Each sink has a normal format and an "internal" format used for the logger's own messages (level `-`).
