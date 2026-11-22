@@ -347,19 +347,19 @@ void SinkSignalLog::slotLog(const QString& ts, const QString& tid, const QString
 
 SinkSyslogLog::SinkSyslogLog(QObject* parent)
   : Sink(parent)
+  , _opened(false)
 {
   // qDebug("SinkSyslogLog::SinkSyslogLog");
-#ifdef Q_OS_LINUX
-  _ident = NAME_LOG_SINK_SYSLOG.toUtf8();
-  openlog(_ident.isEmpty() ? NULL : _ident.constData(), LOG_PID, FACILITY_LOG_SINK_SYSLOG);
-#endif
+  // openlog() is called lazily in slotLog, so an application's own syslog setup is not touched while this sink is unused
 }
 
 SinkSyslogLog::~SinkSyslogLog()
 {
   // qDebug("SinkSyslogLog::~SinkSyslogLog");
 #ifdef Q_OS_LINUX
-  closelog(); // optional
+  if (_opened) {
+    closelog(); // optional
+  }
 #endif
 }
 
@@ -376,6 +376,12 @@ void SinkSyslogLog::slotLog(const QString& ts, const QString& tid, const QString
   }
   if (logLevel != LogLevel_INTERNAL && !checkFilter(text)) {
     return;
+  }
+
+  if (!_opened) {
+    _ident = NAME_LOG_SINK_SYSLOG.toUtf8(); // openlog() keeps the pointer
+    openlog(_ident.isEmpty() ? NULL : _ident.constData(), LOG_PID, FACILITY_LOG_SINK_SYSLOG);
+    _opened = true;
   }
 
   QString textIsEmpty("?");

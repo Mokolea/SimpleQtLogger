@@ -17,7 +17,7 @@ The only buildable targets are the two qmake example apps under `examples/`, and
 mkdir -p examples/build-console && cd examples/build-console
 qmake CONFIG+=debug ../TestSimpleQtLogger && make && ./TestSimpleQtLogger
 
-# GUI example (dialog widget): runs until its Quit button is clicked, so start it in the background or with a timeout
+# GUI example (dialog widget): runs until its window is closed (Quit button or window close), so start it in the background or with a timeout
 mkdir -p examples/build-gui && cd examples/build-gui
 qmake CONFIG+=debug ../TestSimpleQtLoggerGui && make && ./TestSimpleQtLoggerGui
 ```
@@ -32,7 +32,7 @@ To verify log-file rolling, run the console app three times in a row, as the leg
 
 - Distro Qt packages provide `qmake6`, or `qmake -qt=qt6` through qtchooser on Debian/Ubuntu. Recorded test platforms include Qt 6.4.2 on Debian 12 and Qt 5.15.3 on Ubuntu 22.04. The legacy CI also ran on Linux.
 - Linux is the only platform with the syslog sink. `ENABLE_SQTL_LOG_SINK_SYSLOG` defaults to 1, and both examples enable it at run time with an empty `NAME_LOG_SINK_SYSLOG`, so messages are tagged with the program name. Check them with e.g. `journalctl -t TestSimpleQtLogger`.
-- `openlog()` runs in the `SinkSyslogLog` constructor, so `NAME_LOG_SINK_SYSLOG` and `FACILITY_LOG_SINK_SYSLOG` must be set before `createInstance()`. The name is copied into the `_ident` member because `openlog()` keeps the pointer instead of copying the string.
+- `openlog()` is called lazily in `SinkSyslogLog::slotLog`, on the first message that passes the syslog sink's checks, and `closelog()` only if it was opened. So the sink doesn't touch an application's own syslog setup while it is disabled. `NAME_LOG_SINK_SYSLOG` and `FACILITY_LOG_SINK_SYSLOG` must be set before that first message. The name is copied into the `_ident` member because `openlog()` keeps the pointer instead of copying the string.
 
 ### macOS
 
@@ -63,5 +63,5 @@ The code supports Qt 4.8 through Qt 6 at the same time. Version-dependent code i
   2. The run-time global `simpleqtlogger::ENABLE_LOG_LEVELS` and `ENABLE_LOG_SINK_*` flags, checked in the macros
   3. Per-sink levels (`setLogLevels_file/console/...`) plus optional per-sink regex filters
 - **Macros:** `L_*` take a QString, `LS_*` take a `QTextStream` `<<` expression, and `L_FUNC` / `LS_FUNC` create an RAII `SimpleQtLoggerFunc` that logs function entry/exit (`\` and `/`) with per-thread stack-depth indentation. The destructor calls `logFuncEnd` only if the constructor's `logFuncBegin` incremented the depth, and it decides from the state at construction, not from the current run-time flags. This keeps the depth balanced when `ENABLE_LOG_LEVELS.logLevel_FUNCTION` or `ENABLE_FUNCTION_STACK_TRACE` change while a traced function is running. All macro paths (`L_*`, `LS_*`, and `SimpleQtLoggerFunc`) check `getInstance()` for NULL. Any variable declared inside a macro must start with `_sqtl_`, so it can't shadow a user variable used in the message expression (e.g. `LS_INFO("x=" << s)`).
-- **File rolling:** `SinkFileLog` re-arms a `QTimer::singleShot` every `CHECK_LOG_FILE_ACTIVITY_INTERVAL` ms. If anything was written since the last check, it checks the on-disk size. There is no explicit `flush()`, but each message's `QTextStream` hands its text to the file as it goes out of scope, so lines reach the file right away. A log can therefore grow well past the rotation size before the next check. When the size exceeds the rotation size, it shifts `name.log` → `name_01.log` → `name_02.log` … up to the configured count. Log-file names must end in `.log`.
+- **File rolling:** `SinkFileLog` re-arms a `QTimer::singleShot` every `CHECK_LOG_FILE_ACTIVITY_INTERVAL` ms. If anything was written since the last check, it checks the on-disk size. There is no explicit `flush()`, but each message's `QTextStream` hands its text to the file as it goes out of scope, so lines reach the file right away. A log can therefore grow well past the rotation size before the next check. When the size exceeds the rotation size, it shifts `name.log` → `name_01.log` → `name_02.log` … up to the configured count. Log-file names must end in `.log`. Rolled names come from `rolledLogFileName()`, which inserts `_NN` only before the trailing `.log`; never use `QString::replace` on the path, since `.log` can appear in directory names.
 - **Log format** is a template string with `<TS>`, `<TID>`, `<TID32>`, `<LL>`, `<TEXT>`, `<FUNC>`, `<FILE>` and `<LINE>` TAGs. Each sink has a normal format and an "internal" format used for the logger's own messages (level `-`).

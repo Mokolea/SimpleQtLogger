@@ -83,8 +83,11 @@
    - maybe flush periodically on idle-time
    - maybe do file rolling (check file size periodically) on idle-time
    - maybe do all file-operations in worker-thread
+   - if re-opening the log-file fails during rolling, file-logging stops for good (activity check is not re-armed); retry instead
+   - calling setLogFileName() again starts an additional activity-check timer chain; keep just one
 
   Done:
+   - open the syslog connection only when the syslog sink is used
    - add hexdump
    - add log sink syslog to send messages to the system logger (Linux only)
    - log forwarding by emitting a Qt signal
@@ -503,6 +506,7 @@ class SinkSyslogLog : public Sink
     SinkSyslogLog(const SinkSyslogLog&);
     SinkSyslogLog& operator=(const SinkSyslogLog&);
 
+    bool _opened; // openlog() called (lazily, on first message sent to syslog)
     QByteArray _ident; // openlog() keeps the pointer, so the string has to outlive the syslog connection
 };
 
