@@ -96,6 +96,7 @@
    - continuous integration using Travis CI: created a .travis.yml
 
   Tested using:
+   - Qt 6.12.0 macOS 15.8.3 (Apple clang 17.0.0, x86_64)
    - Qt 6.4.2 Debian 12 rc3 (GCC 12.2.0, x86_64)
    - Qt 5.15.3 Ubuntu 22.04.5 LTS (GCC 11.4.0, x86_64)
    - Qt 5.12.8 Ubuntu 20.04.1 LTS (Focal Fossa)

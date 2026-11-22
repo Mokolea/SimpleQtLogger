@@ -26,6 +26,18 @@ Use `qmake6` (or `qmake -qt=qt6`) to build against Qt 6. Each `.pro` adds `../..
 
 To verify log-file rolling, run the console app three times in a row, as the legacy CI did. It writes `testSimpleQtLogger.log` (role `main`) and `testSimpleQtLoggerWarn.log` (role `warn`) into the current directory with a small 10 KB rotation size, so `_01.log`, `_02.log`, … files should appear. Generated `testSimpleQtLogger*log` files are gitignored. Qt Creator shadow-build dirs (`examples/build-TestSimpleQtLogger-Desktop_Qt_…`) may also exist locally; they are gitignored and are not part of the source.
 
+### Linux
+
+- Distro Qt packages provide `qmake6`, or `qmake -qt=qt6` through qtchooser on Debian/Ubuntu. Recorded test platforms include Qt 6.4.2 on Debian 12 and Qt 5.15.3 on Ubuntu 22.04. The legacy CI also ran on Linux.
+- Linux is the only platform with the syslog sink. `ENABLE_SQTL_LOG_SINK_SYSLOG` defaults to 1, and both examples enable it at run time with an empty `NAME_LOG_SINK_SYSLOG`, so messages are tagged with the program name. Check them with e.g. `journalctl -t TestSimpleQtLogger`.
+
+### macOS
+
+- The Qt online installer does not put Qt on `PATH`. Call qmake by its full path, e.g. `~/Qt/<version>/macos/bin/qmake6`.
+- The console example builds a plain binary (`CONFIG -= app_bundle`). The GUI example builds an app bundle, so start it as `./TestSimpleQtLoggerGui.app/Contents/MacOS/TestSimpleQtLoggerGui` from the build directory. Its log-file names are relative to the current directory, and `open` starts the app with `/` as its current directory, so the log files can't be created there.
+- The syslog sink is Linux-only, so it is compiled out on macOS.
+- Editor clang diagnostics such as `'QObject' file not found` come from missing Qt include paths in the editor setup, not from the code. Use the qmake build as the source of truth.
+
 `.travis.yml` is legacy (Travis CI, Qt 4) and is not actively used.
 
 ## Compatibility constraints
