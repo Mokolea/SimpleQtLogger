@@ -38,7 +38,13 @@ To verify log-file rolling, run the console app three times in a row, as the leg
 - The Qt online installer does not put Qt on `PATH`. Call qmake by its full path, e.g. `~/Qt/<version>/macos/bin/qmake6`.
 - The console example builds a plain binary (`CONFIG -= app_bundle`). The GUI example builds an app bundle, so start it as `./TestSimpleQtLoggerGui.app/Contents/MacOS/TestSimpleQtLoggerGui` from the build directory. Its log-file names are relative to the current directory, and `open` starts the app with `/` as its current directory, so the log files can't be created there.
 - The syslog sink writes to the unified log through `os_log`, which Console.app and `log` show. FATAL becomes a Fault and ERROR an Error, both stored and shown as errors by default. WARN and NOTE become Default, INFO (plus function-trace and internal messages) becomes Info, and DEBUG becomes Debug. Console.app shows Info and Debug only with "Include Info/Debug Messages" turned on. Debug isn't stored, so it shows only live in `log stream --level debug`, not in `log show`.
-- Check the examples' messages with e.g. `log stream --predicate 'process == "TestSimpleQtLogger"' --level debug`, or afterwards with `log show --last 5m --info --predicate '… AND messageType == error'`.
+- Viewing the unified log:
+  - **Console.app** (Applications → Utilities): select the Mac under Devices, click "Start streaming" (only messages from while it streams are shown), and search for the process name as a Process token, e.g. `TestSimpleQtLogger`. Fault and Error messages get a colored dot.
+  - **Live, including Debug:** `log stream --level debug --predicate 'process == "TestSimpleQtLogger"'`
+  - **Stored messages after a run** (no Debug): `log show --last 5m --info --predicate 'process == "TestSimpleQtLogger"'`
+  - **Only FATAL and ERROR:** `log show --last 1h --predicate 'process == "TestSimpleQtLogger" AND messageType IN {"error", "fault"}'`
+  - macOS logs its own system messages under the app's process name too. Add `AND senderImagePath ENDSWITH "/TestSimpleQtLogger"` to keep only the logger's messages. If `NAME_LOG_SINK_SYSLOG` is set, filter with `subsystem == "<name>"` instead. For the GUI example, use the process name `TestSimpleQtLoggerGui`.
+  - To check the levels in a script, use `--style json` and read the `messageType` field.
 - Editor clang diagnostics such as `'QObject' file not found` come from missing Qt include paths in the editor setup, not from the code. Use the qmake build as the source of truth.
 
 `.travis.yml` is legacy (Travis CI, Qt 4) and is not actively used.
