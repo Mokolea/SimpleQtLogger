@@ -10,7 +10,13 @@ The big comment block at the top of `simpleQtLogger.h` is the user documentation
 
 ## Build and run
 
-The only buildable targets are the two qmake example apps under `examples/`, and they double as the test suite (there are no unit tests). Build out-of-source in `examples/build*`, which is gitignored:
+The buildable targets are the Qt Test unit tests under `tests/` and the two qmake example apps under `examples/`. Build out-of-source in `tests/build*` or `examples/build*`, which are gitignored:
+
+```sh
+# Unit tests (Qt Test, needs Qt >= 5.3): runs in well under a second
+mkdir -p tests/build-unit && cd tests/build-unit
+qmake CONFIG+=debug ../TestSimpleQtLoggerUnit && make && ./TestSimpleQtLoggerUnit
+```
 
 ```sh
 # Console example: exits by itself after ~6 s
@@ -24,7 +30,7 @@ qmake CONFIG+=debug ../TestSimpleQtLoggerGui && make && ./TestSimpleQtLoggerGui
 
 Use `qmake6` (or `qmake -qt=qt6`) to build against Qt 6. Each `.pro` adds `../../simpleQtLogger.cpp` to SOURCES and `../..` to INCLUDEPATH. Only debug builds add `-Wextra` (`QMAKE_CXXFLAGS_DEBUG`), so pass `CONFIG+=debug` when you check for warnings. Recent commits focus on removing compiler warnings, so new code should build warning-free.
 
-There is no way to run a single test. To check one behavior on its own (e.g. a run-time flag change or a cross-thread connection), build a throwaway qmake console project outside the repo. It needs `SOURCES` and `HEADERS` pointing at the two library files, plus a `main.cpp` that calls `createInstance(qApp)` and exercises the case.
+Run a single unit test by naming it, e.g. `./TestSimpleQtLoggerUnit file_rolling` (`-functions` lists them). The tests (`tests/TestSimpleQtLoggerUnit/tst_simpleQtLogger.cpp`) create a fresh logger in `init()` and reset all run-time globals. They watch messages through the signal sink (with `Qt::DirectConnection`) and through log-files in a `QTemporaryDir`. They start file rolling without waiting 5 s by calling the private slot `slotCheckLogFileActivity` with `QMetaObject::invokeMethod`. Add a test there for each behavior change or bug fix. The tests need Qt 5.3 or later, but the library itself still has to build with Qt 4.8.
 
 To verify log-file rolling, run the console app three times in a row, as the legacy CI did. It writes `testSimpleQtLogger.log` (role `main`) and `testSimpleQtLoggerWarn.log` (role `warn`) into the current directory with a small 10 KB rotation size and at most 10 rolled files, so `_01.log`, `_02.log`, … files should appear. One run isn't enough: the size is checked only every `CHECK_LOG_FILE_ACTIVITY_INTERVAL` (5000 ms) and a run lasts about 6 s, so each run does about one check and the files roll across runs. Generated `testSimpleQtLogger*log` files are gitignored. Qt Creator shadow-build dirs (`examples/build-TestSimpleQtLogger-Desktop_Qt_…`) may also exist locally; they are gitignored and are not part of the source.
 

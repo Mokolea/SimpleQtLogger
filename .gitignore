@@ -1,4 +1,5 @@
 .DS_Store
 *.autosave
 examples/build*
+tests/build*
 testSimpleQtLogger*log
