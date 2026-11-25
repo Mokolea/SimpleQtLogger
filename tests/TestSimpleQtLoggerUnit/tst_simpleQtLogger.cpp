@@ -82,7 +82,7 @@ class TestSimpleQtLogger : public QObject
 
     // log-format TAGs
     void format_tags();
-    void format_tid32();
+    void format_tidAndTs();
     void format_emptyTextAndTrimmed();
     void format_levelChars();
 
@@ -243,7 +243,11 @@ void TestSimpleQtLogger::timeStamp_format()
 void TestSimpleQtLogger::threadId_format()
 {
   QString tid = SimpleQtLogger::threadId();
-  QVERIFY2(QRegularExpression("^[0-9a-f]{16}$").match(tid).hasMatch(), qPrintable(tid));
+  // as wide as a pointer: 16 digits on 64-bit, 8 on 32-bit (a sign-extended value would be too long there)
+  QVERIFY2(QRegularExpression(QString("^[0-9a-f]{%1}$").arg(sizeof(void*) * 2)).match(tid).hasMatch(), qPrintable(tid));
+  bool ok = false;
+  QCOMPARE(tid.toULongLong(&ok, 16), static_cast<qulonglong>(reinterpret_cast<quintptr>(QThread::currentThreadId())));
+  QVERIFY(ok);
   QCOMPARE(SimpleQtLogger::threadId(), tid); // stable within a thread
 }
 
@@ -329,7 +333,7 @@ void TestSimpleQtLogger::format_tags()
   QCOMPARE(_receiver->levels, QList<int>() << LogLevel_WARNING << LogLevel_INTERNAL);
 }
 
-void TestSimpleQtLogger::format_tid32()
+void TestSimpleQtLogger::format_tidAndTs()
 {
   _logger->setLogFormat_signal("<TID>|<TID32>|<TS>", "");
   L_INFO("x");
@@ -338,7 +342,7 @@ void TestSimpleQtLogger::format_tid32()
   QStringList parts = _receiver->messages[0].split('|');
   QCOMPARE(parts.size(), 3);
   QCOMPARE(parts[0], SimpleQtLogger::threadId());
-  QCOMPARE(parts[1], parts[0].right(8));
+  QCOMPARE(parts[1], QString("<TID32>")); // removed TAG, not expanded
   QVERIFY(QRegularExpression("^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{3}$").match(parts[2]).hasMatch());
 }
 

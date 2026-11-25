@@ -64,8 +64,7 @@
   Log-format:
   The following TAGs are available and expand to:
    - <TS> --> Time-stamp, "YYYY-MM-DD HH:MM:SS.SSS"
-   - <TID> --> Thread-Id, 64bit value in hexadecimal
-   - <TID32> --> Thread-Id, 32bit value in hexadecimal
+   - <TID> --> Thread-Id in hexadecimal, as wide as a pointer: 16 digits on 64-bit, 8 digits on 32-bit platforms
    - <LL> --> Log-level, one character: '!', 'E', 'W', 'N', 'I', 'D' or 'F'
    - <TEXT> --> The log-message
    - <FUNC> --> Function-name
@@ -95,6 +94,7 @@
    - maybe do all file-operations in worker-thread
 
   Done:
+   - removed TAG <TID32>; <TID> is correct on 32-bit platforms too (no sign-extension)
    - syslog sink also on macOS (os_log: FATAL --> Fault, ERROR --> Error in Console.app)
    - retry opening the log-file (every activity check) if it failed, e.g. during rolling
    - keep a single activity-check timer per file-log (setLogFileName() can be called again)
@@ -153,8 +153,8 @@
 #  endif
 #endif
 
-#define SQTL_VERSION_STR   "1.3.3"
-#define SQTL_VERSION       0x010303   // Version is: (major << 16) + (minor << 8) + patch
+#define SQTL_VERSION_STR   "1.4.0"
+#define SQTL_VERSION       0x010400   // Version is: (major << 16) + (minor << 8) + patch
 // SQTL_VERSION_CHECK can be used like: #if (SQTL_VERSION >= SQTL_VERSION_CHECK(1, 3, 0))
 #define SQTL_VERSION_CHECK(major,minor,patch)   ((major<<16)|(minor<<8)|(patch))
 
@@ -616,7 +616,7 @@ class SimpleQtLogger : public QObject
     QMap<QString, SinkFileLog*> _sinkFileLogMap;
 
     QMutex _mutex;
-    QMap<unsigned long long int, unsigned int> _stackDepth; // current stack-depth per thread-id for function-log
+    QMap<quintptr, unsigned int> _stackDepth; // current stack-depth per thread-id for function-log
 };
 
 // -------------------------------------------------------------------------------------------------

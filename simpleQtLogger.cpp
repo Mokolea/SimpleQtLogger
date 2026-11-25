@@ -245,13 +245,13 @@ void SinkConsoleLog::slotLog(const QString& ts, const QString& tid, const QStrin
   }
 
   if (logLevel == LogLevel_INTERNAL) {
-    out << getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4 * 2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
+    out << getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
   }
   else if (logLevel == LogLevel_FUNCTION) {
-    out << getLogFormat().append(DEFAULT_LOG_FORMAT_CONSOLE_FUNCTION_SUFFIX).replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4 * 2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
+    out << getLogFormat().append(DEFAULT_LOG_FORMAT_CONSOLE_FUNCTION_SUFFIX).replace("<TS>", ts).replace("<TID>", tid).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
   }
   else {
-    out << getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4 * 2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : ENABLE_CONSOLE_TRIMMED ? text.trimmed() : text);
+    out << getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : ENABLE_CONSOLE_TRIMMED ? text.trimmed() : text);
   }
 
   if (ENABLE_CONSOLE_COLOR) {
@@ -295,10 +295,10 @@ void SinkQDebugLog::slotLog(const QString& ts, const QString& tid, const QString
   }
 
   if (logLevel == LogLevel_INTERNAL) {
-    qDebug("%s", getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4 * 2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()).toStdString().c_str());
+    qDebug("%s", getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()).toStdString().c_str());
   }
   else {
-    qDebug("%s", getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4 * 2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()).toStdString().c_str());
+    qDebug("%s", getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()).toStdString().c_str());
   }
 }
 
@@ -335,10 +335,10 @@ void SinkSignalLog::slotLog(const QString& ts, const QString& tid, const QString
   }
 
   if (logLevel == LogLevel_INTERNAL) {
-    emit signalLogMessage(logLevel, getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4 * 2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()));
+    emit signalLogMessage(logLevel, getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()));
   }
   else {
-    emit signalLogMessage(logLevel, getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4 * 2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()));
+    emit signalLogMessage(logLevel, getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()));
   }
 }
 
@@ -398,10 +398,10 @@ void SinkSyslogLog::slotLog(const QString& ts, const QString& tid, const QString
 
   QString message;
   if (logLevel == LogLevel_INTERNAL) {
-    message = getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4 * 2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
+    message = getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
   }
   else {
-    message = getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4 * 2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
+    message = getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
   }
 
 #ifdef SQTL_SYSLOG_USE_OSLOG
@@ -546,10 +546,10 @@ void SinkFileLog::slotLog(const QString& ts, const QString& tid, const QString& 
     out.setCodec("UTF-8");
 #endif
     if (logLevel == LogLevel_INTERNAL) {
-      out << getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4 * 2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()) << '\n';
+      out << getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()) << '\n';
     }
     else {
-      out << getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<TID32>", tid.right(4 * 2)).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()) << '\n';
+      out << getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()) << '\n';
     }
     _logFileActivity = true;
   }
@@ -705,6 +705,13 @@ void SinkFileLog::slotCheckLogFileActivity()
 }
 
 // -------------------------------------------------------------------------------------------------
+
+// Thread-id of the calling thread as an unsigned integer as wide as a pointer.
+// Qt::HANDLE is a pointer: convert it via quintptr, a direct cast to a wider integer may sign-extend it (e.g. GCC on 32-bit).
+static quintptr currentThreadIdValue()
+{
+  return reinterpret_cast<quintptr>(QThread::currentThreadId());
+}
 
 SimpleQtLogger* SimpleQtLogger::instance = 0; // TODO use C++11 nullptr
 
@@ -1017,8 +1024,8 @@ bool SimpleQtLogger::connectSinkSignalLog(const QObject* receiver, const char* m
 {
   // qDebug("SimpleQtLogger::threadId");
 
-  // thread-id in hexadecimal
-  return QString("%1").arg((unsigned long long int)QThread::currentThreadId(), 16, 16, QLatin1Char('0')); // field-with for 64bit
+  // thread-id in hexadecimal, as wide as a pointer: 16 digits on 64-bit, 8 digits on 32-bit
+  return QString("%1").arg(static_cast<qulonglong>(currentThreadIdValue()), static_cast<int>(sizeof(quintptr) * 2), 16, QLatin1Char('0'));
 }
 
 /*static*/ QString SimpleQtLogger::toHexdump(const QByteArray& ba)
@@ -1086,7 +1093,7 @@ bool SimpleQtLogger::logFuncBegin(const QString& text, const QString& functionNa
   {
     QMutexLocker locker(&_mutex);
     // adjust stack-trace depth (++ before log)
-    unsigned int& value = _stackDepth[(unsigned long long int)QThread::currentThreadId()];
+    unsigned int& value = _stackDepth[currentThreadIdValue()];
     stackDepthThread = ++value;
   }
 
@@ -1114,7 +1121,7 @@ void SimpleQtLogger::logFuncEnd(const QString& text, const QString& functionName
   {
     QMutexLocker locker(&_mutex);
     // adjust stack-trace depth (-- after log), never below 0 (e.g. logger instance re-created in between)
-    const unsigned long long int tid = (unsigned long long int)QThread::currentThreadId();
+    const quintptr tid = currentThreadIdValue();
     unsigned int& value = _stackDepth[tid];
     stackDepthThread = value;
     if (value > 0) {

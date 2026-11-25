@@ -50,8 +50,7 @@ The following TAGs are available and expand to:
 | TAG | Description |
 | :--- | :--- |
 | \<TS\> | Time-stamp, "YYYY-MM-DD HH:MM:SS.SSS" |
-| \<TID\> | Thread-Id, 64bit value in hexadecimal |
-| \<TID32\> | Thread-Id, 32bit value in hexadecimal |
+| \<TID\> | Thread-Id in hexadecimal, as wide as a pointer: 16 digits on 64-bit, 8 digits on 32-bit platforms |
 | \<LL\> | Log-level, one character: '!', 'E', 'W', 'N', 'I', 'D' or 'F' |
 | \<TEXT\> | The log-message |
 | \<FUNC\> | Function-name |
