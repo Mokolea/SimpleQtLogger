@@ -131,16 +131,31 @@ bool Sink::addLogFilter(const QRegularExpression& re)
 }
 #endif
 
-QString Sink::getLogFormat() const
+QString Sink::formatMessage(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber, bool trimmed, const QString& logFormatSuffix) const
 {
-  // qDebug("Sink::getLogFormat");
-  return _logFormat;
-}
+  // qDebug("Sink::formatMessage");
 
-QString Sink::getLogFormatInt() const
-{
-  // qDebug("Sink::getLogFormatInt");
-  return _logFormatInt;
+  QString textOut;
+  if (text.isEmpty()) {
+    textOut = (logLevel == LogLevel_FUNCTION) ? "-" : "?";
+  }
+  else if (trimmed || logLevel == LogLevel_INTERNAL) {
+    textOut = text.trimmed();
+  }
+  else {
+    textOut = text;
+  }
+
+  QString message(_logFormatInt);
+  if (logLevel != LogLevel_INTERNAL) {
+    message = _logFormat;
+    message.append(logFormatSuffix); // no operator+, it may be a QStringBuilder (QT_USE_QSTRINGBUILDER)
+  }
+  message.replace("<TS>", ts).replace("<TID>", tid).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel]));
+  if (logLevel != LogLevel_INTERNAL) { // internal format: following TAGs are not processed: <FUNC>, <FILE>, <LINE>
+    message.replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber));
+  }
+  return message.replace("<TEXT>", textOut); // last, so TAGs in the log-message are not expanded
 }
 
 bool Sink::checkLogLevelsEnabled(LogLevel logLevel) const
@@ -198,11 +213,6 @@ void SinkConsoleLog::slotLog(const QString& ts, const QString& tid, const QStrin
     return;
   }
 
-  QString textIsEmpty("?");
-  if (logLevel == LogLevel_FUNCTION) {
-    textIsEmpty = "-";
-  }
-
   QTextStream out(stdout);
   // out.setCodec("UTF-8");
   if (ENABLE_CONSOLE_COLOR) {
@@ -244,14 +254,11 @@ void SinkConsoleLog::slotLog(const QString& ts, const QString& tid, const QStrin
     }
   }
 
-  if (logLevel == LogLevel_INTERNAL) {
-    out << getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
-  }
-  else if (logLevel == LogLevel_FUNCTION) {
-    out << getLogFormat().append(DEFAULT_LOG_FORMAT_CONSOLE_FUNCTION_SUFFIX).replace("<TS>", ts).replace("<TID>", tid).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
+  if (logLevel == LogLevel_FUNCTION) {
+    out << formatMessage(ts, tid, text, logLevel, functionName, fileName, lineNumber, true, DEFAULT_LOG_FORMAT_CONSOLE_FUNCTION_SUFFIX);
   }
   else {
-    out << getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : ENABLE_CONSOLE_TRIMMED ? text.trimmed() : text);
+    out << formatMessage(ts, tid, text, logLevel, functionName, fileName, lineNumber, ENABLE_CONSOLE_TRIMMED);
   }
 
   if (ENABLE_CONSOLE_COLOR) {
@@ -289,17 +296,7 @@ void SinkQDebugLog::slotLog(const QString& ts, const QString& tid, const QString
     return;
   }
 
-  QString textIsEmpty("?");
-  if (logLevel == LogLevel_FUNCTION) {
-    textIsEmpty = "-";
-  }
-
-  if (logLevel == LogLevel_INTERNAL) {
-    qDebug("%s", getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()).toStdString().c_str());
-  }
-  else {
-    qDebug("%s", getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()).toStdString().c_str());
-  }
+  qDebug("%s", formatMessage(ts, tid, text, logLevel, functionName, fileName, lineNumber).toStdString().c_str());
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -329,17 +326,7 @@ void SinkSignalLog::slotLog(const QString& ts, const QString& tid, const QString
     return;
   }
 
-  QString textIsEmpty("?");
-  if (logLevel == LogLevel_FUNCTION) {
-    textIsEmpty = "-";
-  }
-
-  if (logLevel == LogLevel_INTERNAL) {
-    emit signalLogMessage(logLevel, getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()));
-  }
-  else {
-    emit signalLogMessage(logLevel, getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()));
-  }
+  emit signalLogMessage(logLevel, formatMessage(ts, tid, text, logLevel, functionName, fileName, lineNumber));
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -391,18 +378,7 @@ void SinkSyslogLog::slotLog(const QString& ts, const QString& tid, const QString
     _opened = true;
   }
 
-  QString textIsEmpty("?");
-  if (logLevel == LogLevel_FUNCTION) {
-    textIsEmpty = "-";
-  }
-
-  QString message;
-  if (logLevel == LogLevel_INTERNAL) {
-    message = getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
-  }
-  else {
-    message = getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed());
-  }
+  const QString message(formatMessage(ts, tid, text, logLevel, functionName, fileName, lineNumber));
 
 #ifdef SQTL_SYSLOG_USE_OSLOG
   // unified log types: Fault and Error are shown as such in Console.app
@@ -532,11 +508,6 @@ void SinkFileLog::slotLog(const QString& ts, const QString& tid, const QString& 
     return;
   }
 
-  QString textIsEmpty("?");
-  if (logLevel == LogLevel_FUNCTION) {
-    textIsEmpty = "-";
-  }
-
   // stream (append) to log file
   if (_logFile && _logFile->isOpen()) {
     QTextStream out(_logFile);
@@ -545,12 +516,7 @@ void SinkFileLog::slotLog(const QString& ts, const QString& tid, const QString& 
 #else
     out.setCodec("UTF-8");
 #endif
-    if (logLevel == LogLevel_INTERNAL) {
-      out << getLogFormatInt().replace("<TS>", ts).replace("<TID>", tid).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()) << '\n';
-    }
-    else {
-      out << getLogFormat().replace("<TS>", ts).replace("<TID>", tid).replace("<LL>", QString(LOG_LEVEL_CHAR[logLevel])).replace("<FUNC>", functionName).replace("<FILE>", fileName).replace("<LINE>", QString("%1").arg(lineNumber)).replace("<TEXT>", text.isEmpty() ? textIsEmpty : text.trimmed()) << '\n';
-    }
+    out << formatMessage(ts, tid, text, logLevel, functionName, fileName, lineNumber) << '\n';
     _logFileActivity = true;
   }
 }

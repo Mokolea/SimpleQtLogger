@@ -20,6 +20,11 @@
 
 #include "simpleQtLogger.h"
 
+#include <cstdio>
+#ifdef Q_OS_UNIX
+#include <unistd.h>
+#endif
+
 using namespace simpleqtlogger;
 
 // -------------------------------------------------------------------------------------------------
@@ -55,6 +60,19 @@ class LogThread : public QThread
     }
 };
 
+// Collects the messages of the qDebug sink
+static QStringList qDebugMessages;
+static QtMessageHandler previousMessageHandler = 0; // TODO use C++11 nullptr
+
+static void collectingMessageHandler(QtMsgType type, const QMessageLogContext& context, const QString& msg)
+{
+  if (type == QtDebugMsg) {
+    qDebugMessages.append(msg);
+    return;
+  }
+  previousMessageHandler(type, context, msg);
+}
+
 // -------------------------------------------------------------------------------------------------
 
 class TestSimpleQtLogger : public QObject
@@ -85,6 +103,9 @@ class TestSimpleQtLogger : public QObject
     void format_tidAndTs();
     void format_emptyTextAndTrimmed();
     void format_levelChars();
+    void format_consoleSink();
+    void format_consoleSinkColor();
+    void format_qDebugSink();
 
     // gating
     void gating_globalLogLevels();
@@ -122,6 +143,7 @@ class TestSimpleQtLogger : public QObject
     SinkFileLog* fileSink(int index) const;
     void checkFileActivity(int index = 0) const;
     static QString readFile(const QString& fileName);
+    QString captureConsole(void (*logFunc)(SimpleQtLogger*));
 
     SimpleQtLogger* _logger;
     LogReceiver* _receiver;
@@ -367,6 +389,109 @@ void TestSimpleQtLogger::format_levelChars()
 
   QCOMPARE(_receiver->messages, QStringList() << "!|a" << "E|b" << "W|c" << "N|d" << "I|e" << "D|f");
   QCOMPARE(_receiver->levels, QList<int>() << LogLevel_FATAL << LogLevel_ERROR << LogLevel_WARNING << LogLevel_NOTE << LogLevel_INFO << LogLevel_DEBUG);
+}
+
+// Redirects stdout to a file while logFunc runs, returns what the console sink wrote
+QString TestSimpleQtLogger::captureConsole(void (*logFunc)(SimpleQtLogger*))
+{
+#ifdef Q_OS_UNIX
+  const QString fileName = _tmpDir->path() + "/stdout.txt";
+  QFile file(fileName);
+  if (!file.open(QIODevice::WriteOnly)) {
+    return "open failed";
+  }
+  fflush(stdout);
+  int savedStdout = dup(STDOUT_FILENO);
+  dup2(file.handle(), STDOUT_FILENO);
+  logFunc(_logger);
+  fflush(stdout);
+  dup2(savedStdout, STDOUT_FILENO);
+  close(savedStdout);
+  file.close();
+  return readFile(fileName);
+#else
+  Q_UNUSED(logFunc);
+  return QString();
+#endif
+}
+
+static void logConsoleMessages(SimpleQtLogger* logger)
+{
+  logger->log("  warn  ", LogLevel_WARNING, "fn", "f.cpp", 1);
+  logger->log("", LogLevel_INFO, "fn", "f.cpp", 2);
+  ENABLE_CONSOLE_TRIMMED = false;
+  logger->log("  untrimmed  ", LogLevel_INFO, "fn", "f.cpp", 3);
+  logger->log("  func  ", LogLevel_FUNCTION, "fn", "f.cpp", 4); // always trimmed, suffix " (<FUNC>)"
+  logger->log("", LogLevel_FUNCTION, "fn", "f.cpp", 5);
+  logger->log("  internal  ", LogLevel_INTERNAL, "fn", "f.cpp", 6); // always trimmed, no FUNC/FILE/LINE
+  ENABLE_CONSOLE_TRIMMED = true;
+}
+
+void TestSimpleQtLogger::format_consoleSink()
+{
+#ifndef Q_OS_UNIX
+  QSKIP("stdout capture needs POSIX dup2");
+#endif
+  ENABLE_LOG_SINK_CONSOLE = true;
+  ENABLE_CONSOLE_COLOR = false;
+  EnableLogLevels all;
+  all.logLevel_DEBUG = true;
+  all.logLevel_FUNCTION = true;
+  _logger->setLogLevels_console(all);
+  _logger->setLogFormat_console("<LL>|<TEXT>|<FUNC>@<FILE>:<LINE>", "<LL>|<TEXT>|<FUNC>");
+
+  QCOMPARE(captureConsole(logConsoleMessages), QString(
+             "WARNING: W|warn|fn@f.cpp:1\n"
+             "I|?|fn@f.cpp:2\n"
+             "I|  untrimmed  |fn@f.cpp:3\n"
+             "F|func|fn@f.cpp:4 (fn)\n"
+             "F|-|fn@f.cpp:5 (fn)\n"
+             "-|internal|<FUNC>\n"));
+}
+
+static void logConsoleColorMessages(SimpleQtLogger* logger)
+{
+  logger->log("e", LogLevel_ERROR, "fn", "f.cpp", 1);
+  logger->log("i", LogLevel_INFO, "fn", "f.cpp", 2);
+  logger->log("f", LogLevel_FUNCTION, "fn", "f.cpp", 3);
+}
+
+void TestSimpleQtLogger::format_consoleSinkColor()
+{
+#ifndef Q_OS_UNIX
+  QSKIP("stdout capture needs POSIX dup2");
+#endif
+  ENABLE_LOG_SINK_CONSOLE = true;
+  EnableLogLevels all;
+  all.logLevel_FUNCTION = true;
+  _logger->setLogLevels_console(all);
+
+  // default console format "<TEXT>", function-log gets the suffix " (<FUNC>)"
+  QCOMPARE(captureConsole(logConsoleColorMessages), QString(
+             "\033[0;47;31;1mERROR\033[0;31m: e\033[0m\n"
+             "i\n"
+             "\033[0;32mf (fn)\033[0m\n"));
+}
+
+void TestSimpleQtLogger::format_qDebugSink()
+{
+  ENABLE_LOG_SINK_QDEBUG = true;
+  EnableLogLevels all;
+  all.logLevel_FUNCTION = true;
+  _logger->setLogLevels_qDebug(all);
+  _logger->setLogFormat_qDebug("<LL>|<TEXT>|<FUNC>@<FILE>:<LINE>", "<LL>|<TEXT>|<FUNC>");
+
+  qDebugMessages.clear();
+  previousMessageHandler = qInstallMessageHandler(collectingMessageHandler);
+  _logger->log("  note  ", LogLevel_NOTE, "fn", "f.cpp", 1);
+  _logger->log("", LogLevel_FUNCTION, "fn", "f.cpp", 2);
+  _logger->log("  internal  ", LogLevel_INTERNAL, "fn", "f.cpp", 3);
+  qInstallMessageHandler(previousMessageHandler);
+
+  QCOMPARE(qDebugMessages, QStringList()
+           << "N|note|fn@f.cpp:1"
+           << "F|-|fn@f.cpp:2"
+           << "-|internal|<FUNC>");
 }
 
 // -------------------------------------------------------------------------------------------------

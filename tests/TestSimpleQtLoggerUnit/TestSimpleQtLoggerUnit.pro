@@ -14,6 +14,9 @@ TEMPLATE = app
 
 QMAKE_CXXFLAGS_DEBUG += -Wextra
 
+# the qDebug sink is disabled at compile-time by default
+DEFINES += ENABLE_SQTL_LOG_SINK_QDEBUG=1
+
 INCLUDEPATH += ../..
 
 SOURCES += tst_simpleQtLogger.cpp \

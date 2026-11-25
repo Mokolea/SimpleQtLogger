@@ -398,8 +398,8 @@ class Sink : public QObject
 #endif
 
   protected:
-    QString getLogFormat() const;
-    QString getLogFormatInt() const;
+    // Expand the TAGs of the log-format; LogLevel_INTERNAL uses the internal log-format (without <FUNC>, <FILE>, <LINE>) and is always trimmed
+    QString formatMessage(const QString& ts, const QString& tid, const QString& text, LogLevel logLevel, const QString& functionName, const QString& fileName, unsigned int lineNumber, bool trimmed = true, const QString& logFormatSuffix = QString()) const;
     bool checkLogLevelsEnabled(LogLevel logLevel) const;
     bool checkFilter(const QString& text) const;
 
