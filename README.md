@@ -22,7 +22,7 @@ Simple rolling file logger for C++ applications using the [Qt Framework](https:/
  - thread-safe use of log-macros
  - specify log-format
  - log-file encoding: utf-8
- 
+
 ## Usage
 Just see the comments in [simpleQtLogger.h](simpleQtLogger.h) and the [examples](examples).
 
