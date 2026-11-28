@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
   // initialize SimpleQtLogger (step 1/2)
   simpleqtlogger::SimpleQtLogger::createInstance(qApp);
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_file(enableLogLevels_file);
-  simpleqtlogger::SimpleQtLogger::getInstance()->setLogFileName("testSimpleQtLogger.log", 10*1000, 10);
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogFileName("testSimpleQtLogger.log", 10*1024, 10);
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_console(enableLogLevels_console);
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_qDebug(enableLogLevels_qDebug);
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_signal(enableLogLevels_signal);
@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
   // 2nd file-log (levels: warn..fatal)
   simpleqtlogger::SimpleQtLogger::getInstance()->addSinkFileLog("warn");
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_file("warn", enableLogLevels_fileWarn);
-  simpleqtlogger::SimpleQtLogger::getInstance()->setLogFileName("warn", "testSimpleQtLoggerWarn.log", 10*1000, 10);
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogFileName("warn", "testSimpleQtLoggerWarn.log", 10*1024, 10);
 
   // start and initialize the main task
   Task *task = new Task(&a);

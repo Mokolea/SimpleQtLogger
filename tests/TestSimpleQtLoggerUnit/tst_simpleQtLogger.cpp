@@ -725,7 +725,7 @@ void TestSimpleQtLogger::file_writesLinesImmediately()
 {
   const QString fileName = _tmpDir->path() + "/app.log";
   _logger->setLogFormat_file("<LL> <TEXT> (<FUNC>:<LINE>)", "<LL> <TEXT>");
-  QVERIFY(_logger->setLogFileName(fileName, 10000, 3));
+  QVERIFY(_logger->setLogFileName(fileName, 10*1024, 3));
 
   const int line = __LINE__ + 1;
   L_INFO("first");
@@ -759,8 +759,8 @@ void TestSimpleQtLogger::file_logLevelsPerRole()
 
   _logger->setLogFormat_file("<LL> <TEXT>", "<LL> <TEXT>");
   _logger->setLogFormat_file("warn", "<LL> <TEXT>", "<LL> <TEXT>");
-  QVERIFY(_logger->setLogFileName(mainName, 10000, 3));
-  QVERIFY(_logger->setLogFileName("warn", warnName, 10000, 3));
+  QVERIFY(_logger->setLogFileName(mainName, 10*1024, 3));
+  QVERIFY(_logger->setLogFileName("warn", warnName, 10*1024, 3));
 
   L_INFO("info");
   L_WARN("warn");
@@ -841,7 +841,7 @@ void TestSimpleQtLogger::file_rollingWithLogInDirectoryName()
 void TestSimpleQtLogger::file_noRollingBelowRotationSize()
 {
   const QString fileName = _tmpDir->path() + "/app.log";
-  QVERIFY(_logger->setLogFileName(fileName, 10000, 3));
+  QVERIFY(_logger->setLogFileName(fileName, 10*1024, 3));
   L_INFO("small");
   checkFileActivity();
   checkFileActivity(); // no activity since the last check
@@ -856,7 +856,7 @@ void TestSimpleQtLogger::file_retryOpenAfterFailure()
   _logger->setLogFormat_file("<TEXT>", "<TEXT>");
 
   QTest::ignoreMessage(QtWarningMsg, QRegularExpression("^Open log-file failed! Retrying every"));
-  QVERIFY(!_logger->setLogFileName(fileName, 10000, 3));
+  QVERIFY(!_logger->setLogFileName(fileName, 10*1024, 3));
 
   L_INFO("lost while closed");
   checkFileActivity(); // still failing; warned only once (an extra warning fails the test)

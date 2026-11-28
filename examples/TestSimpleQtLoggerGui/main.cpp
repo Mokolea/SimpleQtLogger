@@ -56,8 +56,8 @@ int main(int argc, char *argv[])
   simpleqtlogger::SimpleQtLogger::createInstance(qApp);
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogFormat_file("<TS> [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)", "<TS> [<LL>] <TEXT>");
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_file(enableLogLevels_file);
-  //simpleqtlogger::SimpleQtLogger::getInstance()->setLogFileName(QDir::home().filePath("Documents/Qt/testSimpleQtLoggerGui.log"), 10*1000, 10);
-  simpleqtlogger::SimpleQtLogger::getInstance()->setLogFileName("testSimpleQtLoggerGui.log", 10*1000, 10);
+  //simpleqtlogger::SimpleQtLogger::getInstance()->setLogFileName(QDir::home().filePath("Documents/Qt/testSimpleQtLoggerGui.log"), 10*1024, 10);
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogFileName("testSimpleQtLoggerGui.log", 10*1024, 10);
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_console(enableLogLevels_console);
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_qDebug(enableLogLevels_qDebug);
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_signal(enableLogLevels_signal);
@@ -66,8 +66,8 @@ int main(int argc, char *argv[])
   simpleqtlogger::SimpleQtLogger::getInstance()->addSinkFileLog("warn");
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogFormat_file("warn", "<TS> [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)", "<TS> [<LL>] <TEXT>");
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_file("warn", enableLogLevels_fileWarn);
-  //simpleqtlogger::SimpleQtLogger::getInstance()->setLogFileName("warn", QDir::home().filePath("Documents/Qt/testSimpleQtLoggerGuiWarn.log"), 10*1000, 10);
-  simpleqtlogger::SimpleQtLogger::getInstance()->setLogFileName("warn", "testSimpleQtLoggerGuiWarn.log", 10*1000, 10);
+  //simpleqtlogger::SimpleQtLogger::getInstance()->setLogFileName("warn", QDir::home().filePath("Documents/Qt/testSimpleQtLoggerGuiWarn.log"), 10*1024, 10);
+  simpleqtlogger::SimpleQtLogger::getInstance()->setLogFileName("warn", "testSimpleQtLoggerGuiWarn.log", 10*1024, 10);
 
   // start and initialize the main widget
   Dialog w(0);
